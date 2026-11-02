@@ -1,0 +1,24 @@
+{
+  "state": "PREPARED_UNRUN",
+  "baseline_tree": "Immutable original387 source AND original test tree; do not overlay migrated existing tests or new modules.",
+  "regression_overlay_only": [
+    "tests/integration/test_plan_plugin_baseline.py"
+  ],
+  "expected_assertion_failures": [
+    "tests/integration/test_plan_plugin_baseline.py::test_create_dispatches_before_and_after",
+    "tests/integration/test_plan_plugin_baseline.py::test_rejected_create_never_persists",
+    "tests/integration/test_plan_plugin_baseline.py::test_update_dispatches_detached_previous_and_saved",
+    "tests/integration/test_plan_plugin_baseline.py::test_delete_dispatches_confirmed_removal"
+  ],
+  "expected_passes": [
+    "tests/integration/test_plan_plugin_baseline.py::test_noop_and_missing_are_positive_controls"
+  ],
+  "requirements": [
+    "Original full baseline suites pass before regression lane.",
+    "Full baseline has zero new test files/implementation overlays.",
+    "All five exact IDs collected and executed once; no skip/xfail/collection/import error as fail-before credit.",
+    "New callback tests use baseline-existing imports and setattr injection to assert behavior, no new-module import failure.",
+    "Candidate must pass all five plus full new and unchanged suites.",
+    "One integrated attempt only; any setup/harness/baselinefailure terminal; no retry granted."
+  ]
+}

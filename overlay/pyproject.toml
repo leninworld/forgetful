@@ -1,0 +1,165 @@
+[project]
+name = "forgetful-ai"
+dynamic = ["version"]
+description = "MCP Server for AI Agent Memory - persistent, semantically-searchable memory for AI agents"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [{name = "Scott", email = "scott@scottrbk.dev"}]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "aiosqlite==0.22.1",
+    "alembic==1.18.4",
+    "asyncpg==0.31.0",
+    # Keep audited transitive versions in fresh CLI installs as well as the lockfile.
+    "certifi==2026.10.19",
+    "dotenv==0.9.9",
+    "fastapi==0.136.3",
+    "fastembed==0.9.1",
+    "fastmcp==3.4.10",
+    "filelock==4.2.1",
+    "fsspec==2026.9.0",
+    "google-genai==1.66.0",
+    "httpx==0.28.1",
+    "ollama==0.6.1",
+    "openai==2.20.0",
+    "pgvector==0.4.2",
+    "pillow==13.0.0",
+    "platformdirs==4.7.0",
+    "psycopg2-binary==2.9.11",
+    "py-key-value-aio[filetree]==0.4.4",
+    "pydantic==2.12.5",
+    "pydantic-settings==2.14.2",
+    "PyJWT==2.15.1",
+    "pytest==9.0.3",
+    "pytest-asyncio==1.3.0",
+    "requests==2.33.0",
+    "sqlalchemy[asyncio]==2.0.46",
+    "sqlite-vec==0.1.6",
+    "starlette==1.3.1",
+    "tiktoken==0.12.0",
+    "urllib3==2.8.0",
+    "uvicorn==0.40.0",
+]
+
+[project.optional-dependencies]
+ollama = ["ollama>=0.4"]
+
+[dependency-groups]
+dev = [
+    "grimp==3.17",
+    "import-linter==2.15",
+]
+# Dev-only: drives the UAT walkthrough container; agent-shell-py lives in the
+# container image (test_harness/docker/Dockerfile), not on the host.
+harness = ["docker>=7.1.0"]
+
+[project.urls]
+Homepage = "https://github.com/scottrbk/forgetful"
+Repository = "https://github.com/scottrbk/forgetful"
+Issues = "https://github.com/scottrbk/forgetful/issues"
+
+[project.scripts]
+forgetful = "main:cli"
+forgetful-ai = "main:cli"
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "app/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app", "main.py"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"alembic.ini" = "alembic.ini"
+"alembic" = "alembic"
+
+[tool.hatch.build.targets.sdist]
+include = ["app", "main.py", "alembic.ini", "alembic/", "README.md", "LICENCE.md"]
+
+[tool.importlinter]
+root_package = "app"
+include_external_packages = true
+exclude_type_checking_imports = false
+
+[[tool.importlinter.contracts]]
+id = "foundation"
+name = "Models, contracts and shared support stay independent"
+type = "forbidden"
+source_modules = [
+    "app.models", "app.protocols", "app.events", "app.utils",
+    "app.config.settings", "app.config.logging_config",
+    "app.middleware.logging_middleware", "app.exceptions", "app.version",
+]
+forbidden_modules = [
+    "app.services", "app.repositories", "app.routes", "app.bootstrap",
+    "app.middleware.auth", "app.config.auth", "app.config.write_plugin", "app.config.plan_plugin",
+]
+
+[[tool.importlinter.contracts]]
+id = "services"
+name = "Services use contracts instead of integrations or entry points"
+type = "forbidden"
+source_modules = ["app.services"]
+forbidden_modules = [
+    "app.repositories", "app.routes", "app.bootstrap",
+    "app.middleware.auth", "app.config.auth", "app.config.write_plugin", "app.config.plan_plugin",
+]
+
+[[tool.importlinter.contracts]]
+id = "repositories"
+name = "Repositories stay independent of workflows and entry points"
+type = "forbidden"
+source_modules = ["app.repositories"]
+forbidden_modules = [
+    "app.services", "app.routes", "app.bootstrap",
+    "app.middleware.auth", "app.config.auth", "app.config.write_plugin", "app.config.plan_plugin",
+]
+
+[[tool.importlinter.contracts]]
+id = "external"
+name = "Core code stays independent of database, provider and backup integrations"
+type = "forbidden"
+source_modules = [
+    "app.models", "app.protocols", "app.services", "app.events", "app.utils",
+    "app.config.settings", "app.config.logging_config",
+    "app.middleware.logging_middleware", "app.exceptions", "app.version",
+]
+forbidden_modules = [
+    "sqlalchemy", "openai", "google", "fastembed", "httpx", "ollama",
+    "subprocess", "shutil",
+]
+
+[[tool.importlinter.contracts]]
+id = "routes"
+name = "HTTP and MCP handlers use services instead of repositories or bootstrap"
+type = "forbidden"
+source_modules = [
+    "app.routes.api", "app.routes.mcp", "app.routes.write_plugin_responses", "app.routes.plan_plugin_responses", "app.middleware.auth",
+]
+forbidden_modules = ["app.repositories", "app.bootstrap", "app.config.write_plugin", "app.config.plan_plugin"]
+
+# Keep CLI startup exceptions separate so HTTP/MCP cannot use them to reach bootstrap.
+[[tool.importlinter.contracts]]
+id = "cli"
+name = "CLI uses services with explicit startup wiring"
+type = "forbidden"
+source_modules = ["app.routes.cli"]
+forbidden_modules = ["app.repositories", "app.bootstrap", "app.config.write_plugin", "app.config.plan_plugin"]
+ignore_imports = [
+    "app.routes.cli.local_executor -> app.bootstrap",
+    "app.routes.cli.context -> app.bootstrap",
+]

@@ -1,0 +1,2468 @@
+# Forgetful MCP Server - Complete Tool Reference
+
+This guide provides comprehensive documentation for all tools available in the Forgetful MCP server.
+
+---
+
+## Table of Contents
+
+- [Meta-Tools Pattern](#meta-tools-pattern)
+- [Tool Categories Overview](#tool-categories-overview)
+- [User Tools](#user-tools)
+- [Memory Tools](#memory-tools)
+- [Project Tools](#project-tools)
+- [Code Artifact Tools](#code-artifact-tools)
+- [Document Tools](#document-tools)
+- [Skill Tools](#skill-tools)
+- [Entity Tools](#entity-tools)
+- [Plan Tools](#plan-tools)
+- [Task Tools](#task-tools)
+- [Cross-Category Workflows](#cross-category-workflows)
+
+---
+
+## Meta-Tools Pattern
+
+Forgetful uses a **meta-tools pattern** to preserve your LLM's context window. Only
+**3 meta-tools** are visible to MCP clients; the inner tool catalog depends on the enabled
+feature flags.
+
+### The Three Meta-Tools
+
+#### 1. `discover_forgetful_tools`
+List available tools, optionally filtered by category.
+
+**Parameters:**
+- `category` (optional): Filter by category (`user`, `memory`, `project`, `code_artifact`, `document`, `entity`, `plan`, `task`, `skill`)
+
+**Returns:**
+- `tools_by_category`: Tools grouped by category
+- `total_count`: Total number of tools
+- `categories_available`: List of all categories
+- `filtered_by`: Applied filter (if any)
+
+**Example:**
+```python
+# Discover all memory tools
+discover_forgetful_tools(category="memory")
+
+# Discover all available tools
+discover_forgetful_tools()
+```
+
+#### 2. `how_to_use_forgetful_tool`
+Get detailed documentation for a specific tool.
+
+**Parameters:**
+- `tool_name`: Name of the tool
+
+**Returns:**
+- Complete tool documentation with JSON schema, parameters, and examples
+
+**Example:**
+```python
+how_to_use_forgetful_tool(tool_name="create_memory")
+```
+
+#### 3. `execute_forgetful_tool`
+Execute any registered tool dynamically.
+
+**Parameters:**
+- `tool_name`: Name of the tool to execute
+- `arguments`: Dictionary of arguments for the tool
+
+**Returns:**
+- Tool execution result (format depends on specific tool)
+
+**Example:**
+```python
+execute_forgetful_tool(
+    tool_name="create_memory",
+    arguments={
+        "title": "Database choice: PostgreSQL",
+        "content": "Selected PostgreSQL for pgvector support",
+        "context": "Choosing the database for vector search",
+        "keywords": ["postgresql", "pgvector"],
+        "tags": ["database", "decision"],
+        "importance": 9
+    }
+)
+```
+
+---
+
+## Tool Categories Overview
+
+The core catalog covers users, memories, projects, code artifacts, documents, and entities.
+Skills, files, plans, and tasks appear only when their feature flags are enabled. Call
+`discover_forgetful_tools()` for the exact catalog exposed by the running server.
+
+---
+
+## User Tools
+
+Manage user authentication and profile information.
+
+### `get_current_user`
+
+Returns information about the currently authenticated user.
+
+**Parameters:** None
+
+**Returns:**
+- `user_id`: Unique user identifier
+- `username`: User's username
+- `email`: User's email
+- `notes`: User profile notes
+- `created_at`: Account creation timestamp
+
+**Example:**
+```python
+user = execute_forgetful_tool("get_current_user", {})
+# Returns: {"user_id": 1, "username": "alex_smith", "email": "alex@example.com", ...}
+```
+
+### `update_user_notes`
+
+Update the notes field for the current user's profile.
+
+**Parameters:**
+- `notes`: Text content for user notes
+
+**Returns:**
+- Updated user object
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "update_user_notes",
+    {"notes": "Prefers TypeScript over JavaScript. Works on microservices architecture."}
+)
+```
+
+---
+
+## Memory Tools
+
+Memory create/update/obsolete/restore can be checked by an administrator's
+[Memory Plugin](configuration.md#memory-plugin). Success adds `plugin_warnings` only when
+nonempty; each entry contains `outcome="warn"`, a client-safe `message`, and optional `code`.
+Create keeps its existing confirmation fields and `obsolete_matches`. Update stays a flat memory
+object. Lifecycle tools keep `{"success": true}` plus any warnings. Reads, lists, queries, and
+events do not contain these transient warnings.
+
+A warning means the write succeeded: review the message without creating a duplicate. Rejection
+raises `WRITE_PLUGIN_REJECTED: <message>` and leaves the write unapplied. Correct the stated issue
+within the user's authorization before making another attempt. Before-handler failure/timeout raises
+`WRITE_PLUGIN_UNAVAILABLE: Memory Write Plugin unavailable.` in enforce mode; warn mode writes
+with that generic warning instead. Do not automatically retry or claim a rejected write succeeded.
+After handlers are advisory in both modes. Failure adds warning code
+`MEMORY_PLUGIN_AFTER_SAVE_UNAVAILABLE` while retaining success. Create's after handler can use
+existing scored matches and links to warn about near duplicates after persistence; it cannot
+prevent creation. No-op updates skip both phases. Linking/unlinking and entity tools are unaffected.
+External cancellation or network failure can lose a response after persistence; verify state
+before retrying.
+
+
+The core of Forgetful - atomic knowledge storage and semantic retrieval.
+
+### `create_memory`
+
+Create an atomic memory with automatic linking to related memories.
+
+**Parameters:**
+- `title` (required): Short, searchable title (max 200 chars)
+- `content` (required): Memory content - ONE concept (max 2000 chars, ~300-400 words)
+- `importance` (required): Importance score 1-10 (9-10 = foundational, 7-8 = patterns, 5-6 = context)
+- `context` (required): Why the memory matters (max 500 chars)
+- `keywords` (required): Search keywords (max 10)
+- `tags` (required): Categorization tags (max 10)
+- `project_ids` (optional): Project IDs to link
+- `document_ids` (optional): Document IDs to link
+- `file_ids` (optional): Existing file IDs to link (files must belong to the current user; unknown IDs fail)
+- `code_artifact_ids` (optional): Code artifact IDs to link
+
+**Provenance Tracking (optional):**
+- `source_repo` (optional): Repository source (e.g., 'owner/repo', max 200 chars)
+- `source_files` (optional): List of file paths that informed this memory
+- `source_url` (optional): URL to original source material (max 2048 chars)
+- `confidence` (optional): Encoding confidence score (0.0-1.0)
+- `encoding_agent` (optional): Agent/process that created this memory (max 100 chars)
+- `encoding_version` (optional): Version of encoding process/prompt (max 50 chars)
+
+**Returns:**
+- `id`: Created memory ID
+- `title`: Created memory title
+- `linked_memory_ids`: Automatically linked memory IDs
+- `similar_memories`: Summaries of the automatic-link candidates; each entry includes `similarity` (cosine similarity to the new memory)
+- `obsolete_matches`: Up to 3 obsolete memories similar to the new content (on by default via `OBSOLETE_WARNING_ENABLED`); each match includes `id`, `title`, `similarity`, `obsolete_reason`, `superseded_by`, `obsoleted_at`, `project_ids`. Warning-only; never blocks creation. Empty when the feature is disabled.
+
+**Example:**
+```python
+memory = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "API rate limiting: 100 req/min per user",
+        "content": "Implemented rate limiting at 100 requests per minute per authenticated user to prevent abuse. Uses Redis for distributed counting across instances.",
+        "importance": 8,
+        "context": "Performance and security discussion during API redesign",
+        "keywords": ["rate-limiting", "api", "redis", "performance"],
+        "tags": ["api", "security", "performance"],
+        "project_ids": [12]
+    }
+)
+# Returns: {"id": 156, "linked_memory_ids": [142, 148, 151], ...}
+```
+
+**Example with provenance:**
+```python
+# Memory created by AI agent with source tracking
+memory = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "FastAPI dependency injection pattern",
+        "content": "Use Depends() for request-scoped dependencies.",
+        "context": "Recording a reusable FastAPI implementation pattern",
+        "keywords": ["fastapi", "depends", "dependency-injection"],
+        "tags": ["fastapi", "pattern", "dependency-injection"],
+        "importance": 8,
+        "source_repo": "tiangolo/fastapi",
+        "source_files": ["docs/tutorial/dependencies.md", "docs/advanced/async-database.md"],
+        "source_url": "https://fastapi.tiangolo.com/tutorial/dependencies/",
+        "confidence": 0.92,
+        "encoding_agent": "claude-sonnet-4-20250514",
+        "encoding_version": "1.0.0"
+    }
+)
+```
+
+### `query_memory`
+
+Semantic search across all memories with context-aware ranking.
+
+**Parameters:**
+- `query` (required): Natural language search query
+- `query_context` (required): Why the search is being performed
+- `k` (optional): Number of primary results (default: 3, maximum: 20)
+- `include_links` (optional): Include linked memories (default: true)
+- `max_links_per_primary` (optional): Linked memories per primary result (default: 5)
+- `importance_threshold` (optional): Minimum importance score
+- `project_ids` (optional): Project IDs to search
+- `strict_project_filter` (optional): Apply the project filter to linked memories
+
+**Returns:**
+- List of memories ranked by semantic relevance
+- Each memory includes linked artifacts and 1-hop graph connections
+- `scores`: One `MemoryScore` per primary memory (`memory_id`, `similarity`, `rerank_score`), aligned by index with `primary_memories`. Primaries are importance-sorted after retrieval, so list position is not similarity rank.
+- `access_count` / `last_accessed_at` on each returned **full** `Memory` (not on `MemorySummary`). On upstream they increment when `memory.queried` fires, which requires `ACTIVITY_TRACK_READS=true` and an EventBus. Not request parameters.
+
+**Example:**
+```python
+results = execute_forgetful_tool(
+    "query_memory",
+    {
+        "query": "how do we handle authentication",
+        "query_context": "Implementing authentication for the API",
+        "project_ids": [12],
+        "importance_threshold": 7,
+        "k": 5
+    }
+)
+# Returns: {"primary_memories": [...], "linked_memories": [...], ...}
+```
+
+### `get_memory`
+
+Retrieve complete memory details by ID.
+
+**Parameters:**
+- `memory_id` (required): Memory ID
+
+**Returns:**
+- Complete memory object with all fields and relationships
+- `access_count` / `last_accessed_at` on the **full** `Memory`. On upstream they increment when `memory.read` fires, which requires `ACTIVITY_TRACK_READS=true` and an EventBus. Not writable via `update_memory`.
+
+**Example:**
+```python
+memory = execute_forgetful_tool("get_memory", {"memory_id": 156})
+```
+
+### `update_memory`
+
+Update existing memory fields (PATCH semantics - only updates provided fields).
+
+**Parameters:**
+- `memory_id` (required): Memory ID
+- `title` (optional): Updated title
+- `content` (optional): Updated content
+- `importance` (optional): Updated importance score
+- `context` (optional): Updated context
+- `keywords` (optional): Updated keywords
+- `tags` (optional): Updated tags
+- `file_ids` (optional): Replaces existing file links; `[]` clears them; omit to leave them unchanged
+
+**Provenance Tracking (optional):**
+- `source_repo` (optional): Repository source (e.g., 'owner/repo')
+- `source_files` (optional): List of file paths
+- `source_url` (optional): URL to source material
+- `confidence` (optional): Confidence score (0.0-1.0)
+- `encoding_agent` (optional): Agent/process identifier
+- `encoding_version` (optional): Version of encoding process
+
+**Returns:**
+- Updated memory object
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "update_memory",
+    {
+        "memory_id": 156,
+        "importance": 9,  # Increased importance after realizing how critical this is
+        "tags": ["api", "security", "performance", "production"]
+    }
+)
+```
+
+**Example - Adding provenance after creation:**
+```python
+# Add provenance to an existing memory
+execute_forgetful_tool(
+    "update_memory",
+    {
+        "memory_id": 156,
+        "source_repo": "company/api-gateway",
+        "confidence": 0.95,
+        "encoding_agent": "manual-review"
+    }
+)
+```
+
+### `link_memories`
+
+Manually create bidirectional links between memories.
+
+**Parameters:**
+- `memory_id` (required, int): Source memory ID (aliases: `source_id`, `from_id`, `id`)
+- `related_ids` (required, List[int] or int): Target memory IDs (aliases: `target_id`, `target_ids`, `related_id`, `linked_ids`)
+- `memory_ids` (optional, List[int]): Pair/list of memory IDs `[src, target1, target2, ...]`
+
+**Returns:**
+- Dict with `linked_memory_ids` (list of target IDs newly linked). Target IDs that do not exist, belong to another user, or are already linked are skipped.
+
+**Examples:**
+```python
+# Standard syntax
+execute_forgetful_tool(
+    "link_memories",
+    {
+        "memory_id": 156,  # Rate limiting decision
+        "related_ids": [201]  # Redis caching strategy
+    }
+)
+
+# Alias syntax with source_id and target_id
+execute_forgetful_tool(
+    "link_memories",
+    {
+        "source_id": 156,
+        "target_id": 201
+    }
+)
+
+# Pair list syntax
+execute_forgetful_tool(
+    "link_memories",
+    {
+        "memory_ids": [156, 201]
+    }
+)
+```
+
+### `unlink_memories`
+
+Remove bidirectional link(s) between memories.
+
+**Parameters:**
+- `source_id` (required, int): Source memory ID (aliases: `memory_id`, `from_id`, `id`)
+- `target_id` (required, int or List[int]): Target memory ID(s) to unlink (aliases: `target_ids`, `related_id`, `related_ids`, `linked_ids`)
+- `memory_ids` (optional, List[int]): List of memory IDs `[src, target1, target2, ...]`
+
+**Returns:**
+- Dict with `success` boolean (True if all requested links were removed)
+
+**Examples:**
+```python
+execute_forgetful_tool(
+    "unlink_memories",
+    {
+        "source_id": 156,
+        "target_id": 201
+    }
+)
+
+execute_forgetful_tool(
+    "unlink_memories",
+    {
+        "memory_id": 156,
+        "related_ids": [201, 202]
+    }
+)
+
+execute_forgetful_tool(
+    "unlink_memories",
+    {
+        "memory_ids": [156, 201, 202]
+    }
+)
+```
+
+### `mark_memory_obsolete`
+
+Soft delete a memory with audit trail and supersession tracking.
+
+**Parameters:**
+- `memory_id` (required): Memory ID to mark obsolete
+- `reason` (required): Reason for obsolescence
+- `superseded_by` (optional): ID of replacement memory
+
+**Returns:**
+- `{"success": true}`, with `plugin_warnings` only when nonempty
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "mark_memory_obsolete",
+    {
+        "memory_id": 78,  # Old "Docker Swarm deployment" memory
+        "reason": "Migrated to Kubernetes",
+        "superseded_by": 312  # New K8s memory
+    }
+)
+```
+
+### `unobsolete_memory`
+
+Restore a memory previously marked obsolete (undo `mark_memory_obsolete`).
+
+**Parameters:**
+- `memory_id` (required): ID of the obsolete memory to restore
+
+**Returns:**
+- `{"success": true}`, with `plugin_warnings` only when nonempty
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "unobsolete_memory",
+    {"memory_id": 78},
+)
+```
+
+### `get_recent_memories`
+
+Retrieve most recent memories sorted by creation timestamp.
+
+**Parameters:**
+- `limit` (optional): Max memories to return (default: 10)
+- `project_ids` (optional): Scope to specific projects
+
+**Returns:**
+- An object (not a bare list) with two keys:
+  - `memories`: list of recent memories, sorted by `created_at` DESC (newest first)
+  - `total_count`: total number of matching memories
+- Each memory's `linked_memory_ids` includes both directions of links (same set as `get_memory`).
+
+**Example:**
+```python
+result = execute_forgetful_tool(
+    "get_recent_memories",
+    {"limit": 10, "project_ids": [12]}
+)
+recent = result["memories"]     # the list of memories
+total = result["total_count"]   # how many matched in total
+```
+
+> **Behavior change (PR #49) — the return shape is now an envelope.**
+>
+> This tool used to return a bare JSON array of memories. It now returns an object:
+> `{"memories": [...], "total_count": N}`.
+>
+> **Why:** MCP structured content requires an object root. A bare `[]` carries no
+> structured content over the wire, so an empty result collapsed to `null` for remote
+> consumers and could not be told apart from "no result". Wrapping the list in an object
+> lets empty results survive the wire and matches the `list_*` tool family.
+>
+> **Migration:** read `result["memories"]` instead of indexing the bare result, and read
+> `result["total_count"]` if you need the total. For example, replace `for m in result:`
+> with `for m in result["memories"]:`. The REST endpoint is unaffected — this change is
+> only in the MCP tool surface.
+
+---
+
+## Project Tools
+
+Organize memories, code artifacts, and documents by project context.
+
+### Project Types
+- `personal`, `work`, `learning`, `development`, `infrastructure`
+- `template`, `product`, `marketing`, `finance`, `documentation`
+- `development-environment`, `third-party-library`, `open-source`
+
+### Project Statuses
+- `active`, `archived`, `completed`
+
+### `create_project`
+
+Create a new project for organizing knowledge.
+
+**Parameters:**
+- `name` (required): Project name
+- `project_type` (optional): Project type (see list above)
+- `description` (optional): Project description
+- `status` (optional): Project status (default: `active`)
+- `repository_url` (optional): Git repository URL
+- `metadata` (optional): Additional JSON metadata
+- `last_encoding_point` (optional): Opaque caller-managed encoding checkpoint (e.g. a Git commit SHA). The server never infers or advances it; the encoding client updates it only after a successful run.
+
+**Returns:**
+- Created project with `project_id`
+
+**Example:**
+```python
+project = execute_forgetful_tool(
+    "create_project",
+    {
+        "name": "E-Commerce Platform Redesign",
+        "project_type": "work",
+        "description": "Complete redesign of checkout and payment flows",
+        "status": "active",
+        "repository_url": "https://github.com/company/ecommerce-v2"
+    }
+)
+# Returns: {"project_id": 22, "name": "E-Commerce Platform Redesign", ...}
+```
+
+### `list_projects`
+
+List projects with optional filtering.
+
+**Parameters:**
+- `project_type` (optional): Filter by project type
+- `status` (optional): Filter by status
+- `repository_url` (optional): Filter by repository
+
+**Returns:**
+- List of matching projects
+
+**Example:**
+```python
+# Get all active work projects
+active_work = execute_forgetful_tool(
+    "list_projects",
+    {"project_type": "work", "status": "active"}
+)
+```
+
+### `get_project`
+
+Retrieve complete project details by ID.
+
+**Parameters:**
+- `project_id` (required): Project ID
+
+**Returns:**
+- Complete project object
+
+**Errors:**
+- Raises an error (not `null`) when `project_id` does not exist or is not visible to the caller
+
+**Example:**
+```python
+project = execute_forgetful_tool("get_project", {"project_id": 22})
+```
+
+### `update_project`
+
+Update project metadata (PATCH semantics).
+
+**Parameters:**
+- `project_id` (required): Project ID
+- `name` (optional): Updated name
+- `description` (optional): Updated description
+- `status` (optional): Updated status
+- `repository_url` (optional): Updated repository URL
+- `metadata` (optional): Updated metadata
+- `last_encoding_point` (optional): Opaque caller-managed encoding checkpoint (e.g. a Git commit SHA). The server never infers or advances it; the encoding client updates it only after a successful run. Unchanged if omitted; set to empty string to clear.
+
+**Returns:**
+- Updated project object
+
+**Example:**
+```python
+# Mark project as completed
+execute_forgetful_tool(
+    "update_project",
+    {
+        "project_id": 22,
+        "status": "completed",
+        "metadata": {"completion_date": "2025-01-15", "outcome": "shipped to production"}
+    }
+)
+```
+
+### `delete_project`
+
+Delete project while preserving linked memories, artifacts, and documents.
+
+**Parameters:**
+- `project_id` (required): Project ID
+
+**Returns:**
+- Confirmation of deletion
+
+**Example:**
+```python
+execute_forgetful_tool("delete_project", {"project_id": 22})
+```
+
+---
+
+## Code Artifact Tools
+
+Store and retrieve reusable code snippets and patterns.
+
+### `create_code_artifact`
+
+Store a reusable code snippet.
+
+**Parameters:**
+- `title` (required): Artifact title
+- `content` (required): Code content
+- `language` (required): Programming language
+- `description` (optional): Artifact description
+- `tags` (optional): Categorization tags
+- `project_id` (optional): Link to project
+- `framework` (optional): Framework name (e.g., "React", "FastAPI")
+- `version` (optional): Version string
+
+**Returns:**
+- Created artifact with `code_artifact_id`
+
+**Example:**
+```python
+artifact = execute_forgetful_tool(
+    "create_code_artifact",
+    {
+        "title": "Async Retry Decorator with Exponential Backoff",
+        "content": '''
+import asyncio
+from functools import wraps
+
+def async_retry(max_attempts=3, base_delay=1.0):
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            for attempt in range(max_attempts):
+                try:
+                    return await func(*args, **kwargs)
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    delay = base_delay * (2 ** attempt)
+                    await asyncio.sleep(delay)
+        return wrapper
+    return decorator
+        ''',
+        "language": "python",
+        "description": "Reusable retry logic for async operations - use for API calls",
+        "tags": ["async", "retry", "decorator", "resilience"],
+        "project_id": 12
+    }
+)
+# Returns: {"code_artifact_id": 45, ...}
+```
+
+### `list_code_artifacts`
+
+List code artifacts with optional filtering.
+
+**Parameters:**
+- `project_id` (optional): Filter by project
+- `language` (optional): Filter by programming language
+- `tags` (optional): Filter by tags
+
+**Returns:**
+- List of matching code artifacts
+
+**Example:**
+```python
+# Find all Python utilities
+python_utils = execute_forgetful_tool(
+    "list_code_artifacts",
+    {"language": "python", "tags": ["utility"]}
+)
+```
+
+### `get_code_artifact`
+
+Retrieve complete code artifact by ID.
+
+**Parameters:**
+- `code_artifact_id` (required): Artifact ID
+
+**Returns:**
+- Complete artifact object with code content
+
+**Example:**
+```python
+artifact = execute_forgetful_tool("get_code_artifact", {"code_artifact_id": 45})
+```
+
+### `update_code_artifact`
+
+Update code artifact (PATCH semantics).
+
+**Parameters:**
+- `code_artifact_id` (required): Artifact ID
+- `title`, `content`, `language`, `description`, `tags`, `framework`, `version` (all optional)
+
+**Returns:**
+- Updated artifact object
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "update_code_artifact",
+    {
+        "code_artifact_id": 45,
+        "version": "2.0.0",
+        "tags": ["async", "retry", "decorator", "resilience", "production"]
+    }
+)
+```
+
+### `delete_code_artifact`
+
+Delete code artifact (cascades memory associations).
+
+**Parameters:**
+- `code_artifact_id` (required): Artifact ID
+
+**Returns:**
+- Confirmation of deletion
+
+**Example:**
+```python
+execute_forgetful_tool("delete_code_artifact", {"code_artifact_id": 45})
+```
+
+---
+
+## Document Tools
+
+Store long-form content (>400 words) like architecture decision records, research notes, and detailed documentation.
+
+### Document Types
+- `text` - Plain text documents
+- `markdown` - Markdown-formatted documents
+- `code` - Code documentation
+- Custom types - Define your own
+
+### `create_document`
+
+Create a document for long-form content.
+
+**Parameters:**
+- `title` (required): Document title
+- `content` (required): Document content (no character limit)
+- `document_type` (optional): Document type (default: `text`)
+- `description` (optional): Document description
+- `tags` (optional): Categorization tags
+- `project_id` (optional): Link to project
+
+**Returns:**
+- Created document with `document_id`
+
+**Example:**
+```python
+doc = execute_forgetful_tool(
+    "create_document",
+    {
+        "title": "ADR-003: Migration to Event-Driven Architecture",
+        "content": '''
+# Architecture Decision Record: Event-Driven Architecture
+
+## Status
+Accepted
+
+## Context
+Our monolithic architecture faces scaling challenges:
+- Tight coupling between services creates deployment bottlenecks
+- Database contention during peak loads
+- Difficulty adding new features without affecting existing systems
+
+[... 2000+ words of detailed analysis ...]
+
+## Decision
+Adopt event-driven architecture using Apache Kafka as message broker.
+
+## Consequences
+### Positive
+- Loose coupling enables independent service scaling
+- Event sourcing provides audit trail
+- Easier to add new consumers
+
+### Negative
+- Increased operational complexity
+- Eventual consistency requires careful handling
+- Team needs training on distributed systems
+
+## Implementation Plan
+[... detailed steps ...]
+        ''',
+        "document_type": "markdown",
+        "tags": ["adr", "architecture", "event-driven", "kafka"],
+        "project_id": 22
+    }
+)
+# Returns: {"id": 89, ...}
+
+# Extract atomic memories from this document
+memory1 = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "Architecture decision: Event-driven with Kafka",
+        "content": "Adopted event-driven architecture using Kafka.",
+        "context": "Capturing the decision from the architecture document",
+        "keywords": ["architecture", "kafka", "events"],
+        "tags": ["architecture", "decision"],
+        "importance": 10,
+        "document_ids": [89],
+        "project_ids": [22]
+    }
+)
+```
+
+### `list_documents`
+
+List documents with optional filtering.
+
+**Parameters:**
+- `project_id` (optional): Filter by project
+- `document_type` (optional): Filter by type
+- `tags` (optional): Filter by tags
+
+**Returns:**
+- List of matching documents
+
+**Example:**
+```python
+# Find all ADRs
+adrs = execute_forgetful_tool(
+    "list_documents",
+    {"tags": ["adr"], "document_type": "markdown"}
+)
+```
+
+### `get_document`
+
+Retrieve complete document by ID.
+
+**Parameters:**
+- `document_id` (required): Document ID
+
+**Returns:**
+- Complete document object with full content
+
+**Example:**
+```python
+doc = execute_forgetful_tool("get_document", {"document_id": 89})
+```
+
+### `update_document`
+
+Update document (PATCH semantics).
+
+**Parameters:**
+- `document_id` (required): Document ID
+- `title`, `content`, `document_type`, `description`, `tags` (all optional)
+
+**Returns:**
+- Updated document object
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "update_document",
+    {
+        "document_id": 89,
+        "tags": ["adr", "architecture", "event-driven", "kafka", "implemented"]
+    }
+)
+```
+
+### `delete_document`
+
+Delete document (cascades memory associations).
+
+**Parameters:**
+- `document_id` (required): Document ID
+
+**Returns:**
+- Confirmation of deletion
+
+**Example:**
+```python
+execute_forgetful_tool("delete_document", {"document_id": 89})
+```
+
+---
+
+## Skill Tools
+
+Store and manage procedural knowledge (step-by-step instructions, agent capabilities) following the [Agent Skills](https://agentskills.io) open standard.
+
+### `create_skill`
+
+Create a skill for storing procedural knowledge.
+
+**Parameters:**
+- `name` (required): Kebab-case skill name (e.g., 'code-review'). Must match `^[a-z0-9]+(-[a-z0-9]+)*$`
+- `description` (required): What the skill does and when to use it. Gets embedded for semantic search (max 1024 chars)
+- `content` (required): Full SKILL.md body - markdown instructions, steps, examples (max 100KB)
+- `license` (optional): License identifier (e.g., 'MIT', 'Apache-2.0')
+- `compatibility` (optional): Environment requirements (e.g., 'Requires Python 3.14+ and uv')
+- `allowed_tools` (optional): Tool restrictions (e.g., `['Bash(python:*)', 'Read', 'WebFetch']`)
+- `metadata` (optional): Custom key-value pairs (author, version, mcp-server, etc.)
+- `tags` (optional): Categorization tags (max 10)
+- `importance` (optional): Importance 1-10 (default: 7)
+- `project_id` (optional): Link to project
+
+**Returns:**
+- Complete Skill with generated ID and timestamps
+
+**Example:**
+```python
+skill = execute_forgetful_tool(
+    "create_skill",
+    {
+        "name": "code-review",
+        "description": "Systematic code review process for pull requests",
+        "content": "# Code Review\n\n## Steps\n1. Check for breaking changes...",
+        "tags": ["development", "review", "quality"],
+        "importance": 8
+    }
+)
+```
+
+### `list_skills`
+
+List skills with optional filtering.
+
+**Parameters:**
+- `project_id` (optional): Filter by project
+- `tags` (optional): Filter by tags (OR logic - skills with ANY of these tags)
+- `importance_threshold` (optional): Minimum importance level (1-10)
+
+**Returns:**
+- List of SkillSummary (excludes full content)
+
+**Example:**
+```python
+skills = execute_forgetful_tool(
+    "list_skills",
+    {"tags": ["deployment"], "importance_threshold": 7}
+)
+```
+
+### `get_skill`
+
+Retrieve complete skill by ID.
+
+**Parameters:**
+- `skill_id` (required): Skill ID
+
+**Returns:**
+- Complete skill with full content and metadata
+
+**Example:**
+```python
+skill = execute_forgetful_tool("get_skill", {"skill_id": 5})
+```
+
+### `update_skill`
+
+Update skill (PATCH semantics).
+
+**Parameters:**
+- `skill_id` (required): Skill ID
+- `name`, `description`, `content`, `license`, `compatibility`, `allowed_tools`, `metadata`, `tags`, `importance`, `project_id` (all optional)
+
+**Returns:**
+- Updated skill object
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "update_skill",
+    {
+        "skill_id": 5,
+        "content": "# Updated Code Review\n\n## Steps\n1. Run linter first...",
+        "importance": 9
+    }
+)
+```
+
+### `delete_skill`
+
+Delete skill (cascades memory and artifact associations).
+
+**Parameters:**
+- `skill_id` (required): Skill ID
+
+**Returns:**
+- Confirmation of deletion
+
+**Example:**
+```python
+execute_forgetful_tool("delete_skill", {"skill_id": 5})
+```
+
+### `search_skills`
+
+Semantic search across skills by description similarity.
+
+**Parameters:**
+- `query` (required): Search query string (semantic, not keyword-only)
+- `k` (optional): Number of results (default: 5)
+- `project_id` (optional): Filter by project
+
+**Returns:**
+- List of SkillSummary ranked by relevance
+
+**Example:**
+```python
+results = execute_forgetful_tool(
+    "search_skills",
+    {"query": "how to deploy to production", "k": 3}
+)
+```
+
+### `import_skill`
+
+Import a skill from Agent Skills markdown format (SKILL.md).
+
+**Parameters:**
+- `skill_md_content` (required): Raw SKILL.md content with YAML frontmatter
+- `project_id` (optional): Project association
+- `importance` (optional): Importance level (default: 7)
+
+Scalar frontmatter values may contain unquoted colons (for example `Keywords:` in a description); the importer quotes them before parsing.
+
+YAML references (`*name` referring to an `&name` anchor) are not supported in frontmatter.
+Write the referenced values directly instead. Quoted strings such as `"*person"` and Markdown
+asterisks in the body remain valid.
+
+**Returns:**
+- Created Skill with generated ID
+
+**Example:**
+```python
+skill_md = """---
+name: code-review
+description: Systematic code review
+license: MIT
+---
+
+# Code Review
+
+## Steps
+1. Check for...
+"""
+
+skill = execute_forgetful_tool(
+    "import_skill",
+    {
+        "skill_md_content": skill_md,
+        "project_id": 3,
+        "importance": 8
+    }
+)
+```
+
+### `export_skill`
+
+Export a skill to Agent Skills markdown format (SKILL.md).
+
+**Parameters:**
+- `skill_id` (required): Skill ID to export
+
+**Returns:**
+- Formatted SKILL.md string with YAML frontmatter
+
+**Example:**
+```python
+skill_md = execute_forgetful_tool("export_skill", {"skill_id": 5})
+# Returns: "---\nname: code-review\ndescription: ...\n---\n\n# Code Review\n..."
+```
+
+### `link_skill_to_memory`
+
+Link a skill to a memory (bidirectional association).
+
+**Parameters:**
+- `skill_id` (required): Skill ID
+- `memory_id` (required): Memory ID
+
+**Returns:**
+- Confirmation dict
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "link_skill_to_memory",
+    {"skill_id": 5, "memory_id": 123}
+)
+```
+
+### `unlink_skill_from_memory`
+
+Remove association between a skill and a memory.
+
+**Parameters:**
+- `skill_id` (required): Skill ID
+- `memory_id` (required): Memory ID
+
+**Returns:**
+- Confirmation dict
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "unlink_skill_from_memory",
+    {"skill_id": 5, "memory_id": 123}
+)
+```
+
+---
+
+## Entity Tools
+
+Track real-world entities (people, organizations, teams, devices) and build knowledge graphs through relationships.
+
+### Entity Types
+- `Organization` - Companies, institutions
+- `Individual` - People, team members
+- `Team` - Groups within organizations
+- `Device` - Servers, infrastructure
+- `Other` - Custom entity types (requires `custom_type` field)
+
+### Relationship Types
+- `works_for` - Employment relationships
+- `member_of` - Team membership
+- `owns` - Ownership
+- `reports_to` - Reporting structure
+- `collaborates_with` - Collaboration
+- Custom types - Define your own
+
+### Entity CRUD Operations
+
+#### `create_entity`
+
+Create an entity representing a real-world thing.
+
+**Parameters:**
+- `name` (required): Entity name
+- `entity_type` (required): Type (`Organization`, `Individual`, `Team`, `Device`, `System`, `Other`)
+- `description` (optional): Entity description
+- `tags` (optional): Categorization tags
+- `aka` (optional): Alternative names/aliases (max 10). Searchable via `search_entities`.
+- `project_id` (optional): Link to project
+- `custom_type` (optional): Custom type name (required if entity_type is `Other`)
+- `metadata` (optional): Additional JSON metadata
+
+**Returns:**
+- Created entity with `entity_id`
+
+**Example:**
+```python
+# Create a person with aliases
+person = execute_forgetful_tool(
+    "create_entity",
+    {
+        "name": "Sarah Chen",
+        "entity_type": "Individual",
+        "description": "Senior Backend Engineer, specializes in distributed systems",
+        "tags": ["engineering", "backend", "distributed-systems"],
+        "aka": ["Sarah", "S.C."],  # Alternative names for search
+        "metadata": {"start_date": "2024-03-15", "location": "San Francisco"}
+    }
+)
+# Returns: {"entity_id": 42, "name": "Sarah Chen", "aka": ["Sarah", "S.C."], ...}
+
+# Create an organization with stock ticker alias
+org = execute_forgetful_tool(
+    "create_entity",
+    {
+        "name": "TechFlow Systems",
+        "entity_type": "Organization",
+        "description": "SaaS platform for workflow automation",
+        "tags": ["company", "saas", "b2b"],
+        "aka": ["TechFlow", "TFS"]  # Can search by "TFS" to find this
+    }
+)
+# Returns: {"entity_id": 43, ...}
+
+# Create infrastructure
+server = execute_forgetful_tool(
+    "create_entity",
+    {
+        "name": "Cache Server 01",
+        "entity_type": "Device",
+        "description": "Redis cluster primary node - production",
+        "tags": ["infrastructure", "cache", "production", "redis"],
+        "aka": ["redis-primary", "cache-01"],
+        "metadata": {"ip": "10.0.1.50", "region": "us-west-2"}
+    }
+)
+# Returns: {"entity_id": 44, ...}
+```
+
+#### `list_entities`
+
+List entities with optional filtering.
+
+**Parameters:**
+- `entity_type` (optional): Filter by type
+- `tags` (optional): Filter by tags
+- `project_id` (optional): Filter by project
+
+**Returns:**
+- List of matching entities
+
+**Example:**
+```python
+# Find all team members
+team = execute_forgetful_tool(
+    "list_entities",
+    {"entity_type": "Individual", "tags": ["engineering"]}
+)
+```
+
+#### `search_entities`
+
+Search entities by name or alternative names (aka). Case-insensitive text matching.
+
+**Parameters:**
+- `query` (required): Search term (matches name or any aka, partial match supported)
+- `entity_type` (optional): Filter by entity type
+- `tags` (optional): Filter by tags
+- `limit` (optional): Maximum results (1-100, default 20)
+
+**Returns:**
+- List of entities matching the search term (via name or aka)
+
+**Example:**
+```python
+# Find entities with "Chen" in the name
+results = execute_forgetful_tool(
+    "search_entities",
+    {"query": "Chen"}
+)
+# Returns: [{"entity_id": 42, "name": "Sarah Chen", "aka": ["Sarah", "S.C."], ...}, ...]
+
+# Search by alias - finds "TechFlow Systems" via its "TFS" alias
+results = execute_forgetful_tool(
+    "search_entities",
+    {"query": "TFS"}
+)
+# Returns: [{"entity_id": 43, "name": "TechFlow Systems", "aka": ["TechFlow", "TFS"], ...}]
+```
+
+#### `get_entity`
+
+Retrieve complete entity details by ID.
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+
+**Returns:**
+- Complete entity object
+
+**Example:**
+```python
+entity = execute_forgetful_tool("get_entity", {"entity_id": 42})
+```
+
+#### `update_entity`
+
+Update entity (PATCH semantics - only provided fields changed).
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+- `name`, `description`, `tags`, `aka`, `metadata` (all optional)
+- `aka`: Replaces existing aliases. Empty list `[]` clears all aliases.
+
+**Returns:**
+- Updated entity object
+
+**Example:**
+```python
+# Update description and add aliases
+execute_forgetful_tool(
+    "update_entity",
+    {
+        "entity_id": 42,
+        "description": "Principal Backend Engineer, Tech Lead for distributed systems",
+        "aka": ["Sarah", "S.C.", "Chen"],  # Replaces existing aka list
+        "metadata": {"promotion_date": "2025-01-01", "title": "Principal Engineer"}
+    }
+)
+```
+
+#### `delete_entity`
+
+Delete entity (cascade removes memory links and relationships).
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+
+**Returns:**
+- Confirmation of deletion
+
+**Example:**
+```python
+execute_forgetful_tool("delete_entity", {"entity_id": 42})
+```
+
+### Entity-Memory Linking
+
+#### `link_entity_to_memory`
+
+Link an entity to a memory (establishes reference relationship).
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+- `memory_id` (required): Memory ID
+
+**Returns:**
+- Confirmation of link
+
+**Example:**
+```python
+# Link Sarah to a memory about an architecture decision she made
+execute_forgetful_tool(
+    "link_entity_to_memory",
+    {
+        "entity_id": 42,  # Sarah Chen
+        "memory_id": 156  # "API rate limiting decision"
+    }
+)
+```
+
+#### `unlink_entity_from_memory`
+
+Remove entity-memory link.
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+- `memory_id` (required): Memory ID
+
+**Returns:**
+- Confirmation of unlink
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "unlink_entity_from_memory",
+    {"entity_id": 42, "memory_id": 156}
+)
+```
+
+#### `get_memory_entities`
+
+Get every entity directly linked to a memory (reverse of `get_entity_memories`).
+
+**Parameters:**
+- `memory_id` (required): Memory ID
+
+**Returns:**
+- `entity_ids`: Linked entity IDs, ordered by ID
+- `count`: Number of linked entities
+- `entities`: `{id, name, entity_type}` objects in the same order as `entity_ids`
+- The full set is always returned (no pagination). An existing memory with no links returns empty lists; a missing or inaccessible memory raises a not found error.
+
+**Example:**
+```python
+execute_forgetful_tool("get_memory_entities", {"memory_id": 156})
+# Returns: {"entity_ids": [42], "count": 1, "entities": [{"id": 42, "name": "Sarah Chen", "entity_type": "Individual"}]}
+```
+
+### Entity-Project Linking
+
+#### `link_entity_to_project`
+
+Link an entity to a project for organizational grouping.
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+- `project_id` (required): Project ID
+
+**Returns:**
+- `{"success": true}` on success
+
+**Example:**
+```python
+# Link Sarah to the API Gateway project
+execute_forgetful_tool(
+    "link_entity_to_project",
+    {
+        "entity_id": 42,  # Sarah Chen
+        "project_id": 12  # API Gateway project
+    }
+)
+```
+
+#### `unlink_entity_from_project`
+
+Remove entity-project link.
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+- `project_id` (required): Project ID
+
+**Returns:**
+- `{"success": true}` if unlinked, `{"success": false}` if link didn't exist
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "unlink_entity_from_project",
+    {"entity_id": 42, "project_id": 12}
+)
+```
+
+### Entity Relationships (Knowledge Graph)
+
+Build directional knowledge graphs showing how entities relate to each other.
+
+#### `create_entity_relationship`
+
+Create a typed relationship between two entities.
+
+**Parameters:**
+- `from_entity_id` (required): Source entity ID
+- `to_entity_id` (required): Target entity ID
+- `relationship_type` (required): Relationship type (see list above, or custom)
+- `strength` (optional): Relationship strength 0.0-1.0 (default: 1.0)
+- `confidence` (optional): Confidence level 0.0-1.0 (default: 1.0)
+- `metadata` (optional): Additional JSON metadata
+
+**Returns:**
+- Created relationship with `relationship_id`
+
+**Example:**
+```python
+# Sarah works for TechFlow
+relationship = execute_forgetful_tool(
+    "create_entity_relationship",
+    {
+        "from_entity_id": 42,  # Sarah Chen
+        "to_entity_id": 43,    # TechFlow Systems
+        "relationship_type": "works_for",
+        "strength": 1.0,
+        "metadata": {
+            "role": "Principal Backend Engineer",
+            "department": "Platform Engineering",
+            "start_date": "2024-03-15"
+        }
+    }
+)
+# Returns: {"relationship_id": 12, ...}
+
+# Server owned by TechFlow
+execute_forgetful_tool(
+    "create_entity_relationship",
+    {
+        "from_entity_id": 43,  # TechFlow Systems
+        "to_entity_id": 44,    # Cache Server 01
+        "relationship_type": "owns",
+        "metadata": {"purchased": "2024-06-01", "cost_center": "engineering"}
+    }
+)
+```
+
+#### `get_entity_relationships`
+
+Get relationships for an entity with optional filtering.
+
+**Parameters:**
+- `entity_id` (required): Entity ID
+- `relationship_type` (optional): Filter by relationship type
+- `direction` (optional): `outgoing`, `incoming`, or `both` (default: `both`)
+
+**Returns:**
+- List of relationships
+
+**Example:**
+```python
+# Get all of Sarah's relationships
+relationships = execute_forgetful_tool(
+    "get_entity_relationships",
+    {"entity_id": 42}
+)
+
+# Get only employment relationships
+employment = execute_forgetful_tool(
+    "get_entity_relationships",
+    {
+        "entity_id": 42,
+        "relationship_type": "works_for",
+        "direction": "outgoing"
+    }
+)
+```
+
+#### `update_entity_relationship`
+
+Update entity relationship (PATCH semantics).
+
+**Parameters:**
+- `relationship_id` (required): Relationship ID
+- `relationship_type`, `strength`, `confidence`, `metadata` (all optional)
+
+**Returns:**
+- Updated relationship object
+
+**Example:**
+```python
+# Update Sarah's role after promotion
+execute_forgetful_tool(
+    "update_entity_relationship",
+    {
+        "relationship_id": 12,
+        "metadata": {
+            "role": "Engineering Director",
+            "department": "Platform Engineering",
+            "promotion_date": "2025-01-01"
+        }
+    }
+)
+```
+
+#### `delete_entity_relationship`
+
+Delete entity relationship (removes knowledge graph edge).
+
+**Parameters:**
+- `relationship_id` (required): Relationship ID
+
+**Returns:**
+- Confirmation of deletion
+
+**Example:**
+```python
+execute_forgetful_tool("delete_entity_relationship", {"relationship_id": 12})
+```
+
+---
+
+## Plan Tools
+
+Create and manage plans within projects. Plans serve as containers for organizing tasks toward a specific goal.
+
+### Plan Statuses
+- `draft`, `active`, `completed`, `archived`
+
+### `create_plan`
+
+Create a new plan within a project.
+
+**Parameters:**
+- `title` (required): Plan title
+- `project_id` (required): Parent project ID
+- `goal` (optional): High-level goal for the plan
+- `context` (optional): Additional context or background
+- `status` (optional): Plan status (default: `draft`)
+- `external_ref` (optional): Opaque reference unique across the authenticated user's plans
+
+**Returns:**
+- Created plan with `id` and `external_ref` (null when not supplied)
+
+**Example:**
+```python
+plan = execute_forgetful_tool(
+    "create_plan",
+    {
+        "title": "Migrate Authentication to OAuth2",
+        "project_id": 12,
+        "goal": "Replace legacy session-based auth with OAuth2 + JWT",
+        "context": "Current auth system has scaling issues and no SSO support",
+        "status": "draft"
+    }
+)
+# Returns: {"id": 5, "title": "Migrate Authentication to OAuth2", ...}
+```
+
+### `update_plan`
+
+Update plan metadata (PATCH semantics - only provided fields changed).
+
+**Parameters:**
+- `plan_id` (required): Plan ID
+- `title` (optional): Updated title
+- `goal` (optional): Updated goal
+- `context` (optional): Updated context
+- `status` (optional): Updated status
+- `external_ref` (optional): Replacement reference; omitted or null leaves it unchanged
+
+**Returns:**
+- Updated plan object
+
+**Example:**
+```python
+# Move plan from draft to active
+execute_forgetful_tool(
+    "update_plan",
+    {
+        "plan_id": 5,
+        "status": "active",
+        "goal": "Replace legacy auth with OAuth2 + JWT by end of Q2"
+    }
+)
+```
+
+### `get_plan`
+
+Retrieve complete plan details by ID.
+
+**Parameters:**
+- `plan_id` (required): Plan ID
+
+**Returns:**
+- Complete plan object with all fields
+
+**Errors:**
+- Raises an error (not `null`) when `plan_id` does not exist or is not visible to the caller
+
+**Example:**
+```python
+plan = execute_forgetful_tool("get_plan", {"plan_id": 5})
+```
+
+### `list_plans`
+
+List plans with optional filtering.
+
+**Parameters:**
+- `project_id` (optional): Filter by project
+- `status` (optional): Filter by status
+- `external_ref` (optional): Exact reference lookup within your plans
+
+**Returns:**
+- Object with `plans` summaries (including `external_ref`) and `total_count`
+
+**Example:**
+```python
+# Get all active plans for a project
+active_plans = execute_forgetful_tool(
+    "list_plans",
+    {"project_id": 12, "status": "active"}
+)
+```
+
+### External reference rules and conflict recovery
+
+References are opaque strings: surrounding whitespace is trimmed on create, update, and lookup.
+The trimmed value must contain 1–255 characters. Matching is case-sensitive; all other characters
+are preserved. For example, `github:ScottRBK/factory#42` and `github:scottrbk/factory#42` differ.
+No GitHub parsing or synchronization is performed. Callers must manage changes to their identifiers,
+such as repository renames, or choose stable identifiers.
+
+A reference is unique across all of your projects and plan statuses, including completed and
+archived plans. Different users can use the same reference. Multiple plans without a reference
+are allowed. Existing plans keep a null reference after migration; `source_url` remains independent
+provenance and is never used to backfill or enforce uniqueness.
+
+Duplicate creates or updates fail with a conflict error. The database enforces uniqueness even
+for concurrent requests, and a rejected update leaves the entire plan unchanged. Recover the
+existing plan by looking up the reference **without project or status filters**:
+
+```python
+result = execute_forgetful_tool(
+    "list_plans", {"external_ref": "github:ScottRBK/factory#42"}
+)
+# result["plans"] contains zero or one summary; its "id" can be passed to get_plan.
+```
+
+Omitting `external_ref` or supplying null during an update leaves it unchanged. There is no clear
+operation: empty/whitespace-only strings are rejected. Replacing the reference or deleting the
+plan releases the old value for reuse. Completing or archiving a plan retains its reference.
+A unique reference prevents duplicate plans; it does not claim tasks or prevent duplicate agents.
+
+Generic CLI calls accept the same arguments:
+
+```bash
+forgetful call create_plan --args '{
+  "title": "Factory issue", "project_id": 12, "external_ref": "github:ScottRBK/factory#42"
+}'
+forgetful call list_plans --args '{"external_ref":"github:ScottRBK/factory#42"}'
+```
+
+---
+
+## Task Tools
+
+Manage tasks within plans, including acceptance criteria, dependencies, and agent assignment with optimistic locking.
+
+### Task States
+
+Tasks follow a lifecycle defined by `TaskState` (see `app/models/plan_models.py`):
+
+- `todo` (default) — not started
+- `doing` — in progress
+- `waiting` — blocked / awaiting external input
+- `done` — completed
+- `cancelled` — will not be completed
+
+**Valid transitions** (enforced by `VALID_TASK_TRANSITIONS`):
+
+| From → To | Allowed |
+|---|---|
+| `todo` → | `doing`, `waiting`, `cancelled` |
+| `doing` → | `done`, `waiting`, `todo`, `cancelled` |
+| `waiting` → | `todo`, `doing`, `cancelled` |
+| `done` → | `todo` (reopen only) |
+| `cancelled` → | `todo` (reinstate only) |
+
+Any other transition is rejected by `transition_task` with a validation error.
+
+### Task Priorities
+- `P0` - Critical
+- `P1` - High
+- `P2` - Medium (default)
+- `P3` - Low
+
+### `create_task`
+
+Create a task within a plan.
+
+**Parameters:**
+- `title` (required): Task title
+- `plan_id` (required): Parent plan ID
+- `description` (optional): Detailed task description
+- `priority` (optional): Task priority (default: `P2`)
+- `assigned_agent` (optional): Agent identifier to assign the task to
+- `criteria` (optional): Inline list of acceptance criterion descriptions
+- `dependency_ids` (optional): List of task IDs this task depends on
+
+**Returns:**
+- Created task with `task_id`
+
+**Example:**
+```python
+task = execute_forgetful_tool(
+    "create_task",
+    {
+        "title": "Implement JWT token generation endpoint",
+        "plan_id": 5,
+        "description": "Create /auth/token endpoint that issues JWT tokens with refresh token rotation",
+        "priority": "P1",
+        "assigned_agent": "backend-agent",
+        "criteria": [
+            "Endpoint returns access + refresh token pair",
+            "Access tokens expire after 15 minutes",
+            "Refresh tokens support rotation"
+        ],
+        "dependency_ids": [10, 12]
+    }
+)
+# Returns: {"task_id": 25, "title": "Implement JWT token generation endpoint", ...}
+```
+
+### `update_task`
+
+Update task metadata (not state - use `transition_task` for state changes).
+
+**Parameters:**
+- `task_id` (required): Task ID
+- `title` (optional): Updated title
+- `description` (optional): Updated description
+- `priority` (optional): Updated priority
+
+**Returns:**
+- Updated task object
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "update_task",
+    {
+        "task_id": 25,
+        "priority": "P0",
+        "description": "Create /auth/token endpoint - now critical path for launch"
+    }
+)
+```
+
+### `get_task`
+
+Get task with its acceptance criteria and dependency IDs.
+
+**Parameters:**
+- `task_id` (required): Task ID
+
+**Returns:**
+- Complete task object including criteria and dependency_ids
+
+**Errors:**
+- Raises an error (not `null`) when `task_id` does not exist or is not visible to the caller
+
+**Example:**
+```python
+task = execute_forgetful_tool("get_task", {"task_id": 25})
+# Returns: {"task_id": 25, "criteria": [...], "dependency_ids": [10, 12], ...}
+```
+
+### `query_tasks`
+
+Query tasks within a plan with optional filtering.
+
+**Parameters:**
+- `plan_id` (required): Plan ID
+- `state` (optional): Filter by task state
+- `priority` (optional): Filter by priority
+- `assigned_agent` (optional): Filter by assigned agent
+
+**Returns:**
+- List of matching tasks
+
+**Example:**
+```python
+# Find all todo P0/P1 tasks assigned to an agent
+critical_tasks = execute_forgetful_tool(
+    "query_tasks",
+    {
+        "plan_id": 5,
+        "state": "todo",
+        "priority": "P1",
+        "assigned_agent": "backend-agent"
+    }
+)
+```
+
+### `claim_task`
+
+Claim a task for an agent. Uses optimistic locking to prevent concurrent claims.
+
+**Parameters:**
+- `task_id` (required): Task ID
+- `agent_id` (required): Agent identifier claiming the task
+- `version` (required): Current task version (for optimistic locking)
+
+**Returns:**
+- Updated task object with new version
+
+**Example:**
+```python
+# First get the task to obtain current version
+task = execute_forgetful_tool("get_task", {"task_id": 25})
+
+# Claim with version check
+claimed = execute_forgetful_tool(
+    "claim_task",
+    {
+        "task_id": 25,
+        "agent_id": "backend-agent-01",
+        "version": task["version"]
+    }
+)
+```
+
+### `transition_task`
+
+Transition a task to a new state. Uses optimistic locking to prevent conflicting state changes.
+
+**Parameters:**
+- `task_id` (required): Task ID
+- `state` (required): Target state
+- `version` (required): Current task version (for optimistic locking)
+
+**Returns:**
+- Updated task object with new state and version
+
+**Example:**
+```python
+# Move task from todo to doing
+task = execute_forgetful_tool("get_task", {"task_id": 25})
+execute_forgetful_tool(
+    "transition_task",
+    {
+        "task_id": 25,
+        "state": "doing",
+        "version": task["version"]
+    }
+)
+
+# Later, mark as done
+task = execute_forgetful_tool("get_task", {"task_id": 25})
+execute_forgetful_tool(
+    "transition_task",
+    {
+        "task_id": 25,
+        "state": "done",
+        "version": task["version"]
+    }
+)
+```
+
+### `add_criterion`
+
+Add an acceptance criterion to a task.
+
+**Parameters:**
+- `task_id` (required): Task ID
+- `description` (required): Criterion description
+
+**Returns:**
+- Created criterion with `criterion_id`
+
+**Example:**
+```python
+criterion = execute_forgetful_tool(
+    "add_criterion",
+    {
+        "task_id": 25,
+        "description": "Token endpoint returns 401 for invalid credentials"
+    }
+)
+# Returns: {"criterion_id": 78, "description": "Token endpoint returns 401 for invalid credentials", ...}
+```
+
+### `verify_criterion`
+
+Mark an acceptance criterion as met or unmet.
+
+**Parameters:**
+- `criterion_id` (required): Criterion ID
+- `met` (required): Whether the criterion is met (`true`/`false`)
+
+**Returns:**
+- Updated criterion object
+
+**Example:**
+```python
+# Mark criterion as satisfied
+execute_forgetful_tool(
+    "verify_criterion",
+    {"criterion_id": 78, "met": true}
+)
+```
+
+### `delete_criterion`
+
+Delete an acceptance criterion from a task.
+
+**Parameters:**
+- `criterion_id` (required): Criterion ID
+
+**Returns:**
+- Confirmation of deletion
+
+**Example:**
+```python
+execute_forgetful_tool("delete_criterion", {"criterion_id": 78})
+```
+
+### `add_dependency`
+
+Add a dependency between tasks. The dependent task cannot proceed until the dependency is completed.
+
+**Parameters:**
+- `task_id` (required): Task that depends on another
+- `depends_on_task_id` (required): Task that must be completed first
+
+**Returns:**
+- Confirmation of dependency creation
+
+**Example:**
+```python
+# Task 25 depends on task 20 being completed first
+execute_forgetful_tool(
+    "add_dependency",
+    {
+        "task_id": 25,
+        "depends_on_task_id": 20
+    }
+)
+```
+
+### `remove_dependency`
+
+Remove a dependency between tasks.
+
+**Parameters:**
+- `task_id` (required): Task with the dependency
+- `depends_on_task_id` (required): Task to remove as dependency
+
+**Returns:**
+- Confirmation of dependency removal
+
+**Example:**
+```python
+execute_forgetful_tool(
+    "remove_dependency",
+    {
+        "task_id": 25,
+        "depends_on_task_id": 20
+    }
+)
+```
+
+---
+
+## Cross-Category Workflows
+
+Real-world scenarios demonstrating how tools work together.
+
+### Scenario 1: Documenting a Complete Feature
+
+**Context:** You've implemented a new authentication system and want to capture all knowledge.
+
+```python
+# 1. Create project
+project = execute_forgetful_tool(
+    "create_project",
+    {
+        "name": "Authentication System V2",
+        "project_type": "development",
+        "status": "active"
+    }
+)
+project_id = project["id"]
+
+# 2. Store architecture decision document
+adr = execute_forgetful_tool(
+    "create_document",
+    {
+        "title": "ADR-001: OAuth2 + JWT Authentication Strategy",
+        "content": "[... full 3000-word architecture decision record ...]",
+        "document_type": "markdown",
+        "tags": ["adr", "authentication", "oauth2", "jwt"],
+        "project_id": project_id
+    }
+)
+
+# 3. Extract key decision as atomic memory
+decision_memory = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "Auth strategy: OAuth2 for third-party + JWT for sessions",
+        "content": "Use OAuth2 for social login and JWT for internal sessions.",
+        "context": "Capturing the authentication architecture decision",
+        "keywords": ["authentication", "oauth2", "jwt"],
+        "tags": ["authentication", "decision"],
+        "importance": 10,
+        "project_ids": [project_id],
+        "document_ids": [adr["id"]]
+    }
+)
+
+# 4. Store reusable JWT middleware
+middleware = execute_forgetful_tool(
+    "create_code_artifact",
+    {
+        "title": "JWT Authentication Middleware",
+        "description": "FastAPI middleware that validates JWT bearer tokens",
+        "code": '''
+from fastapi import Request, HTTPException
+from jose import jwt, JWTError
+
+async def verify_jwt(request: Request):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+        ''',
+        "language": "python",
+        "tags": ["authentication", "jwt", "middleware"],
+        "project_id": project_id
+    }
+)
+
+# 5. Create entity for the engineer who implemented it
+engineer = execute_forgetful_tool(
+    "create_entity",
+    {
+        "name": "Alex Kim",
+        "entity_type": "Individual",
+        "notes": "Senior Full-Stack Engineer",
+        "tags": ["engineering", "fullstack"],
+        "aka": ["Alex", "A.K."]
+    }
+)
+
+# 6. Link engineer to the decision memory
+execute_forgetful_tool(
+    "link_entity_to_memory",
+    {
+        "entity_id": engineer["id"],
+        "memory_id": decision_memory["id"]
+    }
+)
+
+# 7. Later, query everything about auth
+results = execute_forgetful_tool(
+    "query_memory",
+    {
+        "query": "authentication implementation",
+        "query_context": "Reviewing the authentication implementation",
+        "project_ids": [project_id]
+    }
+)
+# Returns decision_memory + auto-linked memories + linked document + code artifact + entity
+```
+
+### Scenario 2: New Team Member Onboarding
+
+**Context:** A new engineer joins, you want to capture their information and link relevant knowledge.
+
+```python
+# 1. Create entity for new engineer
+new_hire = execute_forgetful_tool(
+    "create_entity",
+    {
+        "name": "Jordan Taylor",
+        "entity_type": "Individual",
+        "notes": "Backend Engineer - Payments Team",
+        "tags": ["engineering", "backend", "payments"],
+        "aka": ["Jordan", "J.T."]
+    }
+)
+
+# 2. Get company entity (assuming it exists) - can search by name or alias
+company = execute_forgetful_tool(
+    "search_entities",
+    {"query": "TechFlow"}
+)
+company_id = company["entities"][0]["id"]
+
+# 3. Create employment relationship
+execute_forgetful_tool(
+    "create_entity_relationship",
+    {
+        "from_entity_id": new_hire["id"],
+        "to_entity_id": company_id,
+        "relationship_type": "works_for",
+        "metadata": {
+            "role": "Backend Engineer II",
+            "department": "Payments",
+            "team": "Checkout"
+        }
+    }
+)
+
+# 4. Create onboarding memory
+onboarding_memory = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "Jordan Taylor joined - Payments team focus areas",
+        "content": "Jordan will focus on payment integrations and PCI compliance.",
+        "context": "New hire onboarding for the payments team",
+        "keywords": ["jordan", "payments", "stripe", "pci"],
+        "tags": ["team", "onboarding", "payments"],
+        "importance": 7
+    }
+)
+
+# 5. Link new hire to onboarding memory
+execute_forgetful_tool(
+    "link_entity_to_memory",
+    {
+        "entity_id": new_hire["id"],
+        "memory_id": onboarding_memory["id"]
+    }
+)
+
+# 6. Query existing payment system memories and link relevant ones
+payment_memories = execute_forgetful_tool(
+    "query_memory",
+    {
+        "query": "payment gateway stripe paypal",
+        "query_context": "Finding onboarding material for the payments team",
+        "k": 5
+    }
+)
+
+for memory in payment_memories["primary_memories"]:
+    execute_forgetful_tool(
+        "link_entity_to_memory",
+        {
+            "entity_id": new_hire["id"],
+            "memory_id": memory["id"]
+        }
+    )
+```
+
+### Scenario 3: Infrastructure Incident Documentation
+
+**Context:** Redis server failed, you resolved it and want to document for future reference.
+
+```python
+# 1. Get the server entity (can also search by alias like "redis-primary")
+server = execute_forgetful_tool(
+    "search_entities",
+    {"query": "Cache Server 01"}
+)
+server_id = server["entities"][0]["id"]
+
+# 2. Create incident memory
+incident = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "Redis failover incident - memory exhaustion",
+        "content": "Cache Server 01 ran out of memory due to unbounded key growth. Implemented maxmemory-policy=allkeys-lru and set maxmemory=4gb. Also added monitoring alerts at 80% memory usage.",
+        "importance": 9,
+        "tags": ["incident", "redis", "infrastructure", "production"],
+        "context": "Production incident on 2025-01-18, resolved in 45 minutes",
+        "keywords": ["redis", "memory", "failover", "monitoring"]
+    }
+)
+
+# 3. Link incident to server
+execute_forgetful_tool(
+    "link_entity_to_memory",
+    {
+        "entity_id": server_id,
+        "memory_id": incident["id"]
+    }
+)
+
+# 4. Update server metadata with fix
+execute_forgetful_tool(
+    "update_entity",
+    {
+        "entity_id": server_id,
+        "notes": "4 GB maxmemory, allkeys-lru policy, monitoring enabled"
+    }
+)
+
+# 5. Create code artifact for monitoring script
+monitoring_script = execute_forgetful_tool(
+    "create_code_artifact",
+    {
+        "title": "Redis Memory Monitoring Script",
+        "code": '''
+import redis
+import os
+
+def check_redis_memory(threshold=0.8):
+    r = redis.Redis(host='cache-server-01', port=6379)
+    info = r.info('memory')
+    used = info['used_memory']
+    max_mem = info['maxmemory']
+
+    if max_mem > 0 and (used / max_mem) > threshold:
+        send_alert(f"Redis memory at {(used/max_mem)*100:.1f}%")
+        ''',
+        "language": "python",
+        "tags": ["monitoring", "redis", "alerting"],
+        "description": "Alert when Redis memory usage exceeds threshold"
+    }
+)
+
+# 6. Link monitoring script to incident memory
+execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "Implemented Redis memory monitoring",
+        "content": "Added an alert at 80% memory usage to prevent future incidents.",
+        "context": "Follow-up action from the Redis memory exhaustion incident",
+        "keywords": ["redis", "memory", "monitoring", "alert"],
+        "tags": ["monitoring", "prevention", "redis"],
+        "importance": 8,
+        "code_artifact_ids": [monitoring_script["id"]]
+    }
+)
+```
+
+### Scenario 4: Research and Decision Making
+
+**Context:** Researching database options, documenting findings, and making a decision.
+
+```python
+# 1. Create research project
+research_project = execute_forgetful_tool(
+    "create_project",
+    {
+        "name": "Database Technology Evaluation 2025",
+        "project_type": "learning",
+        "status": "active"
+    }
+)
+project_id = research_project["id"]
+
+# 2. Create comprehensive research document
+research_doc = execute_forgetful_tool(
+    "create_document",
+    {
+        "title": "Vector Database Comparison: pgvector vs Qdrant vs Weaviate",
+        "description": "Comparison of vector database options",
+        "content": "[... 5000-word detailed comparison of features, performance, costs ...]",
+        "document_type": "markdown",
+        "tags": ["research", "database", "vector-db", "embeddings"],
+        "project_id": project_id
+    }
+)
+
+# 3. Extract atomic insights as memories
+insight1 = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "pgvector: Best for existing PostgreSQL setups",
+        "content": "pgvector avoids a separate vector database when PostgreSQL is in use.",
+        "context": "Capturing a conclusion from the vector database comparison",
+        "keywords": ["pgvector", "postgresql", "vector-database"],
+        "tags": ["database", "pgvector", "vectors"],
+        "importance": 8,
+        "project_ids": [project_id],
+        "document_ids": [research_doc["id"]]
+    }
+)
+
+insight2 = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "Qdrant: Best performance for large-scale vector search",
+        "content": "Qdrant performs well at large scale but requires a separate service.",
+        "context": "Capturing a conclusion from the vector database comparison",
+        "keywords": ["qdrant", "vector-database", "performance"],
+        "tags": ["database", "qdrant", "vectors"],
+        "importance": 8,
+        "project_ids": [project_id],
+        "document_ids": [research_doc["id"]]
+    }
+)
+
+# 4. Make decision and create decision memory
+decision = execute_forgetful_tool(
+    "create_memory",
+    {
+        "title": "Decision: pgvector for Forgetful project",
+        "content": "Selected pgvector because Forgetful already uses PostgreSQL.",
+        "context": "Final decision from the vector database evaluation",
+        "keywords": ["pgvector", "postgresql", "database-decision"],
+        "tags": ["decision", "database", "pgvector", "forgetful"],
+        "importance": 10,
+        "project_ids": [project_id],
+        "document_ids": [research_doc["id"]]
+    }
+)
+
+# 5. Manually link related insights to decision
+execute_forgetful_tool(
+    "link_memories",
+    {"memory_id": decision["id"], "related_ids": [insight1["id"]]}
+)
+
+execute_forgetful_tool(
+    "link_memories",
+    {"memory_id": decision["id"], "related_ids": [insight2["id"]]}
+)
+
+# 6. Mark project as completed
+execute_forgetful_tool(
+    "update_project",
+    {
+        "project_id": project_id,
+        "status": "completed",
+        "notes": "Selected pgvector; evaluation completed 2025-01-15"
+    }
+)
+```
+
+---
+
+## Best Practices
+
+### Memory Creation
+- **One concept per memory** - Follow atomic memory principle
+- **Title it first** - If you can't easily title it, break it down further
+- **High importance for reusable knowledge** - Use 8-10 for architectural decisions and patterns
+- **Always provide context** - Future you will thank past you
+- **Tag consistently** - Develop a tagging taxonomy for your knowledge domain
+
+### Project Organization
+- **Scope queries to projects** - Dramatically improves search relevance
+- **Use project types consistently** - Helps with filtering and organization
+- **Archive completed projects** - Don't delete - preserve knowledge with context
+- **Link related projects** - Create memories that reference multiple projects
+
+### Entity & Knowledge Graph
+- **Entities for concrete things, memories for concepts** - "Sarah Chen" is an entity, "Sarah's API design preference" is a memory
+- **Build relationships as you learn** - Don't wait to build complete graphs
+- **Use metadata liberally** - Capture temporal and contextual information
+- **Link entities to relevant memories** - Creates rich context for queries
+
+### Code Artifacts & Documents
+- **Code artifacts for reusable snippets (<200 lines)** - Utilities, patterns, configs
+- **Documents for detailed content (>400 words)** - ADRs, research, specifications
+- **Always extract atomic memories** - Documents are storage, memories are searchable knowledge
+- **Link atoms to documents** - Preserve connection to detailed source
+
+### Search & Retrieval
+- **Query early and often** - Check existing knowledge before creating duplicates
+- **Use natural language** - Semantic search works better than keyword matching
+- **Filter by project for focus** - Especially in multi-project environments
+- **Check auto-linked memories** - Often find related context you didn't know existed
+
+---
+
+## Token Budget & Performance
+
+Forgetful protects your LLM context window with configurable token budgets:
+
+- **Default: 8,000 tokens** per query result
+- **Max 20 memories** returned per query
+- **Primary result order**: Importance (high first); ties keep search order, even without truncation
+- **Graceful truncation**: If over budget, lower-priority memories excluded
+
+Configure via environment variables:
+```bash
+MEMORY_TOKEN_BUDGET=8000
+MEMORY_MAX_MEMORIES=20
+```
+
+---
+
+## Additional Resources
+
+- [Configuration Guide](configuration.md) - All environment variables
+- [Connectivity Guide](connectivity_guide.md) - MCP client setup
+- [Search Documentation](search.md) - Embedding pipeline details
+- [MCP Protocol](https://modelcontextprotocol.io/) - MCP specification
+
+---
+
+**Last Updated:** 2025-01-22
+**Forgetful Version:** 0.1.x
+
+
+### Plan policy warnings
+
+`create_plan`, `update_plan` and `transition_task` keep their existing flat success
+shape, adding `plugin_warnings` only when nonempty. `get_plan`, `list_plans` and
+Task reads remain unchanged. An administrator's Plan Plugin can return direct
+`PLAN_PLUGIN_REJECTED`, `PLAN_PLUGIN_UNAVAILABLE` or `PLAN_PLUGIN_STATE_CHANGED`
+errors. Both generic CLI `call` modes use the same contracts.
+
+A successful task transition may include `plan_auto_completion_rejected` or
+`plan_auto_completion_unavailable`: the task committed, but that attempt did not
+complete its parent plan. Do not repeat the task mutation merely to retry parent
+policy. Unrelated errors and request cancellation can still occur after commit;
+read current state first. `automatic` is administrator context only, never a tool
+argument. No `delete_plan` or `delete_task` MCP tool is introduced; those remain
+REST operations. See [Plan Plugin configuration](configuration.md#plan-plugin).
