@@ -1,0 +1,1607 @@
+# Configuration Guide
+
+This guide explains all available environment variables for configuring Forgetful.
+
+## Quick Start
+
+All configuration is optional. If no `.env` file exists, Forgetful uses sensible defaults from `app/config/settings.py`.
+
+To customize configuration:
+```bash
+cd docker
+cp .env.example .env
+# Edit .env with your values
+docker compose up -d
+```
+
+---
+
+## Docker Deployment Options
+
+Forgetful provides three Docker Compose configurations:
+
+### Local Development (`docker-compose.yml`)
+- **Use case**: Local development with hot reload and build context
+- **Features**: Builds from source, optional volume mounting for live code updates
+- **Command**: `docker compose up -d --build`
+
+### SQLite Deployment (`docker-compose.sqlite.yml`)
+- **Use case**: Production deployment with single-container simplicity
+- **Features**:
+  - Single container (no separate database service)
+  - Persistent storage via `./data:/app/data` volume mount
+  - Zero-config database setup
+- **Setup**:
+  ```bash
+  cd docker
+  cp .env.example .env
+  # Edit .env: Set DATABASE=SQLite, SQLITE_PATH=data/forgetful.db
+  docker compose -f docker-compose.sqlite.yml up -d
+  ```
+- **Important**: The `./data` directory persists your database across container restarts
+
+### PostgreSQL Deployment (`docker-compose.postgres.yml`)
+- **Use case**: Production deployment with PostgreSQL for scale and robustness
+- **Features**:
+  - Multi-container stack (app + PostgreSQL + pgvector)
+  - Named volume for database persistence
+  - Production-grade database with vector search
+- **Setup**:
+  ```bash
+  cd docker
+  cp .env.example .env
+  # Edit .env: Set DATABASE=Postgres, configure POSTGRES_* settings
+  docker compose -f docker-compose.postgres.yml up -d
+  ```
+
+---
+
+## Application Info
+
+### `SERVICE_NAME`
+- **Default**: `Forgetful`
+- **Description**: Display name for the service in logs and metrics
+- **Example**: `SERVICE_NAME=MyMemoryService`
+
+### `SERVICE_VERSION`
+- **Default**: `v0.0.1`
+- **Description**: Version identifier for the service
+- **Example**: `SERVICE_VERSION=v1.2.3`
+
+### `SERVICE_DESCRIPTION`
+- **Default**: `Forgetful Memory Service`
+- **Description**: Human-readable description of the service
+- **Example**: `SERVICE_DESCRIPTION="My custom memory MCP server"`
+
+---
+
+## Server Configuration
+
+### `SERVER_HOST`
+- **Default**: `0.0.0.0`
+- **Description**: Network interface the server binds to
+- **Values**:
+  - `0.0.0.0` - Listen on all interfaces (default for container)
+  - `127.0.0.1` - Listen only on localhost
+- **Example**: `SERVER_HOST=0.0.0.0`
+
+### `SERVER_PORT`
+- **Default**: `8020`
+- **Description**: Port number the MCP server listens on
+- **Note**: If changed, update your MCP client configuration and Docker port mapping
+- **Example**: `SERVER_PORT=8020`
+
+### `LOG_LEVEL`
+- **Default**: `INFO`
+- **Description**: Logging verbosity level
+- **Values**: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`
+- **Example**: `LOG_LEVEL=DEBUG` (for troubleshooting)
+
+### `LOG_FORMAT`
+- **Default**: `console`
+- **Description**: Log output format
+- **Values**:
+  - `console` - Human-readable format (recommended for development)
+  - `json` - Structured JSON format (recommended for production)
+- **Example**: `LOG_FORMAT=json`
+
+### `MCP_DESCRIPTOR_MODE`
+
+- **Default**: `verbose`
+- **Description**: Controls how much guidance is embedded in the MCP meta-tool descriptions exposed to clients
+- **Values**:
+  - `verbose` - Include detailed inline guidance in `discover_forgetful_tools` and `execute_forgetful_tool`
+  - `compact` - Keep meta-tool descriptions short and use `how_to_use_forgetful_tool` for detailed schemas and examples
+- **Example**: `MCP_DESCRIPTOR_MODE=compact`
+
+---
+
+## Docker Configuration
+
+### `COMPOSE_PROJECT_NAME`
+- **Default**: `forgetful`
+- **Description**: Docker Compose project name (prefixes container and volume names)
+- **Example**: `COMPOSE_PROJECT_NAME=my-forgetful-stack`
+
+### `BIND_ADDRESS`
+- **Default**: `127.0.0.1`
+- **Description**: Host address Docker exposes the service on
+- **Values**:
+  - `127.0.0.1` - Localhost only (secure, recommended)
+  - `0.0.0.0` - All interfaces (development only, insecure on public networks)
+- **Example**: `BIND_ADDRESS=127.0.0.1`
+
+---
+
+## Database Configuration (SQLite/PostgreSQL)
+
+### `DATABASE`
+- **Default**: `SQLite`
+- **Description**: Database backend to use
+- **Values**:
+  - `SQLite` - Lightweight, zero-config (default, recommended for getting started)
+  - `Postgres` - Production-grade, scalable (recommended for high load)
+- **Example**: `DATABASE=SQLite`
+
+### SQLite Settings
+
+#### `SQLITE_PATH`
+- **Default**: `forgetful.db`
+- **Description**: File path for SQLite database
+- **Notes**:
+  - Relative paths are relative to the project root (or `/app` in Docker containers)
+  - **Docker deployment**: Use `data/forgetful.db` with volume mount `./data:/app/data` to persist data across container restarts (see `docker-compose.sqlite.yml`)
+  - Without volume mounting, the database will be ephemeral and lost on container removal
+- **Example**: `SQLITE_PATH=data/forgetful.db`
+
+#### `SQLITE_MEMORY`
+- **Default**: `false`
+- **Description**: Use in-memory database (ephemeral, for testing only)
+- **Values**: `true`, `false`
+- **Example**: `SQLITE_MEMORY=false`
+
+### PostgreSQL Settings
+
+**Note**: These settings only apply when `DATABASE=Postgres`
+
+#### `POSTGRES_HOST`
+- **Default**: `127.0.0.1`
+- **Description**: PostgreSQL server hostname
+- **Values**:
+  - `forgetful-db` - When running in Docker (container name)
+  - `127.0.0.1` - When running locally outside Docker
+- **Example**: `POSTGRES_HOST=forgetful-db`
+
+### `PGPORT`
+- **Default**: `5099`
+- **Description**: PostgreSQL server port
+- **Note**: Uses non-standard port to avoid conflicts with existing PostgreSQL installations
+- **Example**: `PGPORT=5099`
+
+### `POSTGRES_DB`
+- **Default**: `forgetful`
+- **Description**: Database name to connect to
+- **Example**: `POSTGRES_DB=forgetful`
+
+### `POSTGRES_USER`
+- **Default**: `forgetful`
+- **Description**: PostgreSQL username for authentication
+- **� Security**: Change this in production deployments
+- **Example**: `POSTGRES_USER=my_secure_user`
+
+### `POSTGRES_PASSWORD`
+- **Default**: `forgetful`
+- **Description**: PostgreSQL password for authentication
+- **� Security**: **Always change this in production deployments**
+- **Example**: `POSTGRES_PASSWORD=my_secure_password_123`
+
+### Common Database Settings
+
+#### `DB_LOGGING`
+- **Default**: `false`
+- **Description**: Enable SQL query logging for debugging (applies to both SQLite and PostgreSQL)
+- **Values**: `true`, `false`
+- **Note**: Very verbose - use only for troubleshooting
+- **Example**: `DB_LOGGING=true`
+
+---
+
+## Authentication Configuration
+
+Forgetful leverages **FastMCP's built-in authentication system** via environment variables. This provides flexible auth options without custom code.
+
+Forgetful reads the same `FASTMCP_SERVER_AUTH` and `FASTMCP_SERVER_AUTH_*` environment variables documented below and constructs the appropriate auth provider at startup. Users configure auth entirely through env vars — no code changes required.
+
+**📚 Official Documentation**:
+- [FastMCP Auth Guide](https://fastmcp.wiki/en/servers/auth/authentication)
+- [Auth Examples](https://github.com/jlowin/fastmcp/tree/main/docs/servers/auth)
+
+---
+
+### Authentication Modes
+
+#### **No Authentication (Default)**
+
+When `FASTMCP_SERVER_AUTH` is **not set**, authentication is disabled and all requests use the default user:
+
+```bash
+# .env - No auth configured
+DEFAULT_USER_ID="default-user-id"
+DEFAULT_USER_NAME="default-user-name"
+DEFAULT_USER_EMAIL="default.user@forgetful.dev"
+```
+
+#### **Token Introspection (OAuth 2.0 RFC 7662)**
+
+Validates opaque bearer tokens via an introspection endpoint. Recommended for microservices architectures.
+
+```bash
+# .env - Token Introspection
+FASTMCP_SERVER_AUTH=fastmcp.server.auth.providers.introspection.IntrospectionTokenVerifier
+FASTMCP_SERVER_AUTH_INTROSPECTION_URL=https://auth.yourcompany.com/oauth/introspect
+FASTMCP_SERVER_AUTH_INTROSPECTION_CLIENT_ID=forgetful-resource-server
+FASTMCP_SERVER_AUTH_INTROSPECTION_CLIENT_SECRET=your-client-secret
+# These are IdP admission requirements, not Forgetful tool permissions.
+FASTMCP_SERVER_AUTH_INTROSPECTION_REQUIRED_SCOPES=api:read,api:write
+```
+
+The introspection response must also supply any intended Forgetful tool permissions. For example,
+`"scope": "api:read api:write read"` allows read-only MCP tool access. See
+[authentication scopes and tool permissions](#authentication-scopes-and-forgetful-tool-permissions).
+
+**How it works**:
+- Client sends bearer token in `Authorization` header
+- Forgetful validates token via introspection endpoint
+- User provisioned from token claims (`sub`, `name`, `email`)
+
+#### **JWT Verification**
+
+Validates JWT tokens using JWKS endpoint or public key. Ideal for stateless authentication.
+
+```bash
+# .env - JWT Verification
+FASTMCP_SERVER_AUTH=fastmcp.server.auth.providers.jwt.JWTVerifier
+FASTMCP_SERVER_AUTH_JWT_JWKS_URI=https://auth.yourcompany.com/.well-known/jwks.json
+FASTMCP_SERVER_AUTH_JWT_ISSUER=https://auth.yourcompany.com
+FASTMCP_SERVER_AUTH_JWT_AUDIENCE=forgetful-api
+# These are IdP admission requirements, not Forgetful tool permissions.
+FASTMCP_SERVER_AUTH_JWT_REQUIRED_SCOPES=api:read,api:write
+```
+
+Configure the issuer to include any intended Forgetful tool permissions in the signed token.
+For example, `"scope": "api:read api:write read write"` allows both reads and writes, within the
+server's tool limits. See
+[authentication scopes and tool permissions](#authentication-scopes-and-forgetful-tool-permissions).
+
+**How it works**:
+- Client sends JWT in `Authorization: Bearer <token>` header
+- Forgetful validates signature, issuer, audience, expiration
+- User provisioned from JWT claims (`sub`, `name`, `email`)
+
+#### **OAuth Proxy (GitHub, Google, etc.)**
+
+For OAuth providers that don't support Dynamic Client Registration (DCR). Pre-register your app with the provider.
+
+```bash
+# .env - GitHub OAuth Proxy
+FASTMCP_SERVER_AUTH=fastmcp.server.auth.providers.github.GitHubProvider
+FASTMCP_SERVER_AUTH_GITHUB_CLIENT_ID=Ov23li...
+FASTMCP_SERVER_AUTH_GITHUB_CLIENT_SECRET=abc123...
+FASTMCP_SERVER_AUTH_GITHUB_BASE_URL=https://forgetful.yourcompany.com
+```
+
+**Supported Providers**:
+- `fastmcp.server.auth.providers.github.GitHubProvider`
+- `fastmcp.server.auth.providers.google.GoogleProvider`
+- See [FastMCP docs](https://github.com/jlowin/fastmcp/tree/main/docs/servers/auth) for full list
+
+---
+
+### Authentication scopes and Forgetful tool permissions
+
+Authentication requirements and tool permissions serve different purposes:
+
+- `FASTMCP_SERVER_AUTH_*_REQUIRED_SCOPES` tells the authentication provider which IdP scopes it
+  requires. For JWT and introspection, a token missing a required scope is rejected. These settings
+  neither add scopes to issued tokens nor grant Forgetful tool access.
+- `FORGETFUL_SCOPES` sets the server's MCP tool limit. Its default is `*` (all tools).
+  `FORGETFUL_SCOPES=read` limits the server to reads.
+  `FORGETFUL_SCOPES=read,write:memories` also allows memory writes.
+  The local CLI uses this server setting too.
+- Recognised Forgetful scopes in a verified token's `scope` or `scp` claim narrow MCP access for
+  that token. `read` permits read tools, `write` permits mutating tools, and `read:<category>` or
+  `write:<category>` limits the category. `write` does not include `read`; `*` requests the server's
+  full tool limit. A token cannot widen a nonempty server tool limit.
+
+IdP and Forgetful scopes can share the same claim. This example meets the `api:read,api:write`
+JWT admission requirement above but permits only read tools:
+
+```json
+{
+  "sub": "user-123",
+  "scope": "api:read api:write read"
+}
+```
+
+To allow both reads and writes, the issuer would use `"api:read api:write read write"` instead.
+The example shows only relevant claims; normal signature, issuer, audience and expiry checks still
+apply. This is an issued token claim, not a field the client can edit after signing.
+
+Environment settings use commas. Token scope strings use spaces; lists such as
+`["api:read", "read"]` are also understood by Forgetful. The resolver checks `scope` first, then
+`scp` if `scope` supplies no values. The authentication provider must accept the token format too;
+for example, an introspection provider's required-scope check uses its `scope` response field.
+
+- Recognised scopes alongside unrelated labels are retained: `openid read` remains read-only.
+- A nonempty claim containing only unrelated labels, such as `api:read api:write`, permits no MCP
+  tools. Authentication can succeed while discovery is empty and tool execution is denied.
+- If neither claim supplies scopes (absent, blank or an empty list), the server's permissions apply
+  unchanged. Authentication still runs; configured required scopes can reject such a token first.
+
+The built-in GitHub and Google OAuth providers currently expose upstream scopes separately from
+identity claims, without a top-level `scope`/`scp` claim for this resolver. Their ordinary logins
+retain the server tool permissions. Do not add Forgetful labels such as `write:memories` to those
+providers' requested API scopes. JWT and introspection deployments control the claims described
+above. There is no separate `forgetful_scopes` claim in this change.
+
+These rules govern MCP tools, including calls from the remote CLI. REST endpoints do not currently
+apply the MCP tool-scope checks. The empty-server-permission-set fallback is also a separate known
+limitation; an empty set must not be used as a deny-all configuration.
+
+#### Upgrading existing scoped tokens
+
+The token-scope fix in [PR #107][token-scope-pr] changes access for JWT/introspection tokens whose
+nonempty scope claims contain no recognised Forgetful permission. Before upgrading:
+
+1. Check which claims your issuer places in tokens or introspection responses. If they contain only
+   labels such as `api:read api:write`, add the appropriate Forgetful scopes at the issuer.
+2. Keep the IdP admission labels and append the intended tool permissions: `read` for reads only,
+   `read write` for both, or narrower category permissions. Use `*` only when the token should have
+   every tool permitted by the server.
+3. Obtain replacement tokens or update the introspection response, then check tool discovery and
+   an allowed operation with the new credentials. Changing `REQUIRED_SCOPES` alone does not add
+   permissions to an existing token.
+
+Users with absent/empty scope claims keep the existing server-permission fallback. Normal built-in
+GitHub/Google OAuth logins and local no-auth usage do not need this token change. No database
+migration or embedding rebuild is needed. See the [unreleased notes](release_notes.md#unreleased).
+
+[token-scope-pr]: https://github.com/ScottRBK/forgetful/pull/107
+[scope-rules]: #authentication-scopes-and-forgetful-tool-permissions
+
+### Configuration Reference
+
+#### `FASTMCP_SERVER_AUTH`
+- **Default**: Not set (authentication disabled)
+- **Description**: Fully-qualified class path to FastMCP auth provider
+- **Values**:
+  - *Omit* - No authentication (default user mode)
+  - `fastmcp.server.auth.providers.introspection.IntrospectionTokenVerifier` - Token introspection
+  - `fastmcp.server.auth.providers.jwt.JWTVerifier` - JWT verification
+  - `fastmcp.server.auth.providers.github.GitHubProvider` - GitHub OAuth
+  - `fastmcp.server.auth.providers.google.GoogleProvider` - Google OAuth
+- **Example**: `FASTMCP_SERVER_AUTH=fastmcp.server.auth.providers.jwt.JWTVerifier`
+
+#### Default User Settings (when auth is disabled)
+
+##### `DEFAULT_USER_ID`
+- **Default**: `default-user-id`
+- **Description**: External user ID when authentication is disabled
+- **Example**: `DEFAULT_USER_ID=local-dev-user`
+
+##### `DEFAULT_USER_NAME`
+- **Default**: `default-user-name`
+- **Description**: Display name for default user
+- **Example**: `DEFAULT_USER_NAME=Local Developer`
+
+##### `DEFAULT_USER_EMAIL`
+- **Default**: `default-user-email`
+- **Description**: Email address for default user
+- **Example**: `DEFAULT_USER_EMAIL=dev@localhost`
+
+#### OAuth Storage Configuration
+
+##### `OAUTH_STORAGE_PATH`
+- **Default**: Platform-specific user data directory (e.g., `~/.local/share/forgetful/oauth`)
+- **Description**: Directory where OAuth tokens and state are persisted
+- **Purpose**: Stores authentication tokens between restarts when using OAuth providers (GitHub, Google, etc.)
+- **Note**: This directory contains sensitive authentication data - ensure proper file permissions
+- **Example**: `OAUTH_STORAGE_PATH=/app/data/oauth`
+
+---
+
+### User Provisioning
+
+When authentication is enabled, Forgetful automatically provisions users from token claims:
+
+**Required Claims**:
+- `sub` - Subject identifier (maps to `external_id`)
+- `name` OR `preferred_username` - Display name
+
+**Optional Claims**:
+- `email` - Email address (defaults to empty string)
+
+**Auto-provisioning behavior**:
+- First request: User created in database
+- Subsequent requests: User retrieved by `external_id`
+- Updates: Name/email updated if changed in token
+
+**Example token claims**:
+```json
+{
+  "sub": "auth0|507f1f77bcf86cd799439011",
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "iat": 1700000000,
+  "exp": 1700003600
+}
+```
+
+---
+
+### Security Best Practices
+
+1. **Production Deployments**:
+   - Always enable authentication (`FASTMCP_SERVER_AUTH`)
+   - Use HTTPS for all endpoints
+   - Rotate client secrets regularly
+   - Bind to localhost: `BIND_ADDRESS=127.0.0.1`
+
+2. **Token Scopes**:
+   - Configure IdP admission requirements with `FASTMCP_SERVER_AUTH_*_REQUIRED_SCOPES`.
+   - Set `FORGETFUL_SCOPES` to the tools the server needs, then narrow individual JWT/introspection
+     tokens with recognised Forgetful scopes. Avoid granting `*` when a smaller permission fits.
+   - Read [the scope rules and upgrade steps][scope-rules] before changing issued token claims.
+
+3. **Development vs Production**:
+   ```bash
+   # Development - No auth for local testing
+   # FASTMCP_SERVER_AUTH not set
+   DEFAULT_USER_ID=dev-user
+
+   # Production - JWT auth required
+   FASTMCP_SERVER_AUTH=fastmcp.server.auth.providers.jwt.JWTVerifier
+   FASTMCP_SERVER_AUTH_JWT_JWKS_URI=https://auth.company.com/.well-known/jwks.json
+   FASTMCP_SERVER_AUTH_JWT_ISSUER=https://auth.company.com
+   FASTMCP_SERVER_AUTH_JWT_AUDIENCE=forgetful-prod
+   ```
+
+---
+
+### Troubleshooting
+
+**"Authentication required but no bearer token provided"**:
+- Client must send `Authorization: Bearer <token>` header
+- Check MCP client configuration
+
+**"Token contains no 'sub' claim"**:
+- Token is invalid or missing required claim
+- Verify token with JWT debugger (jwt.io)
+
+**"Token requires 'name' or 'preferred_username' claim"**:
+- Token missing user display name
+- Configure IdP to include `name` claim
+
+**401 Unauthorized**:
+- Token expired, invalid signature, or wrong audience
+- Enable debug logging: `LOG_LEVEL=DEBUG`
+
+---
+
+## CLI Configuration
+
+The `forgetful` CLI executes the same tool registry as the MCP server - locally by
+default, or against a remote deployment.
+
+### `FORGETFUL_SERVER`
+
+- **Default**: `` (empty - local mode)
+- **Purpose**: Remote deployment URL the CLI executes against. The URL is normalized
+  before use:
+  - **Scheme**: when omitted, `http://` is assumed for loopback hosts
+    (`localhost`, `127.0.0.1`, `[::1]`) and `https://` for every other host (secure by
+    default). An explicit `http://`/`https://` scheme is kept as given; any other scheme
+    (e.g. `ftp://`) is rejected.
+  - **Mount path**: when the URL has no path, the default `/mcp` mount path is appended.
+    An explicit path is left untouched.
+
+  So `localhost:8020` becomes `http://localhost:8020/mcp` and `forgetful.example.com`
+  becomes `https://forgetful.example.com/mcp`.
+- **Set by**: `forgetful auth login --server URL` (written to `~/.config/forgetful/.env`),
+  or manually via shell env / any `.env` file in the standard list.
+
+### `FORGETFUL_TOKEN`
+
+- **Default**: unset
+- **Purpose**: Bearer token for headless/CI use of the CLI against an authenticated
+  deployment. Read from the shell environment only - deliberately never stored in
+  `.env` files or the token cache. When unset, the CLI uses the browser OAuth flow.
+
+### Configuration precedence (highest wins)
+
+1. Per-invocation flags: `--server URL` / `--local`
+2. Shell environment: `FORGETFUL_SERVER`, `FORGETFUL_TOKEN`
+3. User config file: `~/.config/forgetful/.env` (written by `forgetful auth login`)
+4. Defaults: local mode, SQLite at the platform data path, FastEmbed embeddings
+
+### Token cache
+
+OAuth tokens are cached in `~/.config/forgetful/tokens/` (created `0700`) so the
+browser flow runs once, not per invocation. `forgetful auth logout` deletes this
+directory; the server-side session is untouched.
+
+---
+
+## Memory Plugin
+
+One optional administrator-configured registration maps memory operations to async handlers in
+`before_save` and `after_save`. Supported operations are `create`, `update`, `obsolete`, and
+`restore` (the last two correspond to `mark_memory_obsolete` and `unobsolete_memory`). Only
+explicitly mapped operations run a handler. An empty setting disables the plugin.
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `MEMORY_WRITE_PLUGIN` | empty | Importable `module:object` containing a `MemoryPlugin` |
+| `MEMORY_WRITE_PLUGIN_MODE` | `enforce` | `warn` or `enforce`, for **before_save only** |
+| `MEMORY_WRITE_PLUGIN_TIMEOUT_SECONDS` | `5.0` | Positive, finite deadline for each handler |
+
+This replaces the unreleased single-function Write Plugin contract. Configure
+`MEMORY_WRITE_PLUGIN=my_plugins.memory_checks:plugin` for the example below. Install your module
+in the server's Python environment and restart the runtime after changing code or configuration.
+The registration loads once, before model/database initialization. Invalid references, imports,
+objects, operation names, non-async handlers, or signatures that cannot accept one context fail
+startup, including in warn mode. Registration mappings are copied and frozen.
+
+This is trusted administrator Python running with the server's privileges. It is not a filesystem
+path, sandbox, or client-uploaded code. The contract passes data only: no database, repository,
+FastMCP context, or write capabilities. Handlers cannot rewrite a write through their snapshots.
+
+```python
+# my_plugins/memory_checks.py (example rules, not built into Forgetful)
+from app.models.write_plugin_models import (
+    MemoryLifecycleRequest,
+    MemorySavedRequest,
+    MemoryWriteRequest,
+    PluginWarning,
+    WriteDecision,
+)
+from app.protocols.write_plugin_protocol import MemoryPlugin
+
+
+async def validate_memory(request: MemoryWriteRequest) -> WriteDecision:
+    if "blocked" in request.proposed.tags:
+        return WriteDecision(
+            outcome="reject", message="Remove the blocked tag.", code="blocked_tag",
+        )
+    return WriteDecision(outcome="allow")
+
+
+async def check_lifecycle(request: MemoryLifecycleRequest) -> WriteDecision:
+    if request.previous.importance >= 9:
+        return WriteDecision(outcome="warn", message="Review this important memory's state.")
+    return WriteDecision(outcome="allow")
+
+
+async def warn_about_duplicates(request: MemorySavedRequest) -> PluginWarning | None:
+    if request.similar_memories is None:
+        return None
+    if any(match.similarity >= 0.95 for match in request.similar_memories):
+        return PluginWarning(message="Review the linked memories for duplicates.", code="duplicate")
+    return None
+
+
+plugin = MemoryPlugin(
+    before_save={
+        "create": validate_memory,
+        "update": validate_memory,
+        "obsolete": check_lifecycle,
+        "restore": check_lifecycle,
+    },
+    after_save={"create": warn_about_duplicates},
+)
+```
+
+### Before save
+
+The handler returns a validated `WriteDecision` with `outcome`, a client-safe `message` (required
+and nonblank for warn/reject), and optional `code`.
+
+| Decision | Enforce mode | Warn mode |
+| --- | --- | --- |
+| `allow` | Write normally | Write normally |
+| `warn` | Write with warning | Write with warning |
+| `reject` | Block write with plugin message | Write with downgraded warning |
+| Error, invalid result, timeout | Generic unavailable error | Unavailable warning |
+
+All contexts include `operation` and the authenticated internal `user_id` (or the configured
+default user's internal ID). The snapshot types depend on the operation:
+
+- Create/update use `MemoryWriteRequest`. `submitted` is the parsed `MemoryCreate` or
+  `MemoryUpdate` before provenance defaults. Update field-set information is preserved; MCP
+  coercion may already omit nulls. `previous` is the full memory for update, or `None` for create.
+  `proposed` is a writable `MemoryCreate` after defaults and merging, without stored IDs,
+  timestamps, or access counters.
+- Obsolete/restore use `MemoryLifecycleRequest`. `submitted` contains `memory_id`, `reason`, and
+  `superseded_by`; restore supplies only the ID, leaving the other fields null. `previous` is the
+  full memory. `proposed` is `MemoryLifecycleState`, containing `is_obsolete`, `obsolete_reason`,
+  and `superseded_by`. Restore proposes false/null/null. The database assigns the actual
+  obsolescence timestamp; a proposed timestamp is not invented.
+
+Each snapshot is separately deep detached. Mutating it cannot change another snapshot or the
+pending write. Core validation, ownership, permission, and state checks still apply. Missing
+memories, invalid restores, and invalid replacement ownership never reach the lifecycle policy.
+No-op updates skip both phases and preserve timestamps/events. Repeating obsolete remains a real
+mutation: existing behavior updates the reason, replacement, and obsolescence timestamp.
+
+Explicit null update fields mean unchanged before provenance enforcement and change detection.
+They remain in `submitted` when present, but are omitted from the effective patch and proposed
+merge. Empty relationship lists still clear associations, and zero confidence is preserved.
+Non-null skill-link update limitations (#96) remain. A valid candidate does not guarantee that
+all referenced IDs exist or a later database write will succeed.
+
+No transaction/session spans a handler await. After a before-update handler completes, the
+service re-reads the owned memory and recomputes the patch against current state. If it has become
+a no-op, it returns any before warning without another event or an after handler. Lifecycle writes
+change only lifecycle fields; restore still uses the repository's conditional state transition.
+After lifecycle checks, previous state is refreshed for subsequent reporting. The policy's
+original snapshots are not re-evaluated. These measures avoid stale overwrites caused by the
+plugin wait; they do not make policy decisions or later writes atomic, including existing races
+during embedding-provider awaits.
+
+### After save
+
+The handler receives `MemorySavedRequest` and returns `PluginWarning(message=..., code=...)` or
+`None`. A warning has only `outcome="warn"`; allow/reject decisions are invalid in this phase.
+After handlers are advisory in **both modes**. They run after a successful mutation, existing
+create similarity/automatic links, and the operation's event emission.
+
+- `operation` and `user_id` identify the operation and caller.
+- `previous` is the state read before persistence (refreshed after any before-handler wait), or
+  `None` for create. `saved` is the actual persisted memory, including resulting link IDs.
+- `similar_memories` contains the existing scored `MemorySummary` results for create, with the
+  same four-decimal similarities as the normal create response. `[]` means the search ran without
+  matches. `None` means it was not computed: automatic linking was disabled, or this was an
+  update/obsolete/restore. No extra similarity search is added. The saved memory's
+  `linked_memory_ids` reports resulting links, which need not equal the candidate matches.
+
+Snapshots are deep detached from stored data, responses, and each other. A handler exception,
+malformed return, or timeout adds the generic warning `Memory saved, but after-save plugin
+unavailable.` with code `MEMORY_PLUGIN_AFTER_SAVE_UNAVAILABLE`. The successful mutation remains
+successful. A failed post-obsolete snapshot read likewise warns without inventing saved state.
+There is no rollback, persistent queue, retry, guaranteed delivery, duplicate prevention, or
+automatic merge. Create similarity is already computed after persistence; duplicate checks here
+can only advise the caller.
+
+Each deadline is cooperative asyncio cancellation, not a hard kill. Blocking Python or a handler
+that suppresses cancellation can exceed it. External cancellation propagates, including after
+persistence. A cancelled request or lost network response may leave a successful write whose
+response was not delivered; verify state before retrying.
+Cancellation raised inside an after handler (including by an awaited child task) becomes the
+generic advisory warning when the request task itself has not been cancelled. Before-save
+cancellation still propagates.
+
+### Responses and diagnostics
+
+Successful create, update, obsolete, and restore responses add `plugin_warnings` only when
+nonempty, in before-then-after order. Each entry has `outcome="warn"`, `message`, and optional
+`code` (null when absent). Create preserves its normal fields, including `obsolete_matches`;
+update stays flat; lifecycle tools and REST DELETE retain `{"success": true}` plus any warnings.
+There is no new REST restore endpoint. Reads, queries, and events have no transient warnings.
+The human memory-save CLI shows warnings alongside success; JSON includes them in the payload.
+
+Before-save rejections exit nonzero. MCP/local CLI use `WRITE_PLUGIN_REJECTED: <message>` or
+`WRITE_PLUGIN_UNAVAILABLE: Memory Write Plugin unavailable.`; REST returns 400 or 503 respectively.
+Custom rejection codes are retained only when downgraded to warnings. CLI JSON errors remain the
+last stderr line; successful JSON stays on stdout. Post-save failures never use rejection or
+unavailable error responses; clients should review their warning without repeating the write.
+
+Core runtime diagnostics record phase, operation, and exception type (also mode before save),
+without exception text, tracebacks, or memory content. Startup import diagnostics identify the
+module/reference, loading phase, and exception type. Plugin authors must keep their messages and
+own logs free of secrets. Bootstrap restores the pre-initialization logger state for the configured
+module, all handler-defining modules (including re-exports and `functools.partial` handlers), and
+existing children after Alembic initialization. It does not change arbitrary third-party logger
+configuration.
+
+The registration, documented context/result fields, and import paths above are the plugin API.
+Internal service results and transport response models are not plugin APIs. There is one
+registration and at most one handler per operation per phase; there is no discovery system,
+handler chain, or marketplace. Memory linking/unlinking has no hooks.
+
+### Entity Plugin
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `ENTITY_WRITE_PLUGIN` | empty | Importable `module:object` containing an `EntityPlugin` |
+| `ENTITY_WRITE_PLUGIN_MODE` | `enforce` | `warn` or `enforce`, for **before_save only** |
+| `ENTITY_WRITE_PLUGIN_TIMEOUT_SECONDS` | `5.0` | Positive, finite deadline for each handler |
+
+Registration, startup validation, before/after semantics, and response shapes mirror the Memory
+Plugin above, scoped to entity `create`, `update`, and `delete` through `EntityService`. Context
+types are `EntityWriteRequest`, `EntitySavedRequest`, and `EntityDeletedRequest`. Delete
+before-save uses `EntityDeleteSubmission`; `proposed` is `None` for delete. Missing entities on
+delete skip both phases. No-op updates skip the plugin but still run the repository update.
+Association rows removed by database `ON DELETE CASCADE` are not visible to the plugin.
+
+## Memory Configuration
+
+These settings control the atomic memory system's behavior and constraints.
+
+### `MEMORY_TITLE_MAX_LENGTH`
+- **Default**: `200`
+- **Description**: Maximum characters for memory titles
+- **Rationale**: Titles must be "easily titled" and scannable at a glance
+- **Atomic Memory Principle**: Force concise, clear titles
+- **Example**: `MEMORY_TITLE_MAX_LENGTH=200`
+
+### `MEMORY_CONTENT_MAX_LENGTH`
+- **Default**: `2000`
+- **Description**: Maximum characters for memory content (~300-400 words)
+- **Rationale**: Enforces single-concept atomic memories (Zettelkasten principle)
+- **Note**: For longer content, use Documents and link to them
+- **Example**: `MEMORY_CONTENT_MAX_LENGTH=2000`
+
+### `MEMORY_CONTEXT_MAX_LENGTH`
+- **Default**: `500`
+- **Description**: Maximum characters for memory context field
+- **Purpose**: Brief explanation of WHY this memory matters, HOW it relates, WHAT implications
+- **Example**: `MEMORY_CONTEXT_MAX_LENGTH=500`
+
+### `MEMORY_KEYWORDS_MAX_COUNT`
+- **Default**: `10`
+- **Description**: Maximum number of keywords per memory
+- **Purpose**: Semantic clustering and search optimization
+- **Example**: `MEMORY_KEYWORDS_MAX_COUNT=10`
+
+### `MEMORY_TAGS_MAX_COUNT`
+- **Default**: `10`
+- **Description**: Maximum number of tags per memory
+- **Purpose**: Categorization and filtering
+- **Example**: `MEMORY_TAGS_MAX_COUNT=10`
+
+### `MEMORY_TOKEN_BUDGET`
+- **Default**: `8000`
+- **Description**: Maximum tokens for query results (protects LLM context window)
+- **Behavior**: System prioritizes by importance, then truncates to fit budget
+- **Note**: Increase if you have larger context windows; decrease for smaller models
+- **Example**: `MEMORY_TOKEN_BUDGET=8000`
+
+### `MEMORY_MAX_MEMORIES`
+- **Default**: `20`
+- **Description**: Maximum number of memories returned per query
+- **Behavior**: Hard limit regardless of token budget
+- **Example**: `MEMORY_MAX_MEMORIES=20`
+
+### `MEMORY_NUM_AUTO_LINK`
+- **Default**: `3`
+- **Description**: Number of similar memories to automatically link on creation
+- **Values**:
+  - `0` - Disable auto-linking
+  - `1-10` - Number of links to create
+- **Rationale**: Builds knowledge graph automatically
+- **Example**: `MEMORY_NUM_AUTO_LINK=5`
+
+### `MEMORY_SIMILARITY_THRESHOLD`
+- **Default**: `0.7`
+- **Description**: Minimum cosine similarity required for an automatic memory link
+- **Behavior**: Applies on creation and embedding rebuild; existing links are not removed
+- **Example**: `MEMORY_SIMILARITY_THRESHOLD=0.8`
+
+### `OBSOLETE_WARNING_ENABLED`
+- **Default**: `true`
+- **Description**: Warn when a created memory is similar to superseded memories
+- **Behavior**: Warning-only in response payload, max 3 matches, same user, all projects; never blocks creation; adds one vector query per `create_memory`; when `false`, `obsolete_matches` is always `[]` and no query runs
+- **Example**: `OBSOLETE_WARNING_ENABLED=false`
+
+### `OBSOLETE_WARNING_THRESHOLD`
+- **Default**: `0.89`
+- **Description**: Minimum cosine similarity for obsolete-memory warnings
+- **Behavior**: Validated in (0, 1]; ignored when OBSOLETE_WARNING_ENABLED is false
+- **Example**: `OBSOLETE_WARNING_THRESHOLD=0.92`
+
+---
+
+## Project Configuration
+
+### `PROJECT_DESCRIPTION_MAX_LENGTH`
+- **Default**: `5000`
+- **Description**: Maximum characters for project descriptions
+- **Purpose**: Text field with reasonable cap for detailed project documentation
+- **Example**: `PROJECT_DESCRIPTION_MAX_LENGTH=5000`
+
+### `PROJECT_NOTES_MAX_LENGTH`
+- **Default**: `4000`
+- **Description**: Maximum characters for project notes
+- **Purpose**: Text field with reasonable cap for project-level annotations
+- **Example**: `PROJECT_NOTES_MAX_LENGTH=4000`
+
+---
+
+## Code Artifact Configuration
+
+### `CODE_ARTIFACT_TITLE_MAX_LENGTH`
+- **Default**: `500`
+- **Description**: Maximum characters for code artifact titles
+- **Note**: Database limit is String(500)
+- **Example**: `CODE_ARTIFACT_TITLE_MAX_LENGTH=500`
+
+### `CODE_ARTIFACT_DESCRIPTION_MAX_LENGTH`
+- **Default**: `5000`
+- **Description**: Maximum characters for code artifact descriptions
+- **Purpose**: Reasonable cap for text field describing the code snippet
+- **Example**: `CODE_ARTIFACT_DESCRIPTION_MAX_LENGTH=5000`
+
+### `CODE_ARTIFACT_CODE_MAX_LENGTH`
+- **Default**: `50000`
+- **Description**: Maximum characters for code artifact content (~50KB)
+- **Purpose**: Allows storage of large code snippets
+- **Example**: `CODE_ARTIFACT_CODE_MAX_LENGTH=50000`
+
+### `CODE_ARTIFACT_TAGS_MAX_COUNT`
+- **Default**: `10`
+- **Description**: Maximum number of tags per code artifact
+- **Purpose**: Categorization and filtering
+- **Example**: `CODE_ARTIFACT_TAGS_MAX_COUNT=10`
+
+---
+
+## Document Configuration
+
+### `DOCUMENT_TITLE_MAX_LENGTH`
+- **Default**: `500`
+- **Description**: Maximum characters for document titles
+- **Note**: Database limit is String(500)
+- **Example**: `DOCUMENT_TITLE_MAX_LENGTH=500`
+
+### `DOCUMENT_DESCRIPTION_MAX_LENGTH`
+- **Default**: `5000`
+- **Description**: Maximum characters for document descriptions
+- **Purpose**: Reasonable cap for text field describing the document
+- **Example**: `DOCUMENT_DESCRIPTION_MAX_LENGTH=5000`
+
+### `DOCUMENT_CONTENT_MAX_LENGTH`
+- **Default**: `100000`
+- **Description**: Maximum characters for document content (~100KB)
+- **Purpose**: Allows storage of large documents
+- **Example**: `DOCUMENT_CONTENT_MAX_LENGTH=100000`
+
+### `DOCUMENT_TAGS_MAX_COUNT`
+- **Default**: `10`
+- **Description**: Maximum number of tags per document
+- **Purpose**: Categorization and filtering
+- **Example**: `DOCUMENT_TAGS_MAX_COUNT=10`
+
+---
+
+## Skill Configuration
+
+These settings control the procedural memory (skills) feature.
+
+### `SKILLS_ENABLED`
+- **Default**: `false`
+- **Description**: Master feature flag for the skills system
+- **Values**: `true`, `false`
+- **Behavior**: When disabled, no skill tools or API routes are registered
+- **Example**: `SKILLS_ENABLED=true`
+
+### `SKILL_NAME_MAX_LENGTH`
+- **Default**: `64`
+- **Description**: Maximum characters for skill names (kebab-case)
+- **Example**: `SKILL_NAME_MAX_LENGTH=64`
+
+### `SKILL_DESCRIPTION_MAX_LENGTH`
+- **Default**: `1024`
+- **Description**: Maximum characters for skill descriptions (embedded for semantic search)
+- **Example**: `SKILL_DESCRIPTION_MAX_LENGTH=1024`
+
+### `SKILL_CONTENT_MAX_LENGTH`
+- **Default**: `100000`
+- **Description**: Maximum characters for skill content (~100KB for detailed instructions)
+- **Example**: `SKILL_CONTENT_MAX_LENGTH=100000`
+
+### `SKILL_LICENSE_MAX_LENGTH`
+- **Default**: `100`
+- **Description**: Maximum characters for license identifiers (e.g., 'MIT', 'Apache-2.0')
+- **Example**: `SKILL_LICENSE_MAX_LENGTH=100`
+
+### `SKILL_COMPATIBILITY_MAX_LENGTH`
+- **Default**: `500`
+- **Description**: Maximum characters for compatibility/requirements description
+- **Example**: `SKILL_COMPATIBILITY_MAX_LENGTH=500`
+
+### `SKILL_ALLOWED_TOOLS_MAX_LENGTH`
+- **Default**: `2000`
+- **Description**: Maximum total characters for the allowed tools list
+- **Example**: `SKILL_ALLOWED_TOOLS_MAX_LENGTH=2000`
+
+### `SKILL_TAGS_MAX_COUNT`
+- **Default**: `10`
+- **Description**: Maximum number of tags per skill
+- **Example**: `SKILL_TAGS_MAX_COUNT=10`
+
+---
+
+## Entity Configuration
+
+### `ENTITY_NAME_MAX_LENGTH`
+- **Default**: `200`
+- **Description**: Maximum characters for entity names
+- **Note**: Database limit is String(200)
+- **Example**: `ENTITY_NAME_MAX_LENGTH=200`
+
+### `ENTITY_TYPE_MAX_LENGTH`
+- **Default**: `100`
+- **Description**: Maximum characters for custom entity types
+- **Examples**: "organization", "person", "device", "team"
+- **Example**: `ENTITY_TYPE_MAX_LENGTH=100`
+
+### `ENTITY_NOTES_MAX_LENGTH`
+- **Default**: `4000`
+- **Description**: Maximum characters for entity notes
+- **Purpose**: Reasonable cap for text field with entity annotations
+- **Example**: `ENTITY_NOTES_MAX_LENGTH=4000`
+
+### `ENTITY_TAGS_MAX_COUNT`
+- **Default**: `10`
+- **Description**: Maximum number of tags per entity
+- **Purpose**: Categorization and filtering
+- **Example**: `ENTITY_TAGS_MAX_COUNT=10`
+
+### `ENTITY_RELATIONSHIP_TYPE_MAX_LENGTH`
+- **Default**: `100`
+- **Description**: Maximum characters for relationship type labels
+- **Examples**: "works_at", "owns", "manages", "depends_on"
+- **Example**: `ENTITY_RELATIONSHIP_TYPE_MAX_LENGTH=100`
+
+---
+
+## Planning Configuration
+
+These settings control the planning and task management feature.
+
+### `PLANNING_ENABLED`
+- **Default**: `false`
+- **Description**: Master feature flag for the planning system
+- **Values**: `true`, `false`
+- **Behavior**: When disabled, no plan/task tools or API routes are registered
+- **Example**: `PLANNING_ENABLED=true`
+
+### `PLAN_TITLE_MAX_LENGTH`
+- **Default**: `500`
+- **Description**: Maximum characters for plan titles
+- **Example**: `PLAN_TITLE_MAX_LENGTH=500`
+
+### `PLAN_GOAL_MAX_LENGTH`
+- **Default**: `2000`
+- **Description**: Maximum characters for plan goals
+- **Example**: `PLAN_GOAL_MAX_LENGTH=2000`
+
+### `PLAN_CONTEXT_MAX_LENGTH`
+- **Default**: `2000`
+- **Description**: Maximum characters for plan context
+- **Example**: `PLAN_CONTEXT_MAX_LENGTH=2000`
+
+### `TASK_TITLE_MAX_LENGTH`
+- **Default**: `500`
+- **Description**: Maximum characters for task titles
+- **Example**: `TASK_TITLE_MAX_LENGTH=500`
+
+### `TASK_DESCRIPTION_MAX_LENGTH`
+- **Default**: `5000`
+- **Description**: Maximum characters for task descriptions
+- **Example**: `TASK_DESCRIPTION_MAX_LENGTH=5000`
+
+### `TASK_AGENT_MAX_LENGTH`
+- **Default**: `200`
+- **Description**: Maximum characters for agent identifiers
+- **Example**: `TASK_AGENT_MAX_LENGTH=200`
+
+### `CRITERION_DESCRIPTION_MAX_LENGTH`
+- **Default**: `1000`
+- **Description**: Maximum characters for criterion descriptions
+- **Example**: `CRITERION_DESCRIPTION_MAX_LENGTH=1000`
+
+---
+
+## Provenance Defaults
+
+These settings allow you to stamp every object created through a Forgetful server instance with identifying information about the agent and software doing the encoding. Useful when multiple agents or tools write to the same knowledge base.
+
+### `ENCODING_AGENT`
+- **Default**: `""` (empty, not applied)
+- **Description**: Software or tool running the agent (e.g., the AI coding tool or script)
+- **Example**: `ENCODING_AGENT=OpenCode`
+
+### `ENCODING_VERSION`
+- **Default**: `""` (empty, not applied)
+- **Description**: Version of the encoding software
+- **Example**: `ENCODING_VERSION=1.3.13`
+
+### `AGENT_ID`
+- **Default**: `""` (empty, not applied)
+- **Description**: Identity of the agent doing the encoding (logical name, not an instance ID)
+- **Example**: `AGENT_ID=CodeAgentUltra`
+
+### `AGENT_VERSION`
+- **Default**: `""` (empty, not applied)
+- **Description**: Version of the agent
+- **Example**: `AGENT_VERSION=1.0`
+
+### `AGENT_MODEL`
+- **Default**: `""` (empty, not applied)
+- **Description**: LLM model the agent is running on
+- **Example**: `AGENT_MODEL=claude-sonnet-4-6`
+
+### `ENFORCE_ENV_OVERWRITE`
+- **Default**: `false`
+- **Description**: When `true`, environment-level provenance values override any values provided by the calling agent. Use this to enforce consistent provenance across a shared server regardless of what individual agents pass in.
+- **Values**: `true`, `false`
+- **Example**: `ENFORCE_ENV_OVERWRITE=true`
+
+### Example Configuration
+
+```bash
+# Tag all writes from this server with the encoding agent and model
+ENCODING_AGENT=OpenCode
+ENCODING_VERSION=1.3.13
+AGENT_ID=CodeAgentUltra
+AGENT_VERSION=1.0
+AGENT_MODEL=claude-sonnet-4-6
+# Prevent individual agents from overriding these values
+ENFORCE_ENV_OVERWRITE=true
+```
+
+---
+
+## Activity Tracking Configuration
+
+Activity tracking provides an audit log of all entity lifecycle events (created, updated, deleted). This is an **experimental feature**.
+
+> **⚠️ Experimental Feature**
+>
+> Activity tracking uses an async event-driven architecture that may cause issues with SQLite backends due to connection pooling conflicts.
+>
+> **Recommendations:**
+> - **PostgreSQL**: Safe to enable, but still considered experimental
+> - **SQLite**: Leave disabled unless you have a specific need and are prepared to troubleshoot potential issues
+> - **Production**: Test thoroughly before enabling in production environments
+
+### `ACTIVITY_ENABLED`
+- **Default**: `false`
+- **Description**: Enable activity event tracking
+- **Values**: `true`, `false`
+- **Note**: When disabled, no events are recorded and the activity API returns empty results
+- **Example**: `ACTIVITY_ENABLED=true`
+
+### `ACTIVITY_RETENTION_DAYS`
+- **Default**: `null` (forever)
+- **Description**: Number of days to keep activity events before automatic cleanup
+- **Values**:
+  - `null` or omit - Keep events forever
+  - `30` - Keep events for 30 days
+  - `90` - Keep events for 90 days
+- **Behavior**: Cleanup happens lazily on API access (not via scheduled job)
+- **Example**: `ACTIVITY_RETENTION_DAYS=90`
+
+### `ACTIVITY_TRACK_READS`
+- **Default**: `false`
+- **Description**: Track read and query operations (in addition to create/update/delete)
+- **Values**: `true`, `false`
+- **⚠️ Warning**: Enabling this can generate high event volume in active systems
+- **Example**: `ACTIVITY_TRACK_READS=false`
+
+Memory fields `access_count` and `last_accessed_at` are not activity-log rows.
+They live on the `Memory` model. On upstream they increment only when
+`memory.read` / `memory.queried` events fire (`get_memory` / `query_memory`),
+which requires `ACTIVITY_TRACK_READS=true` and a wired EventBus
+(default `ACTIVITY_TRACK_READS=false` → counters stay 0).
+REST listing does not emit those events.
+`ACTIVITY_TRACK_READS` still also controls activity-log *events*.
+
+### SSE Streaming Configuration
+
+#### `SSE_MAX_QUEUE_SIZE`
+- **Default**: `1000`
+- **Description**: Maximum events per SSE subscriber queue (backpressure handling)
+- **Purpose**: When the queue is full, new events are dropped to prevent memory exhaustion
+- **Behavior**: Clients can detect dropped events via sequence number gaps and resync via REST API
+- **Note**: Increase for high-throughput scenarios where bulk operations are common
+- **Example**: `SSE_MAX_QUEUE_SIZE=2000`
+
+### Graph Visualization Configuration
+
+#### `MAX_GRAPH_LIMIT`
+- **Default**: `2000`
+- **Description**: Upper bound for the `?limit` query parameter on `/api/v1/graph` and the `?max_nodes` query parameter on `/api/v1/graph/subgraph` (enforced in `GraphService.get_subgraph`)
+- **Purpose**: Safety cap that prevents clients from requesting an unbounded number of nodes in a single response, while staying configurable for larger knowledge graphs (see issue #23)
+- **Behavior**: Any client-provided value above this cap is silently clamped; values at or below are passed through unchanged. A value of `0` is clamped up to `1` for `/graph/subgraph`.
+- **Note**: Before this setting was introduced the cap was hardcoded to `500`, which excluded older memories from the full graph visualization on larger knowledge bases.
+- **Example**: `MAX_GRAPH_LIMIT=5000`
+
+### Example Configuration
+
+```bash
+# Enable activity tracking with 90-day retention
+ACTIVITY_ENABLED=true
+ACTIVITY_RETENTION_DAYS=90
+ACTIVITY_TRACK_READS=false
+```
+
+---
+
+## Search Configuration
+
+### `EMBEDDING_PROVIDER`
+- **Default**: `FastEmbed`
+- **Description**: Embedding generation provider
+- **Current Support**: FastEmbed | Azure | Google | OpenAI | Ollama
+- **Example**: `EMBEDDING_PROVIDER=FastEmbed`
+
+### `EMBEDDING_MODEL`
+- **Default**: `BAAI/bge-small-en-v1.5`
+- **Description**: Embedding model identifier
+- **Properties**: 384 dimensions, optimized for semantic similarity
+- **Note**: Changing this requires re-embedding all existing memories. See [Embedding Migration Guide](./embedding_migration.md)
+- **Example**: `EMBEDDING_MODEL=BAAI/bge-small-en-v1.5`
+
+### `EMBEDDING_DIMENSIONS`
+- **Default**: `384`
+- **Description**: Vector dimensions for embeddings
+- **Note**: Must match the model's output dimensions
+- **Example**: `EMBEDDING_DIMENSIONS=384`
+
+### `EMBEDDING_ONNX_PROVIDERS`
+- **Default**: (empty string)
+- **Values**: Comma-separated ONNX Runtime execution provider names, in priority order
+- **Description**: Execution providers for the local FastEmbed embedding model
+- **Note**: Only used when `EMBEDDING_PROVIDER=FastEmbed`. Empty keeps FastEmbed's default provider selection. Same runtime requirements as [`RERANKING_ONNX_PROVIDERS`](#reranking_onnx_providers)
+- **Example**: `EMBEDDING_ONNX_PROVIDERS=DmlExecutionProvider,CPUExecutionProvider`
+
+### `DENSE_SEARCH_CANDIDATES`
+- **Default**: `50`
+- **Description**: Number of candidates to retrieve from dense (embedding) search before re-ranking
+- **Performance**: Higher values = better recall, slower queries
+- **Example**: `DENSE_SEARCH_CANDIDATES=100`
+
+### Azure Embedding Provider Configuration
+
+**Note**: These settings only apply when `EMBEDDING_PROVIDER=Azure`
+
+#### `AZURE_ENDPOINT`
+- **Default**: (empty string)
+- **Description**: Azure OpenAI service endpoint URL
+- **Format**: `https://<resource-name>.openai.azure.com/`
+- **Example**: `AZURE_ENDPOINT=https://my-openai.openai.azure.com/`
+
+#### `AZURE_DEPLOYMENT`
+- **Default**: (empty string)
+- **Description**: Azure OpenAI embedding model deployment name
+- **Example**: `AZURE_DEPLOYMENT=text-embedding-ada-002`
+
+#### `AZURE_API_VERSION`
+- **Default**: (empty string)
+- **Description**: Azure OpenAI API version to use
+- **Example**: `AZURE_API_VERSION=2023-05-15`
+
+#### `AZURE_API_KEY`
+- **Default**: (empty string)
+- **Description**: Azure OpenAI API authentication key
+- **Security**: **Keep this secret** - never commit to version control
+- **Example**: `AZURE_API_KEY=your-azure-api-key-here`
+
+#### `AZURE_TIMEOUT_SECONDS`
+- **Default**: `120`
+- **Description**: Separate timeout for read inactivity, write inactivity and connection-pool waits
+- **Validation**: Must be a positive, finite number
+- **Note**: The connection-establishment timeout remains fixed at 5 seconds
+- **Retries**: The SDK retries twice by default; this setting is not an overall deadline
+- **Example**: `AZURE_TIMEOUT_SECONDS=180`
+
+### Google Embedding Provider Configuration
+
+**Note**: These settings only apply when `EMBEDDING_PROVIDER=Google`
+
+#### `GOOGLE_AI_API_KEY`
+- **Default**: (empty string)
+- **Description**: Google AI API key for embedding generation
+- **Security**: **Keep this secret** - never commit to version control
+- **Example**: `GOOGLE_AI_API_KEY=your-google-api-key-here`
+
+### OpenAI Embedding Provider Configuration
+
+**Note**: These settings only apply when `EMBEDDING_PROVIDER=OpenAI`
+
+> **Dimension mismatch warning**: If switching from another provider (e.g., FastEmbed at 384 dimensions) to OpenAI, existing memory embeddings will be incompatible. You must re-embed all existing memories after changing providers. See the [Embedding Migration Guide](./embedding_migration.md) for instructions.
+
+#### `OPENAI_API_KEY`
+- **Default**: (empty string)
+- **Description**: OpenAI API key for embedding generation
+- **Security**: **Keep this secret** - never commit to version control
+- **Example**: `OPENAI_API_KEY=sk-your-openai-api-key-here`
+
+#### `OPENAI_BASE_URL`
+- **Default**: (empty string)
+- **Description**: Custom base URL for OpenAI-compatible endpoints (llama.cpp, vLLM, LiteLLM)
+- **Note**: When set, `OPENAI_API_KEY` becomes optional (a placeholder is used automatically)
+- **Tip**: See the [llama.cpp migration scenario](./embedding_migration.md#openai-compatible-local-server-llamacpp-vllm) for server configuration tips (batch size, etc.)
+- **Example**: `OPENAI_BASE_URL=http://localhost:8080/v1`
+
+#### `OPENAI_SUPPORTS_DIMENSIONS`
+- **Default**: `true`
+- **Description**: Whether the endpoint supports the `dimensions` parameter
+- **Note**: Set to `false` for endpoints that error on the dimensions param (e.g. llama.cpp)
+- **Example**: `OPENAI_SUPPORTS_DIMENSIONS=false`
+
+#### `OPENAI_TIMEOUT_SECONDS`
+- **Default**: `120`
+- **Description**: Separate timeout for read inactivity, write inactivity and connection-pool waits
+- **Validation**: Must be a positive, finite number
+- **Note**: The connection-establishment timeout remains fixed at 5 seconds
+- **Retries**: The SDK retries twice by default; this setting is not an overall deadline
+- **Example**: `OPENAI_TIMEOUT_SECONDS=180`
+
+### Ollama Embedding Provider Configuration
+
+**Note**: These settings only apply when `EMBEDDING_PROVIDER=Ollama`
+
+> Ollama uses native async via the `ollama` Python SDK. No API key required (Ollama runs locally). Install with `pip install forgetful-ai[ollama]`.
+
+#### `OLLAMA_BASE_URL`
+- **Default**: `http://localhost:11434`
+- **Description**: Ollama server URL
+- **Example**: `OLLAMA_BASE_URL=http://localhost:11434`
+
+### Re-ranking Configuration
+
+#### `RERANKING_ENABLED`
+- **Default**: `true`
+- **Description**: Enable re-ranking of search results for improved relevance
+- **Values**: `true`, `false`
+- **Note**: Improves search quality at the cost of additional processing
+- **Example**: `RERANKING_ENABLED=true`
+
+#### `RERANKING_PROVIDER`
+- **Default**: `FastEmbed`
+- **Description**: Re-ranking model provider
+- **Current Support**: `FastEmbed` | `HTTP`
+- **Values**:
+  - `FastEmbed` - Local cross-encoder model via FastEmbed (zero-config, no API key)
+  - `HTTP` - Any server exposing a `/v1/rerank`-compatible endpoint (Jina, Cohere, vLLM, llama.cpp, Infinity, etc.)
+- **Example**: `RERANKING_PROVIDER=HTTP`
+
+#### `RERANKING_MODEL`
+- **Default**: `Xenova/ms-marco-MiniLM-L-12-v2`
+- **Description**: Re-ranking model identifier
+- **Purpose**: Optimized for search result re-ranking
+- **Note**: For HTTP provider, set to the model name your endpoint expects (e.g., `jina-reranker-v2-base-multilingual`)
+- **Example**: `RERANKING_MODEL=Xenova/ms-marco-MiniLM-L-12-v2`
+
+#### `RERANKING_THREADS`
+- **Default**: `1`
+- **Values**: Positive integers
+- **Description**: Inference threading for the shared local ONNX reranking model
+- **Note**: Only used when `RERANKING_PROVIDER=FastEmbed`; does not affect HTTP rerankers
+- **Example**: `RERANKING_THREADS=4`
+
+#### `RERANKING_WORKERS`
+- **Default**: `1`
+- **Values**: Positive integers
+- **Description**: Maximum reranking jobs running concurrently on one local adapter
+- **Note**: Only used when `RERANKING_PROVIDER=FastEmbed`; does not limit HTTP requests
+- **Example**: `RERANKING_WORKERS=2`
+
+The defaults preserve serial, single-threaded local reranking. On a multi-core host, try
+`RERANKING_THREADS=4` and `RERANKING_WORKERS=2`, then measure with your actual search workload.
+More threads or workers can increase CPU contention rather than improve latency. Workers share
+one model; these settings are not a guarantee of a dedicated CPU allocation per request.
+Restart the service after changing them. Each server process has its own adapter and limits.
+
+The worker limit bounds active jobs, not the waiting queue. Cancelling a request cannot stop
+inference already running in a thread; that worker stays occupied until inference finishes.
+HTTP reranking already uses asynchronous requests. Its processing capacity and rate limits
+are controlled by the remote service, not these local settings.
+
+#### `RERANKING_ONNX_PROVIDERS`
+- **Default**: (empty string)
+- **Values**: Comma-separated ONNX Runtime execution provider names, in priority order
+- **Description**: Execution providers for the local FastEmbed reranking model
+- **Note**: Only used when `RERANKING_PROVIDER=FastEmbed`; does not affect HTTP rerankers. Empty keeps FastEmbed's default provider selection
+- **Example**: `RERANKING_ONNX_PROVIDERS=DmlExecutionProvider,CPUExecutionProvider`
+
+The list is passed to FastEmbed as is. Every provider in it must be available in the installed
+ONNX Runtime package: FastEmbed refuses to load the model when one is missing, even if
+`CPUExecutionProvider` comes after it in the list. Check what your environment offers with
+`python -c "import onnxruntime; print(onnxruntime.get_available_providers())"`.
+
+Forgetful does not install accelerated runtimes. Replace the default `onnxruntime` package in
+Forgetful's environment with the build that ships your provider, for example `onnxruntime-directml`
+for `DmlExecutionProvider` on Windows or `onnxruntime-gpu` for `CUDAExecutionProvider`. See the
+[ONNX Runtime install guide](https://onnxruntime.ai/docs/install/). If you run from a source checkout
+with `uv run`, uv re-syncs the environment to the lock file and puts the default `onnxruntime` back.
+
+DirectML allows only one inference call at a time per session, and local reranking workers share
+one model, so `DmlExecutionProvider` requires `RERANKING_WORKERS=1`. Forgetful refuses to start the
+local reranker otherwise. [DirectML is in sustained engineering](https://onnxruntime.ai/docs/execution-providers/DirectML-ExecutionProvider.html);
+it stays available here as an optional provider. Restart the service after changing providers.
+
+#### `RERANKING_URL`
+- **Default**: (empty string)
+- **Description**: HTTP endpoint URL for re-ranking requests
+- **Note**: Only used when `RERANKING_PROVIDER=HTTP`
+- **Examples**:
+  - Jina: `https://api.jina.ai/v1/rerank`
+  - Cohere: `https://api.cohere.com/v2/rerank`
+  - Local llama.cpp: `http://localhost:8012/v1/rerank`
+  - Local vLLM: `http://localhost:8000/v1/rerank`
+- **Example**: `RERANKING_URL=https://api.jina.ai/v1/rerank`
+
+#### `RERANKING_API_KEY`
+- **Default**: (empty string)
+- **Description**: API key for authenticated re-ranking endpoints
+- **Note**: Only used when `RERANKING_PROVIDER=HTTP`. Leave empty for local servers that don't require authentication
+- **Security**: **Keep this secret** - never commit to version control
+- **Example**: `RERANKING_API_KEY=your-api-key-here`
+
+### FastEmbed Cache Configuration
+
+#### `FASTEMBED_CACHE_DIR`
+- **Default**: Platform-specific user data directory (e.g., `~/.local/share/forgetful/models/fastembed`)
+- **Description**: Directory where FastEmbed models are cached
+- **Purpose**: Avoids re-downloading models on each startup
+- **Note**: Can be customized for offline deployments (see [Offline Setup Guide](OFFLINE_SETUP.md))
+- **Example**: `FASTEMBED_CACHE_DIR=/app/data/models/fastembed`
+
+#### `FASTEMBED_LOCAL_FILES_ONLY`
+
+- **Default**: `false`
+- **Description**: Restrict FastEmbed embedding and reranking models to files already present in `FASTEMBED_CACHE_DIR`
+- **Purpose**: Prevents HuggingFace/GCS download attempts in locked-down or offline environments
+- **Note**: When enabled, pre-populate the cache first or startup fails with a local-cache error
+- **Example**: `FASTEMBED_LOCAL_FILES_ONLY=true`
+
+---
+
+## Configuration Hierarchy
+
+Settings are resolved in this order (highest priority first):
+
+1. **Environment variables** (from `.env` file or system environment)
+2. **Defaults** (from `app/config/settings.py`)
+
+---
+
+## Common Configuration Scenarios
+
+### Local Development
+```bash
+# docker/.env
+SERVER_PORT=8020
+POSTGRES_HOST=127.0.0.1
+LOG_LEVEL=DEBUG
+LOG_FORMAT=console
+```
+
+### Docker Development
+```bash
+# docker/.env
+SERVER_PORT=8020
+POSTGRES_HOST=forgetful-db
+LOG_LEVEL=INFO
+LOG_FORMAT=console
+```
+
+### Production
+```bash
+# docker/.env
+SERVER_PORT=8020
+POSTGRES_HOST=forgetful-db
+POSTGRES_USER=secure_user
+POSTGRES_PASSWORD=<strong-password>
+LOG_LEVEL=WARNING
+LOG_FORMAT=json
+BIND_ADDRESS=127.0.0.1
+```
+
+### High-Volume / Large Context
+```bash
+# docker/.env
+MEMORY_TOKEN_BUDGET=16000
+MEMORY_MAX_MEMORIES=50
+DENSE_SEARCH_CANDIDATES=100
+```
+
+---
+
+## Security Best Practices
+
+1. **Always change database credentials in production**
+   ```bash
+   POSTGRES_USER=my_secure_user
+   POSTGRES_PASSWORD=<use-a-strong-password>
+   ```
+
+2. **Use localhost binding for security**
+   ```bash
+   BIND_ADDRESS=127.0.0.1
+   ```
+
+3. **Use structured logging in production**
+   ```bash
+   LOG_FORMAT=json
+   LOG_LEVEL=WARNING
+   ```
+
+4. **Keep `.env` out of version control**
+   - Already configured in `.gitignore`
+   - Use `.env.example` as template
+
+---
+
+## Troubleshooting
+
+### Database Connection Issues
+- Verify `POSTGRES_HOST` matches your deployment:
+  - `forgetful-db` for Docker
+  - `127.0.0.1` for local
+- Check port with: `docker compose ps` or `netstat -an | grep 5099`
+
+### Port Conflicts
+- Change `SERVER_PORT` and `PGPORT` if defaults conflict
+- Update Docker port mappings in `docker-compose.yml`
+- Update MCP client configuration
+
+### Search Performance
+- Increase `DENSE_SEARCH_CANDIDATES` for better results
+- Decrease for faster queries
+- Adjust `MEMORY_TOKEN_BUDGET` based on your LLM's context window
+
+### Debug Mode
+```bash
+LOG_LEVEL=DEBUG
+DB_LOGGING=true
+```
+� **Warning**: Very verbose output, use only for troubleshooting
+
+---
+
+## Additional Resources
+
+- [README.md](../README.md) - Getting started guide
+- [Connectivity Guide](connectivity_guide.md) - Connecting MCP clients
+- [Search Documentation](search.md) - Search architecture details
+- [Settings Source](../app/config/settings.py) - Default values and validation
+
+### Embedding request concurrency
+
+`EMBEDDING_MAX_CONCURRENCY` is a positive integer (default `1`). Restart the
+server or CLI process after changing it. The limit is shared by memory and skill
+operations using that process's embedding adapter. Each process has its own limit.
+
+FastEmbed inference and vector conversion run on a dedicated bounded worker pool.
+At `1`, inference remains serial while the event loop stays responsive. Higher
+values permit overlapping calls on one model and can increase CPU and memory use;
+measure throughput and resource use before increasing the value. This controls
+active requests, independently of ONNX inference threads and FastEmbed's batch
+`parallel` option. Waiting callers are not bounded by this setting. A cancelled
+waiter never starts inference; cancelling a running caller keeps its capacity
+occupied until inference actually finishes. Shutdown rejects waiting/new calls,
+drains running work and closes workers, including after runtime startup failures.
+
+`DmlExecutionProvider` requires `EMBEDDING_MAX_CONCURRENCY=1`, even when other
+providers also appear in `EMBEDDING_ONNX_PROVIDERS`. FastEmbed 0.8.0 defaults to
+CPU/CUDA, never DirectML, and rejects unavailable explicit providers, so this
+explicit-list check covers its effective DirectML selection. An empty adapter
+provider list is normalized to the FastEmbed default rather than ONNX Runtime
+selecting all available providers.
+
+For `EMBEDDING_PROVIDER=OpenAI`, one native async SDK client shares an HTTP connection
+pool. `EMBEDDING_MAX_CONCURRENCY` caps both its total connections and kept-alive connections.
+The default of `1` reduces concurrency compared with earlier versions, which used the
+shared thread pool without an adapter limit. Set a higher value for overlapping OpenAI
+or compatible-endpoint HTTP requests. SDK retry backoff releases connection capacity,
+so another request can proceed while an earlier operation waits to retry.
+
+For `EMBEDDING_PROVIDER=Azure`, the adapter uses the same model: one native async
+`AsyncAzureOpenAI` client with a shared HTTP connection pool capped by
+`EMBEDDING_MAX_CONCURRENCY`, with the same retry, cancellation, shutdown and
+startup-error behaviour. Earlier versions called the synchronous client inside the
+event loop, so each Azure request blocked other work in the process; at the default
+`1` requests still go one at a time but the event loop stays responsive.
+`AZURE_TIMEOUT_SECONDS` (default `120`) has the same phase semantics as
+`OPENAI_TIMEOUT_SECONDS`.
+
+This does not bound logical SDK operations, waiting callers, or requests per minute.
+Cancelling a request releases its local connection, but the remote provider may still
+finish that work. Shutdown closes the SDK client without waiting for in-flight OpenAI
+or Azure operations to finish; those operations can fail as the client closes. The client is also
+closed after startup errors and on CLI exit. Changing the limit requires a process restart.
+
+`OPENAI_TIMEOUT_SECONDS` (default `120`) applies separately to read inactivity, write inactivity
+and time spent waiting for a pooled connection. Connection establishment retains a separate
+5-second timeout. These phase limits are not a deadline for one attempt; read and write limits
+restart as data moves. The SDK also retries timeouts twice by default, so there is no fixed overall
+operation deadline. Increase the setting for a slower compatible endpoint. A timed-out attempt
+releases its HTTP connection capacity while it waits to retry. Queued requests can time out when
+all configured connections remain occupied. Changing the timeout requires a process restart.
+
+The setting applies to FastEmbed, OpenAI and Azure, not Google or Ollama.
+It does not parallelize bulk
+re-embedding, limit requests per minute or tokens, bound waiters, or change
+reranking workers.
+
+
+## Plan Plugin
+
+The optional Plan Plugin follows the Memory Plugin's trusted-administrator pattern,
+with a separate registration and settings. It covers plan `create`, `update` and
+`delete`, including parent completion triggered by task transition or deletion.
+It does not install Task Plugin hooks, add a workflow engine, or replace core rules.
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `PLAN_WRITE_PLUGIN` | empty | Importable `module:object` containing a `PlanPlugin` |
+| `PLAN_WRITE_PLUGIN_MODE` | `enforce` | `enforce` or `warn`, for before handlers only |
+| `PLAN_WRITE_PLUGIN_TIMEOUT_SECONDS` | `5.0` | Positive finite cooperative deadline per handler |
+
+Install the trusted administrator module in the deployment's Python environment,
+then set, for example, `PLAN_WRITE_PLUGIN=my_plugins.plan_policy:plugin`.
+The [example registration](../examples/plan_policy.py) can be copied into that
+administrator-owned package. Registration is loaded and validated once during
+startup, before provider/model initialization, even when `PLANNING_ENABLED=false`.
+Disabled planning dispatches nothing. This is executable trusted Python, not a
+sandbox or a user-upload mechanism. The loader validates copied, frozen mappings
+from explicit operation names to async functions accepting one context argument.
+Only operations registered in the relevant phase dispatch a handler.
+
+Before contexts provide `operation`, `user_id`, detached `submitted`, `previous`
+and `proposed` snapshots, and `automatic`. Create has no previous plan; update
+preserves the submitted PATCH fields separately from the effective proposed plan.
+Delete submits the plan ID, supplies the previous plan and has no proposed saved
+object. Plugins receive no repository, database or transport capability. Mutating
+any snapshot cannot rewrite persisted input. `automatic` is true only for the
+internal task-triggered plan update; it is not a REST/MCP/CLI parameter.
+
+Before handlers return the existing `WriteDecision` (`allow`, `warn`, or `reject`).
+In enforce mode, rejection prevents the mutation and unavailable, malformed or
+timed-out decisions fail closed. In warn mode those outcomes become advisory
+warnings and the mutation proceeds. Existing ownership, feature flags, status
+transitions, external-reference uniqueness and provenance remain core checks.
+A registered create operation prechecks project ownership; the repository checks
+again when saving. A before callback can therefore run before a later uniqueness
+failure, but no after callback follows failed persistence.
+
+After contexts contain the confirmed saved plan and previous snapshot, or, for
+delete, `deleted_plan_id` and the previous snapshot. They return `PluginWarning`
+or `None`. After failures, malformed results, timeouts and cancelled child awaits
+produce sanitized warnings without undoing the mutation. Genuine request
+cancellation propagates, including after persistence; delivery is not guaranteed.
+There is no durable queue, retry or rollback guarantee.
+
+No-op updates and missing updates/deletes dispatch nothing. A before-await update
+rereads the current plan, validates its status again and applies only submitted
+fields. Without a plan version/CAS predicate this is not atomic: concurrent final
+tasks can both dispatch a before callback, and callbacks can repeat across
+concurrent mutations. One successful serial mutation invokes each registered
+phase once. Do not use callbacks as an exactly-once transactional delivery system.
+
+Task transitions and task deletion commit before optional parent completion.
+If plan policy rejects that secondary update, the task still succeeds and returns
+`plan_auto_completion_rejected`. Policy unavailability or an incompatible state
+change detected after a handler await returns `plan_auto_completion_unavailable`.
+The parent remains uncompleted by that attempt. Warn mode permits completion and
+propagates the warning. Other failures retain existing propagation after the task
+has committed; request cancellation also propagates. Check persisted state before
+retrying, rather than assuming a failed response means no task mutation occurred.
+
+Direct Plan writes retain flat successful payloads. `plugin_warnings` is present
+only when nonempty; reads/lists and stored Plan/Task/event models have no transient
+warning field. REST rejection is 400, unavailability 503 and an incompatible
+post-handler-await state change 409. MCP errors use `PLAN_PLUGIN_REJECTED`,
+`PLAN_PLUGIN_UNAVAILABLE` and `PLAN_PLUGIN_STATE_CHANGED`; both CLI modes expose
+the same policy result. Existing validation, missing, conflict and transition
+statuses are retained. Deleting plans/tasks remains REST-only.
+
+Deleting a plan cascades its tasks, criteria and dependency edges in the database,
+without per-task callbacks. Project/user deletion can cascade plans without Plan
+callbacks. Those indirect removals do not invoke an administrator's delete policy;
+use existing core authorization rather than treating hooks as cascade protection.

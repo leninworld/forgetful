@@ -1,0 +1,25 @@
+name: Validate Plan Plugin merge repair
+on:
+  push:
+    branches: [validate-plan188-repair-20261103]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Anchor first workload clock
+        run: echo "VALIDATION_JOB_STARTED_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: packet
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: ScottRBK/forgetful
+          ref: e35034247ca9341a0abe6fd75f9eee751ad2da7a
+          path: source
+          persist-credentials: false
+      - name: Complete integrated hosted Docker attempt
+        run: python3 packet/host.py
