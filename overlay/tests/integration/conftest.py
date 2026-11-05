@@ -1,0 +1,2485 @@
+"""Integration test fixtures with in-memory stubs (no real database required)
+"""
+
+import hashlib
+import random
+from datetime import UTC, datetime, timedelta
+from uuid import UUID, uuid4
+
+import pytest
+
+from app.events import EventBus
+from app.exceptions import ConflictError, NotFoundError
+from app.models.activity_models import ActivityEvent
+from app.models.code_artifact_models import (
+    CodeArtifact,
+    CodeArtifactCreate,
+    CodeArtifactSummary,
+    CodeArtifactUpdate,
+)
+from app.models.document_models import (
+    Document,
+    DocumentCreate,
+    DocumentSummary,
+    DocumentUpdate,
+)
+from app.models.entity_models import (
+    Entity,
+    EntityCreate,
+    EntityRelationship,
+    EntityRelationshipCreate,
+    EntityRelationshipUpdate,
+    EntitySummary,
+    EntityType,
+    EntityUpdate,
+)
+from app.models.file_models import (
+    File,
+    FileCreate,
+    FileSummary,
+    FileUpdate,
+)
+from app.models.memory_models import Memory, MemoryCreate, MemoryUpdate
+from app.models.plan_models import (
+    Criterion,
+    CriterionCreate,
+    CriterionUpdate,
+    Plan,
+    PlanCreate,
+    PlanStatus,
+    PlanSummary,
+    PlanUpdate,
+    Task,
+    TaskCreate,
+    TaskDependency,
+    TaskPriority,
+    TaskState,
+    TaskSummary,
+    TaskUpdate,
+)
+from app.models.project_models import (
+    Project,
+    ProjectCreate,
+    ProjectStatus,
+    ProjectSummary,
+    ProjectUpdate,
+)
+from app.models.skill_models import (
+    Skill,
+    SkillCreate,
+    SkillLinks,
+    SkillSummary,
+    SkillUpdate,
+)
+from app.models.user_models import User, UserCreate, UserUpdate
+from app.protocols.code_artifact_protocol import CodeArtifactRepository
+from app.protocols.document_protocol import DocumentRepository
+from app.protocols.entity_protocol import EntityRepository
+from app.protocols.file_protocol import FileRepository
+from app.protocols.memory_protocol import MemoryRepository
+from app.protocols.plan_protocol import PlanRepository
+from app.protocols.project_protocol import ProjectRepository
+from app.protocols.skill_protocol import SkillRepository
+from app.protocols.task_protocol import TaskRepository
+from app.protocols.user_protocol import UserRepository
+from app.services.code_artifact_service import CodeArtifactService
+from app.services.document_service import DocumentService
+from app.services.entity_service import EntityService
+from app.services.file_service import FileService
+from app.services.memory_service import MemoryService
+from app.services.plan_service import PlanService
+from app.services.project_service import ProjectService
+from app.services.skill_service import SkillService
+from app.services.task_service import TaskService
+from app.services.user_service import UserService
+
+
+class InMemoryUserRepository(UserRepository):
+    """In-memory implementation of UserRepository for testing"""
+
+    def __init__(self):
+        self._users: dict[UUID, User] = {}
+        self._external_id_index: dict[str, UUID] = {}
+
+    async def get_user_by_id(self, user_id: UUID) -> User | None:
+        return self._users.get(user_id)
+
+    async def get_user_by_external_id(self, external_id: str) -> User | None:
+        user_id = self._external_id_index.get(external_id)
+        if user_id:
+            return self._users.get(user_id)
+        return None
+
+    async def create_user(self, user: UserCreate) -> User:
+        user_id = uuid4()
+        now = datetime.now(UTC)
+
+        new_user = User(
+            id=user_id,
+            external_id=user.external_id,
+            name=user.name,
+            email=user.email,
+            notes=user.notes,
+            idp_metadata=user.idp_metadata,
+            created_at=now,
+            updated_at=now,
+        )
+
+        self._users[user_id] = new_user
+        self._external_id_index[user.external_id] = user_id
+        return new_user
+
+    async def update_user(self, user_id: UUID, updated_user: UserUpdate) -> User | None:
+        user = self._users.get(user_id)
+        if not user:
+            return None
+
+        # Update fields
+        update_data = updated_user.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            if field != "external_id":  # Don't update external_id
+                setattr(user, field, value)
+
+        user.updated_at = datetime.now(UTC)
+        return user
+
+
+@pytest.fixture
+def clean_test_data():
+    """Fixture that provides a clean slate for each test"""
+    # Setup: nothing needed
+    return
+    # Teardown: nothing needed (new instance per test)
+
+
+@pytest.fixture
+def mock_user_repository():
+    """Provides an in-memory user repository"""
+    return InMemoryUserRepository()
+
+
+@pytest.fixture
+def test_user_service(mock_user_repository):
+    """Provides a UserService with in-memory repository"""
+    return UserService(mock_user_repository)
+
+
+# ============ Memory Testing Fixtures ============
+
+
+class MockEmbeddingsAdapter:
+    """Mock embeddings adapter that returns deterministic 384-dim vectors"""
+
+    def __init__(self, dimensions: int = 384):
+        self.dimensions = dimensions
+
+    async def embed_text(self, text: str) -> list[float]:
+        """Generate deterministic embeddings from text using hash-based seeding"""
+        # Use MD5 hash for reproducibility (same text -> same embedding)
+        hash_value = hashlib.md5(text.encode()).hexdigest()
+        seed = int(hash_value[:8], 16)
+        random.seed(seed)
+
+        # Generate normalized vector
+        vector = [random.random() for _ in range(self.dimensions)]
+
+        # Normalize to unit length (typical for embeddings)
+        magnitude = sum(x**2 for x in vector) ** 0.5
+        normalized = [x / magnitude for x in vector]
+
+        return normalized
+
+
+class InMemoryMemoryRepository(MemoryRepository):
+    """In-memory implementation of MemoryRepository for testing"""
+
+    def __init__(self):
+        self._memories: dict[
+            UUID, dict[int, Memory],
+        ] = {}  # user_id -> {memory_id -> Memory}
+        self._links: dict[int, set[int]] = {}  # memory_id -> set of linked memory_ids
+        self._next_id = 1
+
+    async def create_memory(self, user_id: UUID, memory: MemoryCreate) -> Memory:
+        """Create a new memory"""
+        memory_id = self._next_id
+        self._next_id += 1
+
+        now = datetime.now(UTC) + timedelta(microseconds=memory_id)
+
+        new_memory = Memory(
+            id=memory_id,
+            title=memory.title,
+            content=memory.content,
+            context=memory.context,
+            keywords=memory.keywords,
+            tags=memory.tags,
+            importance=memory.importance,
+            project_ids=memory.project_ids or [],
+            code_artifact_ids=memory.code_artifact_ids or [],
+            document_ids=memory.document_ids or [],
+            linked_memory_ids=[],
+            # Provenance tracking fields
+            source_repo=memory.source_repo,
+            source_files=memory.source_files,
+            source_url=memory.source_url,
+            confidence=memory.confidence,
+            encoding_agent=memory.encoding_agent,
+            encoding_version=memory.encoding_version,
+            agent_id=memory.agent_id,
+            agent_version=memory.agent_version,
+            agent_model=memory.agent_model,
+            created_at=now,
+            updated_at=now,
+        )
+
+        if user_id not in self._memories:
+            self._memories[user_id] = {}
+
+        self._memories[user_id][memory_id] = new_memory
+        self._links[memory_id] = set()
+
+        return new_memory
+
+    async def get_memory_by_id(self, user_id: UUID, memory_id: int) -> Memory | None:
+        """Retrieve memory by ID"""
+        user_memories = self._memories.get(user_id, {})
+        return user_memories.get(memory_id)
+
+    async def search(
+        self,
+        user_id: UUID,
+        query: str,
+        query_context: str,
+        k: int,
+        importance_threshold: int | None,
+        project_ids: list[int] | None,
+        exclude_ids: list[int] | None = None,
+    ) -> list[Memory]:
+        """Mock semantic search - returns memories sorted by importance"""
+        user_memories = self._memories.get(user_id, {})
+
+        memories = list(user_memories.values())
+
+        # Filter out obsolete memories (soft delete)
+        memories = [m for m in memories if not m.is_obsolete]
+
+        # Apply filters
+        if importance_threshold:
+            memories = [m for m in memories if m.importance >= importance_threshold]
+
+        if project_ids:
+            memories = [
+                m for m in memories if any(pid in m.project_ids for pid in project_ids)
+            ]
+
+        if exclude_ids:
+            memories = [m for m in memories if m.id not in exclude_ids]
+
+        # Sort by importance (higher first) then by created_at (newer first)
+        memories.sort(key=lambda m: (m.importance, m.created_at), reverse=True)
+
+        return memories[:k]
+
+    async def search_scored(
+        self,
+        user_id: UUID,
+        query: str,
+        query_context: str,
+        k: int,
+        importance_threshold: int | None,
+        project_ids: list[int] | None,
+        exclude_ids: list[int] | None = None,
+    ):
+        from app.models.memory_models import MemoryScore
+
+        result = await self.search(
+            user_id=user_id,
+            query=query,
+            query_context=query_context,
+            k=k,
+            importance_threshold=importance_threshold,
+            project_ids=project_ids,
+            exclude_ids=exclude_ids,
+        )
+        return [
+            (m, MemoryScore(memory_id=m.id, similarity=1.0 - 0.01 * i))
+            for i, m in enumerate(result)
+        ]
+
+    async def find_similar_memories(
+        self, user_id: UUID, memory_id: int, max_links: int,
+    ) -> list[Memory]:
+        """Find similar memories - uses keyword overlap as proxy for similarity"""
+        user_memories = self._memories.get(user_id, {})
+
+        source = user_memories.get(memory_id)
+        if not source:
+            return []
+
+        # Get all memories except the source memory, filtering out obsolete memories
+        candidates = [
+            m for m in user_memories.values() if m.id != memory_id and not m.is_obsolete
+        ]
+
+        # Calculate similarity based on keyword overlap
+        similar = []
+        for candidate in candidates:
+            # Count overlapping keywords
+            overlap = len(set(source.keywords) & set(candidate.keywords))
+            # Only consider similar if there's at least 1 overlapping keyword
+            if overlap > 0:
+                similar.append(candidate)
+
+        # Sort by importance
+        similar.sort(key=lambda m: m.importance, reverse=True)
+
+        return similar[:max_links]
+
+    async def find_similar_memories_scored(
+        self,
+        user_id: UUID,
+        memory_id: int,
+        max_links: int,
+    ):
+        from app.config.settings import settings
+
+        user_memories = self._memories.get(user_id, {})
+
+        source = user_memories.get(memory_id)
+        if not source:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Memory {memory_id} not found")
+
+        candidates = [
+            m for m in user_memories.values() if m.id != memory_id and not m.is_obsolete
+        ]
+
+        ranked: list[tuple[Memory, float]] = []
+        for candidate in candidates:
+            overlap = len(set(source.keywords) & set(candidate.keywords))
+            if overlap > 0:
+                distance = max(0.02, 0.15 / overlap)
+                ranked.append((candidate, 1.0 - distance))
+
+        ranked.sort(key=lambda item: -item[1])
+
+        max_distance = 1 - settings.MEMORY_SIMILARITY_THRESHOLD
+
+        kept: list[tuple[Memory, float]] = []
+        for candidate, similarity in ranked:
+            if (1.0 - similarity) <= max_distance:
+                kept.append((candidate, similarity))
+            if len(kept) >= max_links:
+                break
+
+        return kept
+
+    async def find_obsolete_matches(
+        self,
+        user_id: UUID,
+        memory_id: int,
+        limit: int,
+        min_similarity: float,
+    ):
+        user_memories = self._memories.get(user_id, {})
+        source = user_memories.get(memory_id)
+        if not source:
+            return []
+
+        candidates = [
+            m for m in user_memories.values() if m.id != memory_id and m.is_obsolete
+        ]
+
+        ranked: list[tuple[Memory, float]] = []
+        for candidate in candidates:
+            overlap = len(set(source.keywords) & set(candidate.keywords))
+            distance = 0.05 if overlap > 0 else 0.5
+            similarity = 1.0 - distance
+            if similarity >= min_similarity:
+                ranked.append((candidate, similarity))
+
+        ranked.sort(key=lambda item: -item[1])
+        return ranked[:limit]
+
+    async def create_links_batch(
+        self, user_id: UUID, source_id: int, target_ids: list[int],
+    ) -> list[int]:
+        """Create bidirectional links between memories"""
+        if not target_ids:
+            return []
+
+        # Verify source exists
+        source = await self.get_memory_by_id(user_id, source_id)
+        if not source:
+            return []
+
+        created_links = []
+
+        for target_id in target_ids:
+            # Skip self-links
+            if target_id == source_id:
+                continue
+
+            # Verify target exists
+            target = await self.get_memory_by_id(user_id, target_id)
+            if not target:
+                continue
+
+            # Ensure both source and target have link sets
+            if source_id not in self._links:
+                self._links[source_id] = set()
+            if target_id not in self._links:
+                self._links[target_id] = set()
+
+            # Create bidirectional links
+            if target_id not in self._links[source_id]:
+                self._links[source_id].add(target_id)
+                self._links[target_id].add(source_id)
+
+                # Update linked_memory_ids in both memories
+                source.linked_memory_ids.append(target_id)
+                target.linked_memory_ids.append(source_id)
+
+                created_links.append(target_id)
+
+        return created_links
+
+    async def get_linked_memories(
+        self,
+        user_id: UUID,
+        memory_id: int,
+        project_ids: list[int] | None,
+        max_links: int = 5,
+    ) -> list[Memory]:
+        """Get linked memories (1-hop neighbors)"""
+        linked_ids = self._links.get(memory_id, set())
+
+        memories = []
+        for linked_id in linked_ids:
+            memory = await self.get_memory_by_id(user_id, linked_id)
+            if memory:
+                # Filter out obsolete memories (soft delete)
+                if memory.is_obsolete:
+                    continue
+
+                # Apply project filter if specified
+                if project_ids:
+                    if any(pid in memory.project_ids for pid in project_ids):
+                        memories.append(memory)
+                else:
+                    memories.append(memory)
+
+            if len(memories) >= max_links:
+                break
+
+        return memories
+
+    async def update_memory(
+        self,
+        user_id: UUID,
+        memory_id: int,
+        updated_memory: MemoryUpdate,
+        existing_memory: Memory,
+        search_fields_changed: bool,
+    ) -> Memory | None:
+        """Update an existing memory"""
+        memory = await self.get_memory_by_id(user_id, memory_id)
+        if not memory:
+            return None
+
+        # Update fields
+        update_data = updated_memory.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(memory, field, value)
+
+        memory.updated_at = datetime.now(UTC)
+        return memory
+
+    async def mark_obsolete(
+        self,
+        user_id: UUID,
+        memory_id: int,
+        reason: str,
+        superseded_by: int | None = None,
+    ) -> bool:
+        """Mark memory as obsolete (soft delete)"""
+        memory = await self.get_memory_by_id(user_id, memory_id)
+        if not memory:
+            return False
+
+        # Mark as obsolete but keep in storage for audit trail
+        from datetime import datetime
+
+        memory.is_obsolete = True
+        memory.obsolete_reason = reason
+        memory.superseded_by = superseded_by
+        memory.obsoleted_at = datetime.now(UTC)
+
+        return True
+
+    async def restore_obsolete(self, user_id: UUID, memory_id: int) -> bool:
+        memory = await self.get_memory_by_id(user_id, memory_id)
+        if not memory or not memory.is_obsolete:
+            return False
+        memory.is_obsolete = False
+        memory.obsolete_reason = None
+        memory.superseded_by = None
+        memory.obsoleted_at = None
+        return True
+
+    async def list_memories(
+        self,
+        user_id: UUID,
+        limit: int,
+        offset: int = 0,
+        project_ids: list[int] | None = None,
+        include_obsolete: bool = False,
+        sort_by: str = "created_at",
+        sort_order: str = "desc",
+        tags: list[str] | None = None,
+        importance_min: int | None = None,
+        created_since: datetime | None = None,
+    ) -> tuple[list[Memory], int]:
+        """Get memories with pagination, sorting, and filtering"""
+        user_memories = self._memories.get(user_id, {})
+        memories = list(user_memories.values())
+
+        # Filter obsolete memories unless include_obsolete is True
+        if not include_obsolete:
+            memories = [m for m in memories if not m.is_obsolete]
+
+        # Apply project filter if provided
+        if project_ids:
+            memories = [
+                m for m in memories if any(pid in m.project_ids for pid in project_ids)
+            ]
+
+        # Apply tag filter (OR logic)
+        if tags:
+            tag_set = set(tags)
+            memories = [m for m in memories if m.tags and tag_set.intersection(m.tags)]
+
+        if importance_min is not None:
+            memories = [m for m in memories if m.importance >= importance_min]
+
+        if created_since is not None:
+            memories = [m for m in memories if m.created_at >= created_since]
+
+        # Dynamic sorting
+        sort_key_map = {
+            "created_at": lambda m: m.created_at,
+            "updated_at": lambda m: m.updated_at,
+            "importance": lambda m: m.importance,
+        }
+        if sort_by == "importance":
+            memories.sort(key=lambda m: (m.created_at, m.id), reverse=True)
+            memories.sort(key=lambda m: m.importance, reverse=sort_order == "desc")
+        else:
+            sort_key = sort_key_map.get(sort_by, sort_key_map["created_at"])
+            memories.sort(key=sort_key, reverse=sort_order == "desc")
+
+        # Get total count before pagination
+        total = len(memories)
+
+        # Apply pagination
+        paginated = memories[offset : offset + limit]
+
+        return paginated, total
+
+    async def unlink_memories(
+        self,
+        user_id: UUID,
+        source_id: int,
+        target_id: int,
+    ) -> bool:
+        """Remove bidirectional link between two memories"""
+        # Check if link exists
+        if source_id not in self._links or target_id not in self._links[source_id]:
+            return False
+
+        # Remove from link tracking
+        self._links[source_id].discard(target_id)
+        self._links[target_id].discard(source_id)
+
+        # Update linked_memory_ids in both memories
+        source = await self.get_memory_by_id(user_id, source_id)
+        target = await self.get_memory_by_id(user_id, target_id)
+
+        if source and target_id in source.linked_memory_ids:
+            source.linked_memory_ids.remove(target_id)
+        if target and source_id in target.linked_memory_ids:
+            target.linked_memory_ids.remove(source_id)
+
+        return True
+
+    # Re-embedding support stubs
+
+    async def count_all_memories(self) -> int:
+        return sum(len(user_mems) for user_mems in self._memories.values())
+
+    async def get_memories_for_reembedding(self, limit: int, offset: int) -> list[Memory]:
+        all_memories = [
+            m for user_mems in self._memories.values()
+            for m in user_mems.values()
+        ]
+        all_memories.sort(key=lambda m: m.id)
+        return all_memories[offset:offset + limit]
+
+    async def reset_embedding_storage(self) -> None:
+        pass  # no-op for in-memory
+
+    async def bulk_update_embeddings(self, updates) -> None:
+        pass  # no-op for in-memory
+
+    async def validate_embedding_count(self) -> bool:
+        return True
+
+    async def validate_embedding_dimensions(self) -> bool:
+        return True
+
+    async def validate_search_works(self) -> bool:
+        return True
+
+    # ------------------------------------------------------------------
+    # Usage tracking (forgetful-hulkito fork)
+    # ------------------------------------------------------------------
+
+    async def record_memory_access(
+        self,
+        user_id: UUID,
+        memory_ids: list[int],
+        accessed_at: datetime | None = None,
+    ) -> int:
+        """In-memory access tracking. Does NOT mutate `updated_at`."""
+        if not memory_ids:
+            return 0
+        ts = accessed_at or datetime.now(UTC)
+        user_memories = self._memories.get(user_id, {})
+        updated = 0
+        for mid in memory_ids:
+            mem = user_memories.get(mid)
+            if mem is None or mem.is_obsolete:
+                continue
+            mem.access_count = (mem.access_count or 0) + 1
+            mem.last_accessed_at = ts
+            updated += 1
+        return updated
+
+
+@pytest.fixture
+def mock_embeddings_adapter():
+    """Provides a mock embeddings adapter"""
+    return MockEmbeddingsAdapter(dimensions=384)
+
+
+@pytest.fixture
+def mock_memory_repository():
+    """Provides an in-memory memory repository"""
+    return InMemoryMemoryRepository()
+
+
+@pytest.fixture
+def test_memory_service(mock_memory_repository):
+    """Provides a MemoryService with in-memory repository"""
+    return MemoryService(mock_memory_repository)
+
+
+class CollectingEventBus(EventBus):
+    """EventBus that collects emitted events for testing."""
+
+    def __init__(self):
+        super().__init__()
+        self.collected_events: list[ActivityEvent] = []
+
+    async def emit(self, event: ActivityEvent) -> None:
+        self.collected_events.append(event)
+        await super().emit(event)
+
+
+@pytest.fixture
+def test_memory_service_with_event_bus(mock_memory_repository):
+    """Provides a MemoryService with event bus for testing event emission."""
+    event_bus = CollectingEventBus()
+    service = MemoryService(mock_memory_repository, event_bus=event_bus)
+    return service, event_bus
+
+
+@pytest.fixture
+def test_memory_service_with_access_tracking(mock_memory_repository):
+    """MemoryService + EventBus with access-tracking handler subscribed."""
+    event_bus = CollectingEventBus()
+    service = MemoryService(mock_memory_repository, event_bus=event_bus)
+    service.register_access_tracking_handlers(event_bus)
+    return service, event_bus
+
+
+# ============ Project Testing Fixtures ============
+
+
+class InMemoryProjectRepository(ProjectRepository):
+    """In-memory implementation of ProjectRepository for testing"""
+
+    def __init__(self):
+        self._projects: dict[
+            UUID, dict[int, Project],
+        ] = {}  # user_id -> {project_id -> Project}
+        self._next_id = 1
+        # Track memories per project for memory_count calculation
+        self._project_memories: dict[
+            int, set[int],
+        ] = {}  # project_id -> set of memory_ids
+
+    async def list_projects(
+        self,
+        user_id: UUID,
+        status: ProjectStatus | None = None,
+        repo_name: str | None = None,
+        name: str | None = None,
+    ) -> list[ProjectSummary]:
+        """List projects with optional filtering"""
+        user_projects = self._projects.get(user_id, {})
+
+        projects = list(user_projects.values())
+
+        # Apply filters
+        if status:
+            projects = [p for p in projects if p.status == status]
+
+        if repo_name:
+            projects = [p for p in projects if p.repo_name == repo_name]
+
+        if name:
+            # Case-insensitive partial match
+            name_lower = name.lower()
+            projects = [p for p in projects if name_lower in p.name.lower()]
+
+        # Sort by creation date (newest first)
+        projects.sort(key=lambda p: (p.created_at, p.id), reverse=True)
+
+        # Convert to ProjectSummary
+        summaries = [
+            ProjectSummary(
+                id=p.id,
+                name=p.name,
+                project_type=p.project_type,
+                status=p.status,
+                repo_name=p.repo_name,
+                last_encoding_point=p.last_encoding_point,
+                memory_count=p.memory_count,
+                created_at=p.created_at,
+                updated_at=p.updated_at,
+            )
+            for p in projects
+        ]
+
+        return summaries
+
+    async def get_project_by_id(self, user_id: UUID, project_id: int) -> Project | None:
+        """Get single project by ID"""
+        user_projects = self._projects.get(user_id, {})
+        return user_projects.get(project_id)
+
+    async def create_project(
+        self, user_id: UUID, project_data: ProjectCreate,
+    ) -> Project:
+        """Create new project"""
+        project_id = self._next_id
+        self._next_id += 1
+
+        now = datetime.now(UTC) + timedelta(microseconds=project_id)
+
+        new_project = Project(
+            id=project_id,
+            name=project_data.name,
+            description=project_data.description,
+            project_type=project_data.project_type,
+            status=project_data.status,
+            repo_name=project_data.repo_name,
+            last_encoding_point=project_data.last_encoding_point,
+            notes=project_data.notes,
+            source_repo=project_data.source_repo,
+            source_files=project_data.source_files,
+            source_url=project_data.source_url,
+            confidence=project_data.confidence,
+            encoding_agent=project_data.encoding_agent,
+            encoding_version=project_data.encoding_version,
+            agent_id=project_data.agent_id,
+            agent_version=project_data.agent_version,
+            agent_model=project_data.agent_model,
+            memory_count=0,
+            created_at=now,
+            updated_at=now,
+        )
+
+        if user_id not in self._projects:
+            self._projects[user_id] = {}
+
+        self._projects[user_id][project_id] = new_project
+        self._project_memories[project_id] = set()
+
+        return new_project
+
+    async def update_project(
+        self, user_id: UUID, project_id: int, project_data: ProjectUpdate,
+    ) -> Project:
+        """Update existing project"""
+        project = await self.get_project_by_id(user_id, project_id)
+        if not project:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Project with id {project_id} not found")
+
+        # Update fields using PATCH semantics
+        update_data = project_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(project, field, value)
+
+        project.updated_at = datetime.now(UTC)
+        return project
+
+    async def delete_project(self, user_id: UUID, project_id: int) -> bool:
+        """Delete project"""
+        user_projects = self._projects.get(user_id, {})
+        if project_id in user_projects:
+            del user_projects[project_id]
+            # Clean up memory tracking
+            if project_id in self._project_memories:
+                del self._project_memories[project_id]
+            return True
+        return False
+
+
+@pytest.fixture
+def mock_project_repository():
+    """Provides an in-memory project repository"""
+    return InMemoryProjectRepository()
+
+
+@pytest.fixture
+def test_project_service(mock_project_repository):
+    """Provides a ProjectService with in-memory repository"""
+    return ProjectService(mock_project_repository)
+
+
+@pytest.fixture
+def test_project_service_with_event_bus(mock_project_repository):
+    """Provides a ProjectService with event bus for testing event emission."""
+    event_bus = CollectingEventBus()
+    service = ProjectService(mock_project_repository, event_bus=event_bus)
+    return service, event_bus
+
+
+# ============ Code Artifact Testing Fixtures ============
+
+
+class InMemoryCodeArtifactRepository(CodeArtifactRepository):
+    """In-memory implementation of CodeArtifactRepository for testing"""
+
+    def __init__(self):
+        self._artifacts: dict[UUID, dict[int, CodeArtifact]] = {}
+        self._next_id = 1
+
+    async def create_code_artifact(
+        self, user_id: UUID, artifact_data: CodeArtifactCreate,
+    ) -> CodeArtifact:
+        artifact_id = self._next_id
+        self._next_id += 1
+        now = datetime.now(UTC)
+
+        new_artifact = CodeArtifact(
+            id=artifact_id,
+            title=artifact_data.title,
+            description=artifact_data.description,
+            code=artifact_data.code,
+            language=artifact_data.language.lower(),
+            tags=artifact_data.tags,
+            project_id=None,
+            created_at=now,
+            updated_at=now,
+            source_repo=artifact_data.source_repo,
+            source_files=artifact_data.source_files,
+            source_url=artifact_data.source_url,
+            confidence=artifact_data.confidence,
+            encoding_agent=artifact_data.encoding_agent,
+            encoding_version=artifact_data.encoding_version,
+            agent_id=artifact_data.agent_id,
+            agent_version=artifact_data.agent_version,
+            agent_model=artifact_data.agent_model,
+        )
+
+        if user_id not in self._artifacts:
+            self._artifacts[user_id] = {}
+        self._artifacts[user_id][artifact_id] = new_artifact
+        return new_artifact
+
+    async def get_code_artifact_by_id(
+        self, user_id: UUID, artifact_id: int,
+    ) -> CodeArtifact | None:
+        user_artifacts = self._artifacts.get(user_id, {})
+        return user_artifacts.get(artifact_id)
+
+    async def list_code_artifacts(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        language: str | None = None,
+        tags: list[str] | None = None,
+    ) -> list[CodeArtifactSummary]:
+        user_artifacts = self._artifacts.get(user_id, {})
+        artifacts = list(user_artifacts.values())
+
+        if project_id is not None:
+            artifacts = [a for a in artifacts if a.project_id == project_id]
+        if language:
+            artifacts = [a for a in artifacts if a.language == language.lower()]
+        if tags:
+            artifacts = [a for a in artifacts if any(t in a.tags for t in tags)]
+
+        artifacts.sort(key=lambda a: a.created_at, reverse=True)
+        return [CodeArtifactSummary.model_validate(a) for a in artifacts]
+
+    async def update_code_artifact(
+        self, user_id: UUID, artifact_id: int, artifact_data: CodeArtifactUpdate,
+    ) -> CodeArtifact:
+        artifact = await self.get_code_artifact_by_id(user_id, artifact_id)
+        if not artifact:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Code artifact {artifact_id} not found")
+
+        update_data = artifact_data.model_dump(exclude_unset=True)
+        if update_data.get("language"):
+            update_data["language"] = update_data["language"].lower()
+
+        for field, value in update_data.items():
+            setattr(artifact, field, value)
+        artifact.updated_at = datetime.now(UTC)
+        return artifact
+
+    async def delete_code_artifact(self, user_id: UUID, artifact_id: int) -> bool:
+        user_artifacts = self._artifacts.get(user_id, {})
+        if artifact_id in user_artifacts:
+            del user_artifacts[artifact_id]
+            return True
+        return False
+
+
+@pytest.fixture
+def mock_code_artifact_repository():
+    return InMemoryCodeArtifactRepository()
+
+
+@pytest.fixture
+def test_code_artifact_service(mock_code_artifact_repository):
+    return CodeArtifactService(mock_code_artifact_repository)
+
+
+@pytest.fixture
+def test_code_artifact_service_with_event_bus(mock_code_artifact_repository):
+    """Provides a CodeArtifactService with event bus for testing event emission."""
+    event_bus = CollectingEventBus()
+    service = CodeArtifactService(mock_code_artifact_repository, event_bus=event_bus)
+    return service, event_bus
+
+
+# ============ Document Testing Fixtures ============
+
+
+class InMemoryDocumentRepository(DocumentRepository):
+    """In-memory implementation of DocumentRepository for testing"""
+
+    def __init__(self):
+        self._documents: dict[UUID, dict[int, Document]] = {}
+        self._next_id = 1
+
+    async def create_document(
+        self, user_id: UUID, document_data: DocumentCreate,
+    ) -> Document:
+        document_id = self._next_id
+        self._next_id += 1
+        now = datetime.now(UTC)
+
+        size_bytes = document_data.size_bytes or len(
+            document_data.content.encode("utf-8"),
+        )
+
+        new_document = Document(
+            id=document_id,
+            title=document_data.title,
+            description=document_data.description,
+            content=document_data.content,
+            document_type=document_data.document_type,
+            filename=document_data.filename,
+            size_bytes=size_bytes,
+            tags=document_data.tags,
+            project_id=None,
+            created_at=now,
+            updated_at=now,
+            source_repo=document_data.source_repo,
+            source_files=document_data.source_files,
+            source_url=document_data.source_url,
+            confidence=document_data.confidence,
+            encoding_agent=document_data.encoding_agent,
+            encoding_version=document_data.encoding_version,
+            agent_id=document_data.agent_id,
+            agent_version=document_data.agent_version,
+            agent_model=document_data.agent_model,
+        )
+
+        if user_id not in self._documents:
+            self._documents[user_id] = {}
+        self._documents[user_id][document_id] = new_document
+        return new_document
+
+    async def get_document_by_id(
+        self, user_id: UUID, document_id: int,
+    ) -> Document | None:
+        user_documents = self._documents.get(user_id, {})
+        return user_documents.get(document_id)
+
+    async def list_documents(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        document_type: str | None = None,
+        tags: list[str] | None = None,
+    ) -> list[DocumentSummary]:
+        user_documents = self._documents.get(user_id, {})
+        documents = list(user_documents.values())
+
+        if project_id is not None:
+            documents = [d for d in documents if d.project_id == project_id]
+        if document_type:
+            documents = [d for d in documents if d.document_type == document_type]
+        if tags:
+            documents = [d for d in documents if any(t in d.tags for t in tags)]
+
+        documents.sort(key=lambda d: d.created_at, reverse=True)
+        return [DocumentSummary.model_validate(d) for d in documents]
+
+    async def update_document(
+        self, user_id: UUID, document_id: int, document_data: DocumentUpdate,
+    ) -> Document:
+        document = await self.get_document_by_id(user_id, document_id)
+        if not document:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Document {document_id} not found")
+
+        update_data = document_data.model_dump(exclude_unset=True)
+        if update_data.get("content"):
+            update_data["size_bytes"] = len(update_data["content"].encode("utf-8"))
+
+        for field, value in update_data.items():
+            setattr(document, field, value)
+        document.updated_at = datetime.now(UTC)
+        return document
+
+    async def delete_document(self, user_id: UUID, document_id: int) -> bool:
+        user_documents = self._documents.get(user_id, {})
+        if document_id in user_documents:
+            del user_documents[document_id]
+            return True
+        return False
+
+
+@pytest.fixture
+def mock_document_repository():
+    return InMemoryDocumentRepository()
+
+
+@pytest.fixture
+def test_document_service(mock_document_repository):
+    return DocumentService(mock_document_repository)
+
+
+@pytest.fixture
+def test_document_service_with_event_bus(mock_document_repository):
+    """Provides a DocumentService with event bus for testing event emission."""
+    event_bus = CollectingEventBus()
+    service = DocumentService(mock_document_repository, event_bus=event_bus)
+    return service, event_bus
+
+
+# ============ File Testing Fixtures ============
+
+
+class InMemoryFileRepository(FileRepository):
+    """In-memory implementation of FileRepository for testing"""
+
+    def __init__(self):
+        self._files: dict[UUID, dict[int, File]] = {}
+        self._next_id = 1
+
+    async def create_file(
+        self, user_id: UUID, file_data: FileCreate,
+    ) -> File:
+        import base64
+        file_id = self._next_id
+        self._next_id += 1
+        now = datetime.now(UTC)
+
+        decoded = base64.b64decode(file_data.data)
+        size_bytes = len(decoded)
+
+        new_file = File(
+            id=file_id,
+            filename=file_data.filename,
+            description=file_data.description,
+            data=file_data.data,
+            mime_type=file_data.mime_type,
+            size_bytes=size_bytes,
+            tags=file_data.tags,
+            project_id=file_data.project_id,
+            created_at=now,
+            updated_at=now,
+            source_repo=file_data.source_repo,
+            source_files=file_data.source_files,
+            source_url=file_data.source_url,
+            confidence=file_data.confidence,
+            encoding_agent=file_data.encoding_agent,
+            encoding_version=file_data.encoding_version,
+            agent_id=file_data.agent_id,
+            agent_version=file_data.agent_version,
+            agent_model=file_data.agent_model,
+        )
+
+        if user_id not in self._files:
+            self._files[user_id] = {}
+        self._files[user_id][file_id] = new_file
+        return new_file
+
+    async def get_file_by_id(
+        self, user_id: UUID, file_id: int,
+    ) -> File | None:
+        user_files = self._files.get(user_id, {})
+        return user_files.get(file_id)
+
+    async def get_file_metadata_by_id(self, user_id: UUID, file_id: int):
+        from app.models.file_plugin_models import FileMetadata
+        file = await self.get_file_by_id(user_id, file_id)
+        return None if file is None else FileMetadata.model_validate(file.model_dump(exclude={"data"}))
+
+    async def list_files(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        mime_type: str | None = None,
+        tags: list[str] | None = None,
+    ) -> list[FileSummary]:
+        user_files = self._files.get(user_id, {})
+        files = list(user_files.values())
+
+        if project_id is not None:
+            files = [f for f in files if f.project_id == project_id]
+        if mime_type:
+            files = [f for f in files if f.mime_type == mime_type]
+        if tags:
+            files = [f for f in files if any(t in f.tags for t in tags)]
+
+        files.sort(key=lambda f: f.created_at, reverse=True)
+        return [FileSummary.model_validate(f) for f in files]
+
+    async def update_file(
+        self, user_id: UUID, file_id: int, file_data: FileUpdate,
+    ) -> File:
+        import base64
+        file_obj = await self.get_file_by_id(user_id, file_id)
+        if not file_obj:
+            from app.exceptions import NotFoundError
+            raise NotFoundError(f"File {file_id} not found")
+
+        update_data = file_data.model_dump(exclude_unset=True)
+        if update_data.get("data"):
+            decoded = base64.b64decode(update_data["data"])
+            update_data["size_bytes"] = len(decoded)
+
+        for field, value in update_data.items():
+            setattr(file_obj, field, value)
+        file_obj.updated_at = datetime.now(UTC)
+        return file_obj
+
+    async def delete_file(self, user_id: UUID, file_id: int) -> bool:
+        user_files = self._files.get(user_id, {})
+        if file_id in user_files:
+            del user_files[file_id]
+            return True
+        return False
+
+
+@pytest.fixture
+def mock_file_repository():
+    return InMemoryFileRepository()
+
+
+@pytest.fixture
+def test_file_service(mock_file_repository):
+    return FileService(mock_file_repository)
+
+
+@pytest.fixture
+def test_file_service_with_event_bus(mock_file_repository):
+    """Provides a FileService with event bus for testing event emission."""
+    event_bus = CollectingEventBus()
+    service = FileService(mock_file_repository, event_bus=event_bus)
+    return service, event_bus
+
+
+# ============ Entity Testing Fixtures ============
+
+
+class InMemoryEntityRepository(EntityRepository):
+    """In-memory implementation of EntityRepository for testing"""
+
+    def __init__(self):
+        self._entities: dict[UUID, dict[int, Entity]] = {}
+        self._relationships: dict[UUID, dict[int, EntityRelationship]] = {}
+        self._entity_memory_links: dict[
+            int, set[int],
+        ] = {}  # entity_id -> set of memory_ids
+        self._entity_project_links: dict[
+            int, set[int],
+        ] = {}  # entity_id -> set of project_ids
+        self._memory_titles: dict[int, str] = {}  # memory_id -> title
+        self._memory_owners: dict[int, UUID] = {}  # memory_id -> owning user_id
+        self._next_entity_id = 1
+        self._next_relationship_id = 1
+
+    def set_memory_title(self, memory_id: int, title: str) -> None:
+        """Test helper: register a title for a memory_id (mimics a real Memory row)"""
+        self._memory_titles[memory_id] = title
+
+    def register_memory(self, user_id: UUID, memory_id: int) -> None:
+        """Test helper: mark memory_id as owned by user_id (mimics a real Memory row)"""
+        self._memory_owners[memory_id] = user_id
+
+    async def create_entity(self, user_id: UUID, entity_data: EntityCreate) -> Entity:
+        entity_id = self._next_entity_id
+        self._next_entity_id += 1
+        now = datetime.now(UTC)
+
+        new_entity = Entity(
+            id=entity_id,
+            name=entity_data.name,
+            entity_type=entity_data.entity_type,
+            custom_type=entity_data.custom_type,
+            notes=entity_data.notes,
+            tags=entity_data.tags,
+            aka=entity_data.aka,
+            project_ids=entity_data.project_ids or [],
+            created_at=now,
+            updated_at=now,
+            source_repo=entity_data.source_repo,
+            source_files=entity_data.source_files,
+            source_url=entity_data.source_url,
+            confidence=entity_data.confidence,
+            encoding_agent=entity_data.encoding_agent,
+            encoding_version=entity_data.encoding_version,
+            agent_id=entity_data.agent_id,
+            agent_version=entity_data.agent_version,
+            agent_model=entity_data.agent_model,
+        )
+
+        if user_id not in self._entities:
+            self._entities[user_id] = {}
+        self._entities[user_id][entity_id] = new_entity
+        self._entity_memory_links[entity_id] = set()
+        return new_entity
+
+    async def get_entity_by_id(self, user_id: UUID, entity_id: int) -> Entity | None:
+        user_entities = self._entities.get(user_id, {})
+        return user_entities.get(entity_id)
+
+    async def list_entities(
+        self,
+        user_id: UUID,
+        project_ids: list[int] | None = None,
+        entity_type: EntityType | None = None,
+        tags: list[str] | None = None,
+        limit: int = 20,
+        offset: int = 0,
+    ) -> tuple[list[EntitySummary], int]:
+        user_entities = self._entities.get(user_id, {})
+        entities = list(user_entities.values())
+
+        if project_ids is not None and len(project_ids) > 0:
+            entities = [
+                e for e in entities if any(pid in e.project_ids for pid in project_ids)
+            ]
+        if entity_type:
+            entities = [e for e in entities if e.entity_type == entity_type]
+        if tags:
+            entities = [e for e in entities if any(t in e.tags for t in tags)]
+
+        # Sort by created_at (newest first), then by id for deterministic ordering
+        entities.sort(key=lambda e: (e.created_at, e.id), reverse=True)
+
+        # Get total before pagination
+        total = len(entities)
+
+        # Apply pagination
+        paginated = entities[offset : offset + limit]
+
+        return [EntitySummary.model_validate(e) for e in paginated], total
+
+    async def search_entities(
+        self,
+        user_id: UUID,
+        search_query: str,
+        entity_type: EntityType | None = None,
+        tags: list[str] | None = None,
+        limit: int = 20,
+    ) -> list[EntitySummary]:
+        """Search entities by name or aka using case-insensitive text matching"""
+        user_entities = self._entities.get(user_id, {})
+        entities = list(user_entities.values())
+
+        # Filter by name OR aka (case-insensitive search)
+        search_lower = search_query.lower()
+
+        def matches_search(entity):
+            # Check name
+            if search_lower in entity.name.lower():
+                return True
+            # Check aka list
+            for alias in entity.aka:
+                if search_lower in alias.lower():
+                    return True
+            return False
+
+        entities = [e for e in entities if matches_search(e)]
+
+        # Apply optional filters
+        if entity_type:
+            entities = [e for e in entities if e.entity_type == entity_type]
+        if tags:
+            entities = [e for e in entities if any(t in e.tags for t in tags)]
+
+        # Sort by creation date (newest first)
+        entities.sort(key=lambda e: e.created_at, reverse=True)
+
+        # Apply limit
+        return [EntitySummary.model_validate(e) for e in entities[:limit]]
+
+    async def update_entity(
+        self, user_id: UUID, entity_id: int, entity_data: EntityUpdate,
+    ) -> Entity:
+        entity = await self.get_entity_by_id(user_id, entity_id)
+        if not entity:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Entity {entity_id} not found")
+
+        update_data = entity_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(entity, field, value)
+        entity.updated_at = datetime.now(UTC)
+        return entity
+
+    async def delete_entity(self, user_id: UUID, entity_id: int) -> bool:
+        user_entities = self._entities.get(user_id, {})
+        if entity_id in user_entities:
+            del user_entities[entity_id]
+            # Clean up memory links
+            if entity_id in self._entity_memory_links:
+                del self._entity_memory_links[entity_id]
+            # Clean up relationships where this entity is involved
+            user_relationships = self._relationships.get(user_id, {})
+            to_delete = [
+                rid
+                for rid, rel in user_relationships.items()
+                if rel.source_entity_id == entity_id
+                or rel.target_entity_id == entity_id
+            ]
+            for rid in to_delete:
+                del user_relationships[rid]
+            return True
+        return False
+
+    async def link_entity_to_memory(
+        self, user_id: UUID, entity_id: int, memory_id: int,
+    ) -> bool:
+        # Verify entity exists
+        entity = await self.get_entity_by_id(user_id, entity_id)
+        if not entity:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Entity {entity_id} not found")
+
+        # Add link
+        if entity_id not in self._entity_memory_links:
+            self._entity_memory_links[entity_id] = set()
+        self._entity_memory_links[entity_id].add(memory_id)
+        return True
+
+    async def unlink_entity_from_memory(
+        self, user_id: UUID, entity_id: int, memory_id: int,
+    ) -> bool:
+        if entity_id in self._entity_memory_links:
+            if memory_id in self._entity_memory_links[entity_id]:
+                self._entity_memory_links[entity_id].discard(memory_id)
+                return True
+        return False
+
+    async def link_entity_to_project(
+        self, user_id: UUID, entity_id: int, project_id: int,
+    ) -> bool:
+        # Verify entity exists
+        entity = await self.get_entity_by_id(user_id, entity_id)
+        if not entity:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Entity {entity_id} not found")
+
+        # Add link (mock repo doesn't verify project exists)
+        if entity_id not in self._entity_project_links:
+            self._entity_project_links[entity_id] = set()
+        self._entity_project_links[entity_id].add(project_id)
+        return True
+
+    async def unlink_entity_from_project(
+        self, user_id: UUID, entity_id: int, project_id: int,
+    ) -> bool:
+        if entity_id in self._entity_project_links:
+            if project_id in self._entity_project_links[entity_id]:
+                self._entity_project_links[entity_id].discard(project_id)
+                return True
+        return False
+
+    async def create_entity_relationship(
+        self, user_id: UUID, relationship_data: EntityRelationshipCreate,
+    ) -> EntityRelationship:
+        # Verify both entities exist
+        source = await self.get_entity_by_id(
+            user_id, relationship_data.source_entity_id,
+        )
+        target = await self.get_entity_by_id(
+            user_id, relationship_data.target_entity_id,
+        )
+        if not source or not target:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError("Source or target entity not found")
+
+        relationship_id = self._next_relationship_id
+        self._next_relationship_id += 1
+        now = datetime.now(UTC)
+
+        new_relationship = EntityRelationship(
+            id=relationship_id,
+            source_entity_id=relationship_data.source_entity_id,
+            target_entity_id=relationship_data.target_entity_id,
+            relationship_type=relationship_data.relationship_type,
+            strength=relationship_data.strength,
+            confidence=relationship_data.confidence,
+            metadata=relationship_data.metadata or {},
+            created_at=now,
+            updated_at=now,
+            source_repo=relationship_data.source_repo,
+            source_files=relationship_data.source_files,
+            source_url=relationship_data.source_url,
+            encoding_agent=relationship_data.encoding_agent,
+            encoding_version=relationship_data.encoding_version,
+            agent_id=relationship_data.agent_id,
+            agent_version=relationship_data.agent_version,
+            agent_model=relationship_data.agent_model,
+        )
+
+        if user_id not in self._relationships:
+            self._relationships[user_id] = {}
+        self._relationships[user_id][relationship_id] = new_relationship
+        return new_relationship
+
+    async def get_entity_relationships(
+        self,
+        user_id: UUID,
+        entity_id: int,
+        direction: str | None = None,
+        relationship_type: str | None = None,
+    ) -> list[EntityRelationship]:
+        user_relationships = self._relationships.get(user_id, {})
+        relationships = list(user_relationships.values())
+
+        # Filter by direction
+        if direction == "outgoing":
+            relationships = [
+                r for r in relationships if r.source_entity_id == entity_id
+            ]
+        elif direction == "incoming":
+            relationships = [
+                r for r in relationships if r.target_entity_id == entity_id
+            ]
+        else:  # both directions
+            relationships = [
+                r
+                for r in relationships
+                if r.source_entity_id == entity_id or r.target_entity_id == entity_id
+            ]
+
+        # Filter by relationship type
+        if relationship_type:
+            relationships = [
+                r for r in relationships if r.relationship_type == relationship_type
+            ]
+
+        relationships.sort(key=lambda r: r.created_at, reverse=True)
+        return relationships
+
+    async def update_entity_relationship(
+        self,
+        user_id: UUID,
+        relationship_id: int,
+        relationship_data: EntityRelationshipUpdate,
+    ) -> EntityRelationship:
+        user_relationships = self._relationships.get(user_id, {})
+        relationship = user_relationships.get(relationship_id)
+        if not relationship:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Relationship {relationship_id} not found")
+
+        update_data = relationship_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(relationship, field, value)
+        relationship.updated_at = datetime.now(UTC)
+        return relationship
+
+    async def delete_entity_relationship(
+        self, user_id: UUID, relationship_id: int,
+    ) -> bool:
+        user_relationships = self._relationships.get(user_id, {})
+        if relationship_id in user_relationships:
+            del user_relationships[relationship_id]
+            return True
+        return False
+
+    async def get_all_entity_relationships(
+        self, user_id: UUID,
+    ) -> list[EntityRelationship]:
+        """Get all entity relationships for a user (for graph visualization)"""
+        user_relationships = self._relationships.get(user_id, {})
+        relationships = list(user_relationships.values())
+        relationships.sort(key=lambda r: r.created_at, reverse=True)
+        return relationships
+
+    async def get_all_entity_memory_links(self, user_id: UUID) -> list[tuple[int, int]]:
+        """Get all entity-memory associations for a user (for graph visualization)"""
+        user_entities = self._entities.get(user_id, {})
+        links = []
+        for entity_id in user_entities:
+            memory_ids = self._entity_memory_links.get(entity_id, set())
+            for memory_id in memory_ids:
+                links.append((entity_id, memory_id))
+        return links
+
+    async def get_entity_memories(self, user_id: UUID, entity_id: int) -> list[tuple[int, str]]:
+        """Get all (memory_id, title) pairs linked to a specific entity"""
+        # Verify entity exists
+        entity = await self.get_entity_by_id(user_id, entity_id)
+        if not entity:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Entity {entity_id} not found")
+
+        # Return (memory_id, title) pairs for memories linked to this entity
+        memory_ids = self._entity_memory_links.get(entity_id, set())
+        return [
+            (mid, self._memory_titles.get(mid, f"Memory {mid}")) for mid in memory_ids
+        ]
+
+    async def get_memory_entities(self, user_id: UUID, memory_id: int) -> list[tuple[int, str, str]]:
+        """Get all (entity_id, name, entity_type) triples linked to a specific memory"""
+        user_entities = self._entities.get(user_id, {})
+        linked = sorted(
+            entity_id
+            for entity_id, memory_ids in self._entity_memory_links.items()
+            if memory_id in memory_ids and entity_id in user_entities
+        )
+        owner = self._memory_owners.get(memory_id)
+        if owner != user_id:
+            raise NotFoundError(f"Memory {memory_id} not found")
+        return [
+            (entity_id, user_entities[entity_id].name, user_entities[entity_id].entity_type)
+            for entity_id in linked
+        ]
+
+
+@pytest.fixture
+def mock_entity_repository():
+    return InMemoryEntityRepository()
+
+
+@pytest.fixture
+def test_entity_service(mock_entity_repository):
+    return EntityService(mock_entity_repository)
+
+
+@pytest.fixture
+def test_entity_service_with_event_bus(mock_entity_repository):
+    """Provides an EntityService with event bus for testing event emission."""
+    event_bus = CollectingEventBus()
+    service = EntityService(mock_entity_repository, event_bus=event_bus)
+    return service, event_bus
+
+
+# ============ Plan Testing Fixtures ============
+
+
+class InMemoryPlanRepository(PlanRepository):
+    """In-memory implementation of PlanRepository for testing"""
+
+    def __init__(self):
+        self._plans: dict[UUID, dict[int, Plan]] = {}  # user_id -> {plan_id -> Plan}
+        self._next_id = 1
+
+    async def create_plan(self, user_id: UUID, plan_data: PlanCreate) -> Plan:
+        plan_id = self._next_id
+        self._next_id += 1
+        now = datetime.now(UTC)
+
+        new_plan = Plan(
+            id=plan_id,
+            user_id=str(user_id),
+            title=plan_data.title,
+            project_id=plan_data.project_id,
+            goal=plan_data.goal,
+            context=plan_data.context,
+            status=plan_data.status,
+            external_ref=plan_data.external_ref,
+            task_count=0,
+            created_at=now,
+            updated_at=now,
+            source_repo=plan_data.source_repo,
+            source_files=plan_data.source_files,
+            source_url=plan_data.source_url,
+            confidence=plan_data.confidence,
+            encoding_agent=plan_data.encoding_agent,
+            encoding_version=plan_data.encoding_version,
+            agent_id=plan_data.agent_id,
+            agent_version=plan_data.agent_version,
+            agent_model=plan_data.agent_model,
+        )
+
+        if user_id not in self._plans:
+            self._plans[user_id] = {}
+        self._plans[user_id][plan_id] = new_plan
+        return new_plan
+
+    async def get_plan_by_id(self, user_id: UUID, plan_id: int) -> Plan | None:
+        user_plans = self._plans.get(user_id, {})
+        return user_plans.get(plan_id)
+
+    async def list_plans(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        status: PlanStatus | None = None,
+        external_ref: str | None = None,
+    ) -> list[PlanSummary]:
+        user_plans = self._plans.get(user_id, {})
+        plans = list(user_plans.values())
+
+        if project_id is not None:
+            plans = [p for p in plans if p.project_id == project_id]
+        if status is not None:
+            plans = [p for p in plans if p.status == status]
+
+        if external_ref is not None:
+            plans = [p for p in plans if p.external_ref == external_ref]
+
+        plans.sort(key=lambda p: p.created_at, reverse=True)
+
+        return [
+            PlanSummary(
+                id=p.id,
+                title=p.title,
+                project_id=p.project_id,
+                status=p.status,
+                external_ref=p.external_ref,
+                task_count=p.task_count,
+                created_at=p.created_at,
+                updated_at=p.updated_at,
+            )
+            for p in plans
+        ]
+
+    async def update_plan(
+        self, user_id: UUID, plan_id: int, plan_data: PlanUpdate,
+    ) -> Plan:
+        plan = await self.get_plan_by_id(user_id, plan_id)
+        if not plan:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Plan with id {plan_id} not found")
+
+        update_data = plan_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(plan, field, value)
+        plan.updated_at = datetime.now(UTC)
+        return plan
+
+    async def delete_plan(self, user_id: UUID, plan_id: int) -> bool:
+        user_plans = self._plans.get(user_id, {})
+        if plan_id in user_plans:
+            del user_plans[plan_id]
+            return True
+        return False
+
+
+@pytest.fixture
+def mock_plan_repository():
+    """Provides an in-memory plan repository"""
+    return InMemoryPlanRepository()
+
+
+@pytest.fixture
+def test_plan_service(mock_plan_repository):
+    """Provides a PlanService with in-memory repository"""
+    repo = mock_plan_repository
+    service = PlanService(repo, event_bus=None)
+    return service
+
+
+# ============ Task Testing Fixtures ============
+
+
+class InMemoryTaskRepository(TaskRepository):
+    """In-memory implementation of TaskRepository for testing.
+
+    Stores tasks, criteria, and dependencies with user_id-scoped RLS filtering.
+    """
+
+    def __init__(self):
+        self._tasks: dict[UUID, dict[int, Task]] = {}  # user_id -> {task_id -> Task}
+        self._criteria: dict[UUID, dict[int, Criterion]] = {}  # user_id -> {criterion_id -> Criterion}
+        self._dependencies: dict[UUID, dict[int, TaskDependency]] = {}  # user_id -> {dep_id -> TaskDependency}
+        self._next_task_id = 1
+        self._next_criterion_id = 1
+        self._next_dependency_id = 1
+
+    # ---- Task CRUD ----
+
+    async def create_task(self, user_id: UUID, task_data: TaskCreate) -> Task:
+        task_id = self._next_task_id
+        self._next_task_id += 1
+        now = datetime.now(UTC)
+
+        new_task = Task(
+            id=task_id,
+            plan_id=task_data.plan_id,
+            title=task_data.title,
+            description=task_data.description,
+            state=TaskState.TODO,
+            priority=task_data.priority,
+            assigned_agent=task_data.assigned_agent,
+            version=1,
+            criteria=[],
+            dependency_ids=[],
+            created_at=now,
+            updated_at=now,
+            source_repo=task_data.source_repo,
+            source_files=task_data.source_files,
+            source_url=task_data.source_url,
+            confidence=task_data.confidence,
+            encoding_agent=task_data.encoding_agent,
+            encoding_version=task_data.encoding_version,
+            agent_id=task_data.agent_id,
+            agent_version=task_data.agent_version,
+            agent_model=task_data.agent_model,
+        )
+
+        if user_id not in self._tasks:
+            self._tasks[user_id] = {}
+        self._tasks[user_id][task_id] = new_task
+
+        # Increment task_count on the plan (find it across all plan repos — not possible here,
+        # but we update the task's own storage; plan count is maintained by the service layer)
+
+        return new_task
+
+    async def get_task_by_id(self, user_id: UUID, task_id: int) -> Task | None:
+        user_tasks = self._tasks.get(user_id, {})
+        task = user_tasks.get(task_id)
+        if task is None:
+            return None
+
+        # Hydrate criteria and dependency_ids from auxiliary stores
+        criteria = await self.get_criteria_for_task(user_id, task_id)
+        deps = await self.get_dependencies(user_id, task_id)
+
+        task.criteria = criteria
+        task.dependency_ids = deps
+        return task
+
+    async def list_tasks(
+        self,
+        user_id: UUID,
+        plan_id: int,
+        state: TaskState | None = None,
+        priority: TaskPriority | None = None,
+        assigned_agent: str | None = None,
+    ) -> list[TaskSummary]:
+        user_tasks = self._tasks.get(user_id, {})
+        tasks = [t for t in user_tasks.values() if t.plan_id == plan_id]
+
+        if state is not None:
+            tasks = [t for t in tasks if t.state == state]
+        if priority is not None:
+            tasks = [t for t in tasks if t.priority == priority]
+        if assigned_agent is not None:
+            tasks = [t for t in tasks if t.assigned_agent == assigned_agent]
+
+        tasks.sort(key=lambda t: t.created_at, reverse=True)
+
+        summaries = []
+        for t in tasks:
+            criteria = await self.get_criteria_for_task(user_id, t.id)
+            deps = await self.get_dependencies(user_id, t.id)
+            # A task is blocked if any of its dependencies are NOT done
+            dep_tasks_not_done = False
+            for dep_id in deps:
+                dep_task = user_tasks.get(dep_id)
+                if dep_task and dep_task.state != TaskState.DONE:
+                    dep_tasks_not_done = True
+                    break
+
+            summaries.append(
+                TaskSummary(
+                    id=t.id,
+                    title=t.title,
+                    plan_id=t.plan_id,
+                    state=t.state,
+                    priority=t.priority,
+                    assigned_agent=t.assigned_agent,
+                    version=t.version,
+                    criteria_met=sum(1 for c in criteria if c.met),
+                    criteria_total=len(criteria),
+                    blocked=dep_tasks_not_done,
+                    created_at=t.created_at,
+                    updated_at=t.updated_at,
+                ),
+            )
+
+        return summaries
+
+    async def list_tasks_for_user(
+        self,
+        user_id: UUID,
+        plan_ids: list[int] | None = None,
+    ) -> list[TaskSummary]:
+        if plan_ids is not None and len(plan_ids) == 0:
+            return []
+        user_tasks = self._tasks.get(user_id, {})
+        if plan_ids is None:
+            tasks = list(user_tasks.values())
+        else:
+            allowed = set(plan_ids)
+            tasks = [t for t in user_tasks.values() if t.plan_id in allowed]
+        tasks.sort(key=lambda t: t.created_at)
+
+        summaries = []
+        for t in tasks:
+            criteria = await self.get_criteria_for_task(user_id, t.id)
+            deps = await self.get_dependencies(user_id, t.id)
+            dep_tasks_not_done = False
+            for dep_id in deps:
+                dep_task = user_tasks.get(dep_id)
+                if dep_task and dep_task.state != TaskState.DONE:
+                    dep_tasks_not_done = True
+                    break
+            summaries.append(
+                TaskSummary(
+                    id=t.id,
+                    title=t.title,
+                    plan_id=t.plan_id,
+                    state=t.state,
+                    priority=t.priority,
+                    assigned_agent=t.assigned_agent,
+                    version=t.version,
+                    criteria_met=sum(1 for c in criteria if c.met),
+                    criteria_total=len(criteria),
+                    blocked=dep_tasks_not_done,
+                    created_at=t.created_at,
+                    updated_at=t.updated_at,
+                ),
+            )
+        return summaries
+
+    async def update_task(
+        self, user_id: UUID, task_id: int, task_data: TaskUpdate,
+    ) -> Task:
+        task = await self.get_task_by_id(user_id, task_id)
+        if not task:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Task with id {task_id} not found")
+
+        update_data = task_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(task, field, value)
+        task.updated_at = datetime.now(UTC)
+        return task
+
+    async def delete_task(self, user_id: UUID, task_id: int) -> bool:
+        user_tasks = self._tasks.get(user_id, {})
+        if task_id in user_tasks:
+            del user_tasks[task_id]
+            # Clean up criteria for this task
+            user_criteria = self._criteria.get(user_id, {})
+            to_delete = [
+                cid for cid, c in user_criteria.items() if c.task_id == task_id
+            ]
+            for cid in to_delete:
+                del user_criteria[cid]
+            # Clean up dependencies involving this task
+            user_deps = self._dependencies.get(user_id, {})
+            to_delete_deps = [
+                did
+                for did, d in user_deps.items()
+                if d.task_id == task_id or d.depends_on_task_id == task_id
+            ]
+            for did in to_delete_deps:
+                del user_deps[did]
+            return True
+        return False
+
+    # ---- Atomic state transition ----
+
+    async def transition_task_state(
+        self,
+        user_id: UUID,
+        task_id: int,
+        new_state: TaskState,
+        expected_version: int,
+        assigned_agent: str | None = None,
+    ) -> Task:
+        user_tasks = self._tasks.get(user_id, {})
+        task = user_tasks.get(task_id)
+        if task is None:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Task with id {task_id} not found")
+
+        if task.version != expected_version:
+            raise ConflictError(
+                f"Version mismatch: expected {expected_version}, got {task.version}. "
+                f"Task was modified by another agent.",
+            )
+
+        task.state = new_state
+        task.version += 1
+        if assigned_agent is not None:
+            task.assigned_agent = assigned_agent
+        task.updated_at = datetime.now(UTC)
+
+        # Re-hydrate criteria and deps before returning
+        task.criteria = await self.get_criteria_for_task(user_id, task_id)
+        task.dependency_ids = await self.get_dependencies(user_id, task_id)
+        return task
+
+    # ---- Criteria CRUD ----
+
+    async def create_criterion(
+        self, user_id: UUID, task_id: int, criterion_data: CriterionCreate,
+    ) -> Criterion:
+        criterion_id = self._next_criterion_id
+        self._next_criterion_id += 1
+        now = datetime.now(UTC)
+
+        new_criterion = Criterion(
+            id=criterion_id,
+            task_id=task_id,
+            description=criterion_data.description,
+            met=False,
+            met_at=None,
+            created_at=now,
+            updated_at=now,
+        )
+
+        if user_id not in self._criteria:
+            self._criteria[user_id] = {}
+        self._criteria[user_id][criterion_id] = new_criterion
+        return new_criterion
+
+    async def update_criterion(
+        self, user_id: UUID, criterion_id: int, criterion_data: CriterionUpdate,
+    ) -> Criterion:
+        user_criteria = self._criteria.get(user_id, {})
+        criterion = user_criteria.get(criterion_id)
+        if criterion is None:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Criterion with id {criterion_id} not found")
+
+        update_data = criterion_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(criterion, field, value)
+
+        # Auto-set met_at when met changes to True
+        if criterion_data.met is True:
+            criterion.met_at = datetime.now(UTC)
+        elif criterion_data.met is False:
+            criterion.met_at = None
+
+        criterion.updated_at = datetime.now(UTC)
+        return criterion
+
+    async def delete_criterion(self, user_id: UUID, criterion_id: int) -> bool:
+        user_criteria = self._criteria.get(user_id, {})
+        if criterion_id in user_criteria:
+            del user_criteria[criterion_id]
+            return True
+        return False
+
+    async def get_criteria_for_task(
+        self, user_id: UUID, task_id: int,
+    ) -> list[Criterion]:
+        user_criteria = self._criteria.get(user_id, {})
+        criteria = [c for c in user_criteria.values() if c.task_id == task_id]
+        criteria.sort(key=lambda c: c.id)
+        return criteria
+
+    # ---- Dependencies ----
+
+    async def add_dependency(
+        self, user_id: UUID, task_id: int, depends_on_task_id: int,
+    ) -> TaskDependency:
+        dep_id = self._next_dependency_id
+        self._next_dependency_id += 1
+        now = datetime.now(UTC)
+
+        new_dep = TaskDependency(
+            id=dep_id,
+            task_id=task_id,
+            depends_on_task_id=depends_on_task_id,
+            created_at=now,
+        )
+
+        if user_id not in self._dependencies:
+            self._dependencies[user_id] = {}
+        self._dependencies[user_id][dep_id] = new_dep
+        return new_dep
+
+    async def remove_dependency(
+        self, user_id: UUID, task_id: int, depends_on_task_id: int,
+    ) -> bool:
+        user_deps = self._dependencies.get(user_id, {})
+        for did, dep in list(user_deps.items()):
+            if dep.task_id == task_id and dep.depends_on_task_id == depends_on_task_id:
+                del user_deps[did]
+                return True
+        return False
+
+    async def get_dependencies(self, user_id: UUID, task_id: int) -> list[int]:
+        """Get IDs of tasks that this task depends on."""
+        user_deps = self._dependencies.get(user_id, {})
+        return [
+            dep.depends_on_task_id
+            for dep in user_deps.values()
+            if dep.task_id == task_id
+        ]
+
+    async def get_dependents(self, user_id: UUID, task_id: int) -> list[int]:
+        """Get IDs of tasks that depend on this task."""
+        user_deps = self._dependencies.get(user_id, {})
+        return [
+            dep.task_id
+            for dep in user_deps.values()
+            if dep.depends_on_task_id == task_id
+        ]
+
+
+@pytest.fixture
+def mock_task_repository():
+    """Provides an in-memory task repository"""
+    return InMemoryTaskRepository()
+
+
+@pytest.fixture
+def test_task_service(test_plan_service, mock_task_repository):
+    """Provides a TaskService with in-memory repository and linked PlanService."""
+    repo = mock_task_repository
+    service = TaskService(repo, plan_service=test_plan_service, event_bus=None)
+    return service, test_plan_service
+
+
+# ============ Skill Testing Fixtures ============
+
+
+class InMemorySkillRepository(SkillRepository):
+    """In-memory implementation of SkillRepository for testing"""
+
+    def __init__(self):
+        self._skills: dict[UUID, dict[int, Skill]] = {}
+        self._skill_memory_links: set[tuple[int, int]] = set()  # (skill_id, memory_id)
+        self._skill_file_links: set[tuple[int, int]] = set()  # (skill_id, file_id)
+        self._skill_code_artifact_links: set[tuple[int, int]] = set()  # (skill_id, code_artifact_id)
+        self._skill_document_links: set[tuple[int, int]] = set()  # (skill_id, document_id)
+        self._next_id = 1
+
+    async def create_skill(
+        self, user_id: UUID, skill_data: SkillCreate,
+    ) -> Skill:
+        skill_id = self._next_id
+        self._next_id += 1
+        now = datetime.now(UTC)
+
+        new_skill = Skill(
+            id=skill_id,
+            name=skill_data.name,
+            description=skill_data.description,
+            content=skill_data.content,
+            license=skill_data.license,
+            compatibility=skill_data.compatibility,
+            allowed_tools=skill_data.allowed_tools,
+            metadata=skill_data.metadata,
+            tags=skill_data.tags,
+            importance=skill_data.importance,
+            project_id=skill_data.project_id,
+            created_at=now,
+            updated_at=now,
+            source_repo=skill_data.source_repo,
+            source_files=skill_data.source_files,
+            source_url=skill_data.source_url,
+            confidence=skill_data.confidence,
+            encoding_agent=skill_data.encoding_agent,
+            encoding_version=skill_data.encoding_version,
+            agent_id=skill_data.agent_id,
+            agent_version=skill_data.agent_version,
+            agent_model=skill_data.agent_model,
+        )
+
+        if user_id not in self._skills:
+            self._skills[user_id] = {}
+        self._skills[user_id][skill_id] = new_skill
+        return new_skill
+
+    async def skill_name_exists(
+        self,
+        user_id: UUID,
+        name: str,
+    ) -> bool:
+        user_skills = self._skills.get(user_id, {})
+        return any(s.name == name for s in user_skills.values())
+
+    async def get_skill_by_id(
+        self, user_id: UUID, skill_id: int,
+    ) -> Skill | None:
+        user_skills = self._skills.get(user_id, {})
+        return user_skills.get(skill_id)
+
+    async def list_skills(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        tags: list[str] | None = None,
+        importance_threshold: int | None = None,
+    ) -> list[SkillSummary]:
+        user_skills = self._skills.get(user_id, {})
+        skills = list(user_skills.values())
+
+        if project_id is not None:
+            skills = [s for s in skills if s.project_id == project_id]
+        if tags:
+            skills = [s for s in skills if any(t in s.tags for t in tags)]
+        if importance_threshold is not None:
+            skills = [s for s in skills if s.importance >= importance_threshold]
+
+        skills.sort(key=lambda s: s.created_at, reverse=True)
+        return [SkillSummary.model_validate(s) for s in skills]
+
+    async def update_skill(
+        self, user_id: UUID, skill_id: int, skill_data: SkillUpdate,
+    ) -> Skill:
+        skill = await self.get_skill_by_id(user_id, skill_id)
+        if not skill:
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Skill {skill_id} not found")
+
+        update_data = skill_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(skill, field, value)
+        skill.updated_at = datetime.now(UTC)
+        return skill
+
+    async def delete_skill(self, user_id: UUID, skill_id: int) -> bool:
+        user_skills = self._skills.get(user_id, {})
+        if skill_id in user_skills:
+            del user_skills[skill_id]
+            # Clean up any links for this skill
+            self._skill_memory_links = {
+                (sid, mid) for sid, mid in self._skill_memory_links if sid != skill_id
+            }
+            self._skill_file_links = {
+                (sid, fid) for sid, fid in self._skill_file_links if sid != skill_id
+            }
+            self._skill_code_artifact_links = {
+                (sid, caid) for sid, caid in self._skill_code_artifact_links if sid != skill_id
+            }
+            self._skill_document_links = {
+                (sid, did) for sid, did in self._skill_document_links if sid != skill_id
+            }
+            return True
+        return False
+
+    async def search_skills(
+        self,
+        user_id: UUID,
+        query: str,
+        k: int = 5,
+        project_id: int | None = None,
+    ) -> list[SkillSummary]:
+        """Simple substring match on description (no real embeddings)"""
+        user_skills = self._skills.get(user_id, {})
+        skills = list(user_skills.values())
+
+        query_lower = query.lower()
+        skills = [s for s in skills if query_lower in s.description.lower()]
+
+        if project_id is not None:
+            skills = [s for s in skills if s.project_id == project_id]
+
+        skills.sort(key=lambda s: s.created_at, reverse=True)
+        return [SkillSummary.model_validate(s) for s in skills[:k]]
+
+    async def link_skill_to_memory(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        memory_id: int,
+    ) -> dict:
+        self._skill_memory_links.add((skill_id, memory_id))
+        return {
+            "skill_id": skill_id,
+            "memory_id": memory_id,
+            "linked": True,
+        }
+
+    async def unlink_skill_from_memory(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        memory_id: int,
+    ) -> dict:
+        existed = (skill_id, memory_id) in self._skill_memory_links
+        self._skill_memory_links.discard((skill_id, memory_id))
+        return {
+            "skill_id": skill_id,
+            "memory_id": memory_id,
+            "unlinked": existed,
+        }
+
+    async def link_skill_to_file(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        file_id: int,
+    ) -> dict:
+        self._skill_file_links.add((skill_id, file_id))
+        return {
+            "skill_id": skill_id,
+            "file_id": file_id,
+            "linked": True,
+        }
+
+    async def unlink_skill_from_file(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        file_id: int,
+    ) -> dict:
+        existed = (skill_id, file_id) in self._skill_file_links
+        self._skill_file_links.discard((skill_id, file_id))
+        return {
+            "skill_id": skill_id,
+            "file_id": file_id,
+            "unlinked": existed,
+        }
+
+    async def link_skill_to_code_artifact(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        code_artifact_id: int,
+    ) -> dict:
+        self._skill_code_artifact_links.add((skill_id, code_artifact_id))
+        return {
+            "skill_id": skill_id,
+            "code_artifact_id": code_artifact_id,
+            "linked": True,
+        }
+
+    async def unlink_skill_from_code_artifact(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        code_artifact_id: int,
+    ) -> dict:
+        existed = (skill_id, code_artifact_id) in self._skill_code_artifact_links
+        self._skill_code_artifact_links.discard((skill_id, code_artifact_id))
+        return {
+            "skill_id": skill_id,
+            "code_artifact_id": code_artifact_id,
+            "unlinked": existed,
+        }
+
+    async def link_skill_to_document(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        document_id: int,
+    ) -> dict:
+        self._skill_document_links.add((skill_id, document_id))
+        return {
+            "skill_id": skill_id,
+            "document_id": document_id,
+            "linked": True,
+        }
+
+    async def unlink_skill_from_document(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        document_id: int,
+    ) -> dict:
+        existed = (skill_id, document_id) in self._skill_document_links
+        self._skill_document_links.discard((skill_id, document_id))
+        return {
+            "skill_id": skill_id,
+            "document_id": document_id,
+            "unlinked": existed,
+        }
+
+    async def get_skill_links(self, user_id: UUID, skill_id: int) -> SkillLinks:
+        """Get IDs of all content linked to a skill (reverse lookup)"""
+        if skill_id not in self._skills.get(user_id, {}):
+            from app.exceptions import NotFoundError
+
+            raise NotFoundError(f"Skill {skill_id} not found")
+
+        return SkillLinks(
+            memory_ids=[m for (s, m) in self._skill_memory_links if s == skill_id],
+            file_ids=[f for (s, f) in self._skill_file_links if s == skill_id],
+            code_artifact_ids=[
+                c for (s, c) in self._skill_code_artifact_links if s == skill_id
+            ],
+            document_ids=[d for (s, d) in self._skill_document_links if s == skill_id],
+        )
+
+
+@pytest.fixture
+def mock_skill_repository():
+    return InMemorySkillRepository()
+
+
+@pytest.fixture
+def test_skill_service(mock_skill_repository):
+    return SkillService(mock_skill_repository, event_bus=None)
+
+
+# =============================================================================
+# Real-runtime settings fixture (bootstrap factory / CLI executor tests)
+# =============================================================================
+
+_SQLITE_RUNTIME_FIELDS = [
+    "DATABASE",
+    "SQLITE_MEMORY",
+    "EMBEDDING_PROVIDER",
+    "RERANKING_ENABLED",
+    "FORGETFUL_SCOPES",
+    "SKILLS_ENABLED",
+    "FILES_ENABLED",
+    "PLANNING_ENABLED",
+    "ACTIVITY_ENABLED",
+]
+
+
+@pytest.fixture
+def sqlite_runtime_settings():
+    """Point the composition root at in-memory SQLite with deterministic feature flags.
+
+    Reranking is disabled to skip the cross-encoder model load; reranker wiring is
+    exercised by the e2e_sqlite suite.
+    """
+    from app.config.settings import settings
+
+    original = {name: getattr(settings, name) for name in _SQLITE_RUNTIME_FIELDS}
+    settings.DATABASE = "SQLite"
+    settings.SQLITE_MEMORY = True
+    settings.EMBEDDING_PROVIDER = "FastEmbed"
+    settings.RERANKING_ENABLED = False
+    settings.FORGETFUL_SCOPES = "*"
+    settings.SKILLS_ENABLED = False
+    settings.FILES_ENABLED = False
+    settings.PLANNING_ENABLED = False
+    settings.ACTIVITY_ENABLED = False
+    yield settings
+    for name, value in original.items():
+        setattr(settings, name, value)
+
+
+@pytest.fixture
+def entity_plugin_runtime(sqlite_runtime_settings, monkeypatch, tmp_path):
+    monkeypatch.setattr("app.bootstrap.check_first_run_models", lambda: None)
+    monkeypatch.syspath_prepend(str(tmp_path))
+    module_name = "runtime_entity_checks"
+    (tmp_path / f"{module_name}.py").write_text("""
+from app.models.write_plugin_models import WriteDecision
+from app.protocols.write_plugin_protocol import EntityPlugin
+
+async def decide(request):
+    if request.operation == "delete":
+        tags = request.previous.tags if request.previous else []
+        if "delete_blocked" in tags:
+            return WriteDecision(outcome="reject", message="Remove the blocked tag.")
+        if "delete_warn" in tags:
+            return WriteDecision(outcome="warn", message="Check the source.", code="source")
+        if "delete_error" in tags:
+            raise RuntimeError("SECRET")
+        return WriteDecision(outcome="allow")
+    if request.proposed and "blocked" in request.proposed.tags:
+        return WriteDecision(outcome="reject", message="Remove the blocked tag.")
+    if request.proposed and "warn" in request.proposed.tags:
+        return WriteDecision(outcome="warn", message="Check the source.", code="source")
+    if request.proposed and "error" in request.proposed.tags:
+        raise RuntimeError("SECRET")
+    return WriteDecision(outcome="allow")
+
+plugin = EntityPlugin(before_save={"create": decide, "update": decide, "delete": decide})
+""")
+    from app.config.settings import settings
+
+    monkeypatch.setattr(settings, "ENTITY_WRITE_PLUGIN", f"{module_name}:plugin")
+    monkeypatch.setattr(settings, "ENTITY_WRITE_PLUGIN_MODE", "enforce")
+    yield module_name
+    import sys
+
+    sys.modules.pop(module_name, None)
+
+
+@pytest.fixture
+async def entity_store(sqlite_runtime_settings, monkeypatch):
+    from app.config.settings import settings
+    from app.events import EventBus
+    from app.models.user_models import UserCreate
+    from app.repositories.sqlite.entity_repository import SqliteEntityRepository
+    from app.repositories.sqlite.sqlite_adapter import SqliteDatabaseAdapter
+    from app.repositories.sqlite.user_repository import SqliteUserRepository
+    from app.services.user_service import UserService
+
+    monkeypatch.setattr(settings, "ACTIVITY_TRACK_READS", False)
+    db = SqliteDatabaseAdapter()
+    await db.init_db()
+    repo = SqliteEntityRepository(db)
+    user = await UserService(SqliteUserRepository(db)).get_or_create_user(
+        UserCreate(external_id="entity-plugin-test", name="Entity plugin", email="ep@example.com"),
+    )
+    bus = EventBus()
+    try:
+        yield repo, user.id, bus
+    finally:
+        await bus.wait_for_pending()
+        await db.dispose()
