@@ -1,0 +1,110 @@
+{
+  "base": "e363d99efc84bb67a516c5e39793399f5233da8d",
+  "repository": "ScottRBK/forgetful",
+  "overlay_sha256": {
+    "app/services/plan_service.py": "8aff5cf6cd9322ca93df61deced9d625037aede94dae438d1e32b4f7304224bd",
+    "app/services/task_service.py": "6b4f2959be37d6c8cb7e157ff75a45cd974fc4eab23735082964be2851a7c2e3",
+    "docs/configuration.md": "dd9c72eefd27c6bff50fd614be75388c3c09c92d668588aea675b92bf1b1bd12",
+    "tests/plan_plugin_cases.py": "09821a8c5628bf6f8f53ae80c2c6fac64f1bf497463a04251340653feca9bd16"
+  },
+  "source_sha256": {
+    "app/services/plan_service.py": "4bc7e1d3b5cc11db6a476fa7c7af308fced79b84cf716fd1490e94807667ad49",
+    "app/services/task_service.py": "8674e8158f2f2734a801a1f8d266133b6eef9969b5a2bc2f775c93e13a2fe986",
+    "docs/configuration.md": "0d1ec4f77f55fc582deabf71673f61b5f3dfeb92f224ddd5faabe390f75ff4fa",
+    "tests/plan_plugin_cases.py": "41caa4292041e9d262e597bd263ec453d073f43efe27223d0bafa49bb94041ae"
+  },
+  "lock_sha256": "93ca7e9f5fd43c90f21fd96bac038d60f24a045e68ce9a71f1aa24370171e936",
+  "images": [
+    {
+      "name": "python313",
+      "repository": "library/python",
+      "tag": "3.13-slim-bookworm",
+      "digest": "sha256:70bda1e795ded2a684ef9815955e05829b14ee5bb5c3eb2a940648e88f10fce9",
+      "compressed_size": 44197665,
+      "platform": "linux/amd64",
+      "tag_updated": "2026-10-28T11:08:00.418849Z"
+    },
+    {
+      "name": "python312",
+      "repository": "library/python",
+      "tag": "3.12-slim",
+      "digest": "sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+      "compressed_size": 43267206,
+      "platform": "linux/amd64",
+      "tag_updated": "2026-10-28T11:07:18.303146Z"
+    },
+    {
+      "name": "pgvector16",
+      "repository": "pgvector/pgvector",
+      "tag": "pg16",
+      "digest": "sha256:c0cd736fe8b8b5d408db56b780570bac404fe518e66e39de624aa46f9aabc60a",
+      "compressed_size": 156203405,
+      "platform": "linux/amd64",
+      "tag_updated": "2026-10-31T10:01:47.448476Z"
+    }
+  ],
+  "uv_version": "0.9.30",
+  "ruff_version": "0.16.10",
+  "target_seconds": 3000,
+  "absolute_seconds": 3600,
+  "network_bytes_cap": 4294967296,
+  "output_bytes_cap": 67108864,
+  "app_memory_gib": 8,
+  "postgres_memory_gib": 1,
+  "image_orchestrator_memory_gib": 1,
+  "image_child_memory_gib": 6,
+  "build_memory_gib": 4,
+  "shipping_build_reserve_seconds": 180,
+  "image_reserve_seconds": 180,
+  "export_reserve_seconds": 60,
+  "runtime_approved": true,
+  "docker_api_approved": true,
+  "diagnostic_branch_approved": true,
+  "style_normalization_approved": true,
+  "diagnostic_branch": "validate-plan188-id-reuse-20261106",
+  "contribution_publication_approved": false,
+  "regression_files": [
+    "tests/plan_plugin_cases.py"
+  ],
+  "packet_sha256": {
+    ".github/workflows/validate-plan171.yml": "eca8ac426dd95c451c0320a47552cc2106539895eeead6f017cdc1e7d93e9382",
+    "Dockerfile": "a3cd6fd02eb69a4e06f8cd45ff9c1cc80a0fe530e9fcf0ac1dfe553bb784c92d",
+    "LICENCE.md": "b0335e6d57ec89c1318969eeaa30419baa2a62ea76d70a458bcadc471110629a",
+    "artifacts.json": "92124ee2b02818a35bc642f48f25e6cd37dd6a0a8191abcd892bf7bd4642f884",
+    "baseline-regression-contract.json": "eefe3abb5bdb9292a4b7ca215dfced49219cf34f250d93b8d97c907e691ebb12",
+    "build-constraints.txt": "222f0445e9d28d99b98f5ac6398cf362f576023dce2370902ddbbfd4d0d6c652",
+    "cache_identity.py": "fb7aa8f0c3933bc1a400d26eeca829b729c95ec2757d41087159360c37acdaee",
+    "host.py": "193d8339e49d1e3ed01176f237e5c95f1f3c0fbac9f0f4ed7c9e2d23479ac090",
+    "image_identity_plugin.py": "37b51115cd0391859944394a6e3265a0d026d3883a238bd5568a3bd95bc1e58d",
+    "inside.py": "04449329206c1ca8d961e679af063f274c6874b9bd4a319aea81f858033e07e7",
+    "installed_demo.py": "7288ae5e7306427d7149cd4d167d617128324adbe6f8b0a028137a59dbbcdb78",
+    "model-pins.json": "1ad32b765fefa354087d63ccc8cd75cf1fd423005c783a72ee3e89d23e27ad0f",
+    "pgdg-key.asc": "0144068502a1eddd2a0280ede10ef607d1ec592ce819940991203941564e8e76",
+    "selection_identity.py": "27242eb8a9fbfc3d5a26e644ca036d424af632b74d93b1173d88859fa00aaf49",
+    "tiny_regression_fixture.py": "8b6e3621819fd00bee48eaee4daa0196c97de1392d2e69fd148cb8c1454a2a11"
+  },
+  "pytest_timeout_seconds": {
+    "baseline": 1200,
+    "baseline-postgres": 900,
+    "regression": 120,
+    "candidate": 1200,
+    "postgres": 900,
+    "image": 360
+  },
+  "clock_scope": "Explicit owner exception authorized one corrected new50min-target/60min-absolute full validation attempt. Original42286672116 permanently CLOSED, no old counters/evidence/allowance baseline reset. This corrected attempt has no retry.",
+  "regression_paths": [
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_manual_completion_allows_unfinished_tasks",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_manual_policy_child_cancellation_propagates"
+  ],
+  "owner_exception": "Authorize one corrected validation attempt"
+}

@@ -1,0 +1,25 @@
+name: Validate Plan Plugin owner feedback
+on:
+  push:
+    branches: [validate-plan188-id-reuse-20261106]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Anchor first workload clock
+        run: echo "VALIDATION_JOB_STARTED_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: packet
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: ScottRBK/forgetful
+          ref: e363d99efc84bb67a516c5e39793399f5233da8d
+          path: source
+          persist-credentials: false
+      - name: Complete integrated hosted Docker attempt
+        run: python3 packet/host.py
