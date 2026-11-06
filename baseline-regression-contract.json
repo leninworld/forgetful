@@ -1,0 +1,32 @@
+{
+  "state": "PREPARED_UNRUN",
+  "baseline_tree": "e363d99efc84bb67a516c5e39793399f5233da8d",
+  "regression_overlay_only": [
+    "tests/plan_plugin_cases.py"
+  ],
+  "expected_passes": [
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_manual_completion_allows_unfinished_tasks",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_manual_policy_child_cancellation_propagates"
+  ],
+  "requirements": [
+    "Full original PR-head SQLite/source and PostgreSQL baseline must pass.",
+    "Exactly eight call-phase behavior failures and four passing controls; no setup, teardown, collection, skip, xfail or import failure credit.",
+    "Only shared test cases overlaid for baseline regression; no production source overlay.",
+    "Candidate full source and PostgreSQL suites retain all baseline IDs; shipping and installed package verification unchanged.",
+    "One integrated attempt; terminal setup or baseline failure; no retry."
+  ],
+  "expected_race_assertion_failures": [
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-delete]"
+  ],
+  "expected_child_cancel_failures": [
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-delete]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-transition]",
+    "tests/e2e_sqlite/test_plan_plugin_storage.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-delete]"
+  ]
+}
