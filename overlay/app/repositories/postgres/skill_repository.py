@@ -1,0 +1,1300 @@
+"""PostgreSQL repository for Skill data access operations
+"""
+from datetime import datetime, UTC
+from uuid import UUID
+
+from sqlalchemy import false, Integer, literal, select, String, union_all
+
+from app.config.logging_config import logging
+from app.config.settings import settings
+from app.exceptions import NotFoundError
+from app.models.code_artifact_models import CodeArtifact
+from app.models.document_models import Document
+from app.models.skill_bundle_models import (
+    BundleCodeArtifact,
+    BundleDocument,
+    BundleFile,
+    CreatedBundleResource,
+    CreatedSkillBundle,
+    PreparedBundleResource,
+    SkillBundleMember,
+    SkillBundleSnapshot,
+    validate_bundle_paths,
+)
+from app.models.skill_models import Skill, SkillCreate, SkillLinks, SkillSummary, SkillUpdate
+from app.protocols.embedding_protocol import EmbeddingsAdapter
+from app.repositories.embeddings.reranker_adapter import RerankAdapter
+from app.repositories.postgres.postgres_adapter import PostgresDatabaseAdapter
+from app.repositories.postgres.postgres_tables import (
+    CodeArtifactsTable,
+    DocumentsTable,
+    FilesTable,
+    memory_skill_association,
+    MemoryTable,
+    skill_bundle_resources,
+    skill_code_artifact_association,
+    skill_document_association,
+    skill_file_association,
+    SkillsTable,
+)
+from app.repositories.postgres.project_reference import ensure_project_owned
+from app.repositories.postgres.resource_rows import (
+    build_code_artifact_row,
+    build_document_row,
+    build_file_row,
+    build_skill_row,
+    file_model,
+)
+from app.utils.embedding_helpers import build_skill_embedding_text
+
+logger = logging.getLogger(__name__)
+
+
+class PostgresSkillRepository:
+    """Repository for Skill operations in PostgreSQL"""
+
+    def __init__(
+        self,
+        db_adapter: PostgresDatabaseAdapter,
+        embedding_adapter: EmbeddingsAdapter,
+        rerank_adapter: RerankAdapter | None = None,
+    ):
+        """Initialize with database and embedding adapters
+
+        Args:
+            db_adapter: PostgreSQL database adapter for session management
+            embedding_adapter: Adapter for generating embeddings
+            rerank_adapter: Optional cross-encoder reranker for search
+        """
+        self.db_adapter = db_adapter
+        self.embedding_adapter = embedding_adapter
+        self.rerank_adapter = rerank_adapter
+        logger.info("Postgres skill repository initialized")
+
+    async def create_skill(
+        self,
+        user_id: UUID,
+        skill_data: SkillCreate,
+    ) -> Skill:
+        """Create a new skill with embedding
+
+        Args:
+            user_id: User ID for ownership
+            skill_data: SkillCreate with skill details
+
+        Returns:
+            Created Skill with generated ID and timestamps
+
+        Raises:
+            NotFoundError: If project_id is not one of the user's projects
+        """
+        try:
+            embedding_text = build_skill_embedding_text(skill_data)
+            embedding = await self.embedding_adapter.generate_embedding(embedding_text)
+
+            async with self.db_adapter.session(user_id) as session:
+                await ensure_project_owned(session, user_id, skill_data.project_id)
+
+                skill_table = build_skill_row(user_id, skill_data, embedding)
+
+                session.add(skill_table)
+                await session.commit()
+                await session.refresh(skill_table)
+
+                return self._to_skill(skill_table)
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(
+                "Failed to create skill",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def skill_name_exists(
+        self,
+        user_id: UUID,
+        name: str,
+    ) -> bool:
+        """Check if a skill with the given name exists for this user."""
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(SkillsTable.id).where(
+                    SkillsTable.user_id == user_id,
+                    SkillsTable.name == name,
+                ).limit(1)
+                result = await session.execute(stmt)
+                return result.scalar_one_or_none() is not None
+        except Exception:
+            logger.exception(
+                "Failed to check skill name existence",
+                extra={
+                    "user_id": str(user_id),
+                    "name": name,
+                },
+            )
+            raise
+
+    async def get_skill_by_id(
+        self,
+        user_id: UUID,
+        skill_id: int,
+    ) -> Skill | None:
+        """Get skill by ID with ownership check
+
+        Args:
+            user_id: User ID for ownership verification
+            skill_id: Skill ID to retrieve
+
+        Returns:
+            Skill if found and owned by user, None otherwise
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+
+                result = await session.execute(stmt)
+                skill_table = result.scalar_one_or_none()
+
+                if not skill_table:
+                    return None
+
+                return self._to_skill(skill_table)
+
+        except Exception as e:
+            logger.error(
+                f"Failed to get skill {skill_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def list_skills(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        tags: list[str] | None = None,
+        importance_threshold: int | None = None,
+    ) -> list[SkillSummary]:
+        """List skills with optional filtering
+
+        Args:
+            user_id: User ID for ownership filtering
+            project_id: Optional filter by project
+            tags: Optional filter by tags (returns skills with ANY of these tags)
+            importance_threshold: Optional minimum importance level
+
+        Returns:
+            List of SkillSummary (lightweight, excludes full content)
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(SkillsTable).where(
+                    SkillsTable.user_id == user_id,
+                )
+
+                if project_id is not None:
+                    stmt = stmt.where(SkillsTable.project_id == project_id)
+
+                if tags:
+                    stmt = stmt.where(SkillsTable.tags.overlap(tags))
+
+                if importance_threshold is not None:
+                    stmt = stmt.where(SkillsTable.importance >= importance_threshold)
+
+                stmt = stmt.order_by(SkillsTable.created_at.desc())
+
+                result = await session.execute(stmt)
+                skills = result.scalars().all()
+
+                return [SkillSummary.model_validate(s) for s in skills]
+
+        except Exception as e:
+            logger.error(
+                "Failed to list skills",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def update_skill(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        skill_data: SkillUpdate,
+    ) -> Skill:
+        """Update skill (PATCH semantics)
+
+        Only provided fields are updated. None/omitted fields remain unchanged.
+        If description changes, the embedding is regenerated.
+
+        Args:
+            user_id: User ID for ownership verification
+            skill_id: Skill ID to update
+            skill_data: SkillUpdate with fields to change
+
+        Returns:
+            Updated Skill
+
+        Raises:
+            NotFoundError: If skill not found or not owned by user,
+                or project_id is not one of the user's projects
+        """
+        try:
+            update_data = skill_data.model_dump(exclude_unset=True)
+            if "description" in update_data:
+                # Preserve validation precedence without holding a connection during embedding.
+                async with self.db_adapter.session(user_id) as session:
+                    result = await session.execute(
+                        select(SkillsTable.id).where(
+                            SkillsTable.id == skill_id,
+                            SkillsTable.user_id == user_id,
+                        ),
+                    )
+                    if result.scalar_one_or_none() is None:
+                        raise NotFoundError(f"Skill {skill_id} not found")
+                    await ensure_project_owned(session, user_id, update_data.get("project_id"))
+
+                embedding_text = build_skill_embedding_text(skill_data)
+                embedding = await self.embedding_adapter.generate_embedding(text=embedding_text)
+                update_data["embedding"] = embedding
+
+            # Re-fetch and recheck after the provider wait; apply only the submitted patch.
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+
+                result = await session.execute(stmt)
+                skill_table = result.scalar_one_or_none()
+
+                if not skill_table:
+                    raise NotFoundError(f"Skill {skill_id} not found")
+
+                await ensure_project_owned(session, user_id, update_data.get("project_id"))
+
+                # Map Pydantic 'metadata' field to ORM 'skill_metadata' column
+                if "metadata" in update_data:
+                    update_data["skill_metadata"] = update_data.pop("metadata")
+
+                for field, value in update_data.items():
+                    setattr(skill_table, field, value)
+
+                skill_table.updated_at = datetime.now(UTC)
+
+                await session.commit()
+                await session.refresh(skill_table)
+
+                return self._to_skill(skill_table)
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(
+                f"Failed to update skill {skill_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def delete_skill(
+        self,
+        user_id: UUID,
+        skill_id: int,
+    ) -> bool:
+        """Delete skill with ownership check
+
+        Args:
+            user_id: User ID for ownership verification
+            skill_id: Skill ID to delete
+
+        Returns:
+            True if deleted, False if not found or not owned by user
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+
+                result = await session.execute(stmt)
+                skill_table = result.scalar_one_or_none()
+
+                if not skill_table:
+                    return False
+
+                await session.delete(skill_table)
+                await session.commit()
+
+                return True
+
+        except Exception as e:
+            logger.error(
+                f"Failed to delete skill {skill_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def search_skills(
+        self,
+        user_id: UUID,
+        query: str,
+        k: int = 5,
+        project_id: int | None = None,
+    ) -> list[SkillSummary]:
+        """Search skills by semantic similarity
+
+        Generates a query embedding and uses cosine distance for vector
+        similarity search. Optionally applies cross-encoder reranking.
+
+        Args:
+            user_id: User ID for ownership filtering
+            query: Search query string
+            k: Number of results to return (default: 5)
+            project_id: Optional filter by project
+
+        Returns:
+            List of SkillSummary ranked by relevance
+        """
+        try:
+            query_embedding = await self.embedding_adapter.generate_embedding(query)
+
+            # Fetch more candidates if reranking is enabled
+            candidates_k = k * 3 if self.rerank_adapter is not None else k
+
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(SkillsTable).where(
+                    SkillsTable.user_id == user_id,
+                )
+
+                if project_id is not None:
+                    stmt = stmt.where(SkillsTable.project_id == project_id)
+
+                stmt = stmt.order_by(
+                    SkillsTable.embedding.cosine_distance(query_embedding),
+                )
+                stmt = stmt.limit(candidates_k)
+
+                result = await session.execute(stmt)
+                skills = [SkillSummary.model_validate(s) for s in result.scalars().all()]
+
+            if not skills:
+                return []
+
+            # Apply cross-encoder reranking if available
+            if self.rerank_adapter is not None and len(skills) > k:
+                documents = [s.description for s in skills]
+                ranked = await self.rerank_adapter.rerank(
+                    query=query, documents=documents,
+                )
+                skills = [skills[idx] for idx, score in ranked[:k]]
+
+            return skills
+
+        except Exception as e:
+            logger.error(
+                "Failed to search skills",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "query": query,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def link_skill_to_memory(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        memory_id: int,
+    ) -> dict:
+        """Link a skill to a memory via the association table.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to link.
+            memory_id: Memory ID to link.
+
+        Returns:
+            Dict confirming the link was created.
+
+        Raises:
+            NotFoundError: If skill or memory not found or not owned by user.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                # Verify skill exists and is owned by user
+                skill_stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+                skill_result = await session.execute(skill_stmt)
+                if skill_result.scalar_one_or_none() is None:
+                    msg = f"Skill {skill_id} not found"
+                    raise NotFoundError(msg)
+
+                # Verify memory exists and is owned by user
+                memory_stmt = select(MemoryTable).where(
+                    MemoryTable.id == memory_id,
+                    MemoryTable.user_id == user_id,
+                )
+                memory_result = await session.execute(memory_stmt)
+                if memory_result.scalar_one_or_none() is None:
+                    msg = f"Memory {memory_id} not found"
+                    raise NotFoundError(msg)
+
+                # Check if link already exists (idempotent)
+                existing = await session.execute(
+                    select(memory_skill_association).where(
+                        memory_skill_association.c.skill_id == skill_id,
+                        memory_skill_association.c.memory_id == memory_id,
+                    ),
+                )
+                if existing.first() is None:
+                    await session.execute(
+                        memory_skill_association.insert().values(
+                            skill_id=skill_id,
+                            memory_id=memory_id,
+                        ),
+                    )
+                    await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "memory_id": memory_id,
+                    "linked": True,
+                }
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(
+                f"Failed to link skill {skill_id} to memory {memory_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "memory_id": memory_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def unlink_skill_from_memory(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        memory_id: int,
+    ) -> dict:
+        """Remove the link between a skill and a memory.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to unlink.
+            memory_id: Memory ID to unlink.
+
+        Returns:
+            Dict with unlinked=True if removed, False if link didn't exist.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                result = await session.execute(
+                    memory_skill_association.delete().where(
+                        memory_skill_association.c.skill_id == skill_id,
+                        memory_skill_association.c.memory_id == memory_id,
+                    ),
+                )
+                await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "memory_id": memory_id,
+                    "unlinked": result.rowcount > 0,
+                }
+
+        except Exception as e:
+            logger.error(
+                f"Failed to unlink skill {skill_id} from memory {memory_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "memory_id": memory_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def link_skill_to_file(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        file_id: int,
+    ) -> dict:
+        """Link a skill to a file via the association table.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to link.
+            file_id: File ID to link.
+
+        Returns:
+            Dict confirming the link was created.
+
+        Raises:
+            NotFoundError: If skill or file not found or not owned by user.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                skill_stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+                skill_result = await session.execute(skill_stmt)
+                if skill_result.scalar_one_or_none() is None:
+                    msg = f"Skill {skill_id} not found"
+                    raise NotFoundError(msg)
+
+                file_stmt = select(FilesTable).where(
+                    FilesTable.id == file_id,
+                    FilesTable.user_id == user_id,
+                )
+                file_result = await session.execute(file_stmt)
+                if file_result.scalar_one_or_none() is None:
+                    msg = f"File {file_id} not found"
+                    raise NotFoundError(msg)
+
+                # Check if link already exists (idempotent)
+                existing = await session.execute(
+                    select(skill_file_association).where(
+                        skill_file_association.c.skill_id == skill_id,
+                        skill_file_association.c.file_id == file_id,
+                    ),
+                )
+                if existing.first() is None:
+                    await session.execute(
+                        skill_file_association.insert().values(
+                            skill_id=skill_id,
+                            file_id=file_id,
+                        ),
+                    )
+                    await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "file_id": file_id,
+                    "linked": True,
+                }
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(
+                f"Failed to link skill {skill_id} to file {file_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "file_id": file_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def unlink_skill_from_file(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        file_id: int,
+    ) -> dict:
+        """Remove the link between a skill and a file.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to unlink.
+            file_id: File ID to unlink.
+
+        Returns:
+            Dict with unlinked=True if removed, False if link didn't exist.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                result = await session.execute(
+                    skill_file_association.delete().where(
+                        skill_file_association.c.skill_id == skill_id,
+                        skill_file_association.c.file_id == file_id,
+                    ),
+                )
+                await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "file_id": file_id,
+                    "unlinked": result.rowcount > 0,
+                }
+
+        except Exception as e:
+            logger.error(
+                f"Failed to unlink skill {skill_id} from file {file_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "file_id": file_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def link_skill_to_code_artifact(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        code_artifact_id: int,
+    ) -> dict:
+        """Link a skill to a code artifact via the association table.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to link.
+            code_artifact_id: Code artifact ID to link.
+
+        Returns:
+            Dict confirming the link was created.
+
+        Raises:
+            NotFoundError: If skill or code artifact not found or not owned by user.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                skill_stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+                skill_result = await session.execute(skill_stmt)
+                if skill_result.scalar_one_or_none() is None:
+                    msg = f"Skill {skill_id} not found"
+                    raise NotFoundError(msg)
+
+                ca_stmt = select(CodeArtifactsTable).where(
+                    CodeArtifactsTable.id == code_artifact_id,
+                    CodeArtifactsTable.user_id == user_id,
+                )
+                ca_result = await session.execute(ca_stmt)
+                if ca_result.scalar_one_or_none() is None:
+                    msg = f"Code artifact {code_artifact_id} not found"
+                    raise NotFoundError(msg)
+
+                # Check if link already exists (idempotent)
+                existing = await session.execute(
+                    select(skill_code_artifact_association).where(
+                        skill_code_artifact_association.c.skill_id == skill_id,
+                        skill_code_artifact_association.c.code_artifact_id == code_artifact_id,
+                    ),
+                )
+                if existing.first() is None:
+                    await session.execute(
+                        skill_code_artifact_association.insert().values(
+                            skill_id=skill_id,
+                            code_artifact_id=code_artifact_id,
+                        ),
+                    )
+                    await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "code_artifact_id": code_artifact_id,
+                    "linked": True,
+                }
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(
+                f"Failed to link skill {skill_id} to code artifact {code_artifact_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "code_artifact_id": code_artifact_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def unlink_skill_from_code_artifact(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        code_artifact_id: int,
+    ) -> dict:
+        """Remove the link between a skill and a code artifact.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to unlink.
+            code_artifact_id: Code artifact ID to unlink.
+
+        Returns:
+            Dict with unlinked=True if removed, False if link didn't exist.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                result = await session.execute(
+                    skill_code_artifact_association.delete().where(
+                        skill_code_artifact_association.c.skill_id == skill_id,
+                        skill_code_artifact_association.c.code_artifact_id == code_artifact_id,
+                    ),
+                )
+                await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "code_artifact_id": code_artifact_id,
+                    "unlinked": result.rowcount > 0,
+                }
+
+        except Exception as e:
+            logger.error(
+                f"Failed to unlink skill {skill_id} from code artifact {code_artifact_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "code_artifact_id": code_artifact_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def link_skill_to_document(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        document_id: int,
+    ) -> dict:
+        """Link a skill to a document via the association table.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to link.
+            document_id: Document ID to link.
+
+        Returns:
+            Dict confirming the link was created.
+
+        Raises:
+            NotFoundError: If skill or document not found or not owned by user.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                skill_stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+                skill_result = await session.execute(skill_stmt)
+                if skill_result.scalar_one_or_none() is None:
+                    msg = f"Skill {skill_id} not found"
+                    raise NotFoundError(msg)
+
+                doc_stmt = select(DocumentsTable).where(
+                    DocumentsTable.id == document_id,
+                    DocumentsTable.user_id == user_id,
+                )
+                doc_result = await session.execute(doc_stmt)
+                if doc_result.scalar_one_or_none() is None:
+                    msg = f"Document {document_id} not found"
+                    raise NotFoundError(msg)
+
+                # Check if link already exists (idempotent)
+                existing = await session.execute(
+                    select(skill_document_association).where(
+                        skill_document_association.c.skill_id == skill_id,
+                        skill_document_association.c.document_id == document_id,
+                    ),
+                )
+                if existing.first() is None:
+                    await session.execute(
+                        skill_document_association.insert().values(
+                            skill_id=skill_id,
+                            document_id=document_id,
+                        ),
+                    )
+                    await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "document_id": document_id,
+                    "linked": True,
+                }
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(
+                f"Failed to link skill {skill_id} to document {document_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "document_id": document_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def unlink_skill_from_document(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        document_id: int,
+    ) -> dict:
+        """Remove the link between a skill and a document.
+
+        Args:
+            user_id: User ID for ownership verification.
+            skill_id: Skill ID to unlink.
+            document_id: Document ID to unlink.
+
+        Returns:
+            Dict with unlinked=True if removed, False if link didn't exist.
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                result = await session.execute(
+                    skill_document_association.delete().where(
+                        skill_document_association.c.skill_id == skill_id,
+                        skill_document_association.c.document_id == document_id,
+                    ),
+                )
+                await session.commit()
+
+                return {
+                    "skill_id": skill_id,
+                    "document_id": document_id,
+                    "unlinked": result.rowcount > 0,
+                }
+
+        except Exception as e:
+            logger.error(
+                f"Failed to unlink skill {skill_id} from document {document_id}",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "document_id": document_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def get_skill_links(
+        self,
+        user_id: UUID,
+        skill_id: int,
+    ) -> SkillLinks:
+        """Get IDs of all content linked to a skill (reverse lookup).
+
+        Args:
+            user_id: User ID for ownership verification
+            skill_id: Skill to look up links for
+
+        Returns:
+            SkillLinks with memory, file, code artifact and document IDs
+
+        Raises:
+            NotFoundError: If skill not found or not owned by user
+        """
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                # First verify the skill exists and is owned by user
+                skill_stmt = select(SkillsTable).where(
+                    SkillsTable.id == skill_id,
+                    SkillsTable.user_id == user_id,
+                )
+                skill_result = await session.execute(skill_stmt)
+                if skill_result.scalar_one_or_none() is None:
+                    raise NotFoundError(f"Skill {skill_id} not found")
+
+                memory_stmt = select(
+                    memory_skill_association.c.memory_id,
+                ).join(
+                    MemoryTable,
+                    MemoryTable.id == memory_skill_association.c.memory_id,
+                ).where(
+                    memory_skill_association.c.skill_id == skill_id,
+                    MemoryTable.user_id == user_id,
+                )
+                memory_ids = [row.memory_id for row in await session.execute(memory_stmt)]
+
+                file_stmt = select(
+                    skill_file_association.c.file_id,
+                ).join(
+                    FilesTable,
+                    FilesTable.id == skill_file_association.c.file_id,
+                ).where(
+                    skill_file_association.c.skill_id == skill_id,
+                    FilesTable.user_id == user_id,
+                )
+                file_ids = [row.file_id for row in await session.execute(file_stmt)]
+
+                artifact_stmt = select(
+                    skill_code_artifact_association.c.code_artifact_id,
+                ).join(
+                    CodeArtifactsTable,
+                    CodeArtifactsTable.id == skill_code_artifact_association.c.code_artifact_id,
+                ).where(
+                    skill_code_artifact_association.c.skill_id == skill_id,
+                    CodeArtifactsTable.user_id == user_id,
+                )
+                code_artifact_ids = [
+                    row.code_artifact_id for row in await session.execute(artifact_stmt)
+                ]
+
+                document_stmt = select(
+                    skill_document_association.c.document_id,
+                ).join(
+                    DocumentsTable,
+                    DocumentsTable.id == skill_document_association.c.document_id,
+                ).where(
+                    skill_document_association.c.skill_id == skill_id,
+                    DocumentsTable.user_id == user_id,
+                )
+                document_ids = [
+                    row.document_id for row in await session.execute(document_stmt)
+                ]
+
+                return SkillLinks(
+                    memory_ids=memory_ids,
+                    file_ids=file_ids,
+                    code_artifact_ids=code_artifact_ids,
+                    document_ids=document_ids,
+                )
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(
+                "Failed to get skill links",
+                exc_info=True,
+                extra={
+                    "user_id": str(user_id),
+                    "skill_id": skill_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+    async def get_all_skill_file_links(
+        self,
+        user_id: UUID,
+    ) -> list[tuple[int, int]]:
+        """Get all skill-file associations for a user (for graph visualization)."""
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(
+                    skill_file_association.c.skill_id,
+                    skill_file_association.c.file_id,
+                ).select_from(
+                    skill_file_association,
+                ).join(
+                    SkillsTable,
+                    SkillsTable.id == skill_file_association.c.skill_id,
+                ).join(
+                    FilesTable,
+                    FilesTable.id == skill_file_association.c.file_id,
+                ).where(
+                    SkillsTable.user_id == user_id,
+                    FilesTable.user_id == user_id,
+                )
+
+                result = await session.execute(stmt)
+                return [(row.skill_id, row.file_id) for row in result]
+        except Exception:
+            logger.exception(
+                "Failed to get all skill-file links",
+                extra={"user_id": str(user_id)},
+            )
+            raise
+
+    async def get_all_skill_code_artifact_links(
+        self,
+        user_id: UUID,
+    ) -> list[tuple[int, int]]:
+        """Get all skill-code_artifact associations for a user (for graph visualization)."""
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(
+                    skill_code_artifact_association.c.skill_id,
+                    skill_code_artifact_association.c.code_artifact_id,
+                ).select_from(
+                    skill_code_artifact_association,
+                ).join(
+                    SkillsTable,
+                    SkillsTable.id == skill_code_artifact_association.c.skill_id,
+                ).join(
+                    CodeArtifactsTable,
+                    CodeArtifactsTable.id == skill_code_artifact_association.c.code_artifact_id,
+                ).where(
+                    SkillsTable.user_id == user_id,
+                    CodeArtifactsTable.user_id == user_id,
+                )
+
+                result = await session.execute(stmt)
+                return [(row.skill_id, row.code_artifact_id) for row in result]
+        except Exception:
+            logger.exception(
+                "Failed to get all skill-code_artifact links",
+                extra={"user_id": str(user_id)},
+            )
+            raise
+
+    async def get_all_skill_document_links(
+        self,
+        user_id: UUID,
+    ) -> list[tuple[int, int]]:
+        """Get all skill-document associations for a user (for graph visualization)."""
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                stmt = select(
+                    skill_document_association.c.skill_id,
+                    skill_document_association.c.document_id,
+                ).select_from(
+                    skill_document_association,
+                ).join(
+                    SkillsTable,
+                    SkillsTable.id == skill_document_association.c.skill_id,
+                ).join(
+                    DocumentsTable,
+                    DocumentsTable.id == skill_document_association.c.document_id,
+                ).where(
+                    SkillsTable.user_id == user_id,
+                    DocumentsTable.user_id == user_id,
+                )
+
+                result = await session.execute(stmt)
+                return [(row.skill_id, row.document_id) for row in result]
+        except Exception:
+            logger.exception(
+                "Failed to get all skill-document links",
+                extra={"user_id": str(user_id)},
+            )
+            raise
+
+    @staticmethod
+    def _to_skill(row: SkillsTable) -> Skill:
+        """Convert ORM row to Skill model.
+
+        Handles the skill_metadata -> metadata field name mapping.
+        SQLAlchemy models have a class-level .metadata attribute (MetaData),
+        so we cannot rely on model_validate(row) for this field.
+        """
+        return Skill(
+            id=row.id,
+            name=row.name,
+            description=row.description,
+            content=row.content,
+            license=row.license,
+            compatibility=row.compatibility,
+            allowed_tools=row.allowed_tools,
+            metadata=row.skill_metadata,
+            tags=row.tags,
+            importance=row.importance,
+            project_id=row.project_id,
+            created_at=row.created_at,
+            updated_at=row.updated_at,
+            source_repo=row.source_repo,
+            source_files=row.source_files,
+            source_url=row.source_url,
+            confidence=row.confidence,
+            encoding_agent=row.encoding_agent,
+            encoding_version=row.encoding_version,
+            agent_id=row.agent_id,
+            agent_version=row.agent_version,
+            agent_model=row.agent_model,
+        )
+
+    async def create_skill_bundle(
+        self, user_id: UUID, skill_data: SkillCreate,
+        resources: list[PreparedBundleResource],
+    ) -> CreatedSkillBundle:
+        """Commit the skill, vector, resources, links and membership together."""
+        embedding = await self.embedding_adapter.generate_embedding(
+            text=build_skill_embedding_text(skill_data),
+        )
+        async with self.db_adapter.session(user_id) as session:
+            await ensure_project_owned(session, user_id, skill_data.project_id)
+            existing = await session.execute(select(SkillsTable.id).where(
+                SkillsTable.user_id == user_id, SkillsTable.name == skill_data.name,
+            ).limit(1))
+            if existing.first() is not None:
+                raise ValueError(f"A skill named '{skill_data.name}' already exists")
+            # This preserves the existing name check, not a new uniqueness guarantee.
+            skill_row = build_skill_row(user_id, skill_data, embedding)
+            session.add(skill_row)
+            await session.flush()
+            members = []
+            created = []
+            for item in resources:
+                builder, converter, link, key = {
+                    "document": (build_document_row, Document.model_validate,
+                                 skill_document_association, "document_id"),
+                    "code_artifact": (build_code_artifact_row, CodeArtifact.model_validate,
+                                      skill_code_artifact_association, "code_artifact_id"),
+                    "file": (build_file_row, file_model,
+                             skill_file_association, "file_id"),
+                }[item.kind]
+                resource_row = builder(user_id, item.data)
+                session.add(resource_row)
+                await session.flush()
+                await session.execute(link.insert().values(
+                    skill_id=skill_row.id, **{key: resource_row.id},
+                ))
+                await session.execute(skill_bundle_resources.insert().values(
+                    skill_id=skill_row.id, path=item.path, kind=item.kind,
+                    **{key: resource_row.id},
+                ))
+                created.append(CreatedBundleResource(
+                    kind=item.kind, resource=converter(resource_row),
+                ))
+                members.append(SkillBundleMember(
+                    path=item.path, kind=item.kind, resource_id=resource_row.id,
+                ))
+            # Construct detached results before committing, so conversion errors roll back.
+            result = CreatedSkillBundle(
+                skill=self._to_skill(skill_row), members=members, resources=created,
+            )
+            await session.commit()
+            return result
+
+    async def read_skill_bundle(
+        self, user_id: UUID, skill_id: int,
+        members: list[SkillBundleMember] | None = None,
+    ) -> SkillBundleSnapshot:
+        """One SELECT reads the owned skill, paths, contents and link membership."""
+        if members is None:
+            selected = skill_bundle_resources
+        else:
+            if len(members) > settings.SKILL_BUNDLE_MAX_RESOURCES:
+                raise ValueError("Bundle resource count exceeds SKILL_BUNDLE_MAX_RESOURCES")
+            validate_bundle_paths([member.path for member in members])
+            projections = []
+            for member in members:
+                projections.append(select(
+                    literal(skill_id, Integer).label("skill_id"),
+                    literal(member.path, String).label("path"),
+                    literal(member.kind, String).label("kind"),
+                    *[literal(member.resource_id if member.kind == kind else None, Integer).label(key)
+                      for kind, key in (("document", "document_id"),
+                                        ("code_artifact", "code_artifact_id"),
+                                        ("file", "file_id"))],
+                ))
+            if not projections:
+                projections = [select(
+                    literal(skill_id, Integer).label("skill_id"),
+                    literal(None, String).label("path"),
+                    literal(None, String).label("kind"),
+                    literal(None, Integer).label("document_id"),
+                    literal(None, Integer).label("code_artifact_id"),
+                    literal(None, Integer).label("file_id"),
+                ).where(false())]
+            selected = union_all(*projections).subquery("selected_bundle_members")
+        statement = select(
+            SkillsTable, selected.c.path, selected.c.kind,
+            selected.c.document_id, selected.c.code_artifact_id, selected.c.file_id,
+            DocumentsTable, CodeArtifactsTable, FilesTable,
+            skill_document_association.c.document_id,
+            skill_code_artifact_association.c.code_artifact_id,
+            skill_file_association.c.file_id,
+        ).select_from(SkillsTable).outerjoin(
+            selected, selected.c.skill_id == SkillsTable.id,
+        ).outerjoin(
+            DocumentsTable, (DocumentsTable.id == selected.c.document_id)
+            & (DocumentsTable.user_id == user_id),
+        ).outerjoin(
+            CodeArtifactsTable, (CodeArtifactsTable.id == selected.c.code_artifact_id)
+            & (CodeArtifactsTable.user_id == user_id),
+        ).outerjoin(
+            FilesTable, (FilesTable.id == selected.c.file_id)
+            & (FilesTable.user_id == user_id),
+        ).outerjoin(
+            skill_document_association,
+            (skill_document_association.c.skill_id == SkillsTable.id)
+            & (skill_document_association.c.document_id == selected.c.document_id),
+        ).outerjoin(
+            skill_code_artifact_association,
+            (skill_code_artifact_association.c.skill_id == SkillsTable.id)
+            & (skill_code_artifact_association.c.code_artifact_id == selected.c.code_artifact_id),
+        ).outerjoin(
+            skill_file_association,
+            (skill_file_association.c.skill_id == SkillsTable.id)
+            & (skill_file_association.c.file_id == selected.c.file_id),
+        ).where(
+            SkillsTable.id == skill_id, SkillsTable.user_id == user_id,
+        ).order_by(selected.c.path)
+        async with self.db_adapter.session(user_id) as session:
+            rows = (await session.execute(statement)).all()
+            if not rows:
+                raise NotFoundError(f"Skill {skill_id} not found")
+            resources = []
+            for row in rows:
+                _skill_row, path, kind, did, aid, fid, doc, artifact, file_row, dl, al, fl = row
+                if path is None:
+                    continue
+                native_id, resource, linked = {
+                    "document": (did, doc, dl),
+                    "code_artifact": (aid, artifact, al),
+                    "file": (fid, file_row, fl),
+                }[kind]
+                if resource is None and (members is not None or native_id is not None):
+                    raise NotFoundError(f"Bundle member '{path}' not found")
+                if native_id is None or resource is None:
+                    raise ValueError(f"Bundle member '{path}' was deleted")
+                if linked is None:
+                    raise ValueError(f"Bundle member '{path}' was unlinked")
+                if str(resource.user_id) != str(user_id):
+                    raise NotFoundError(f"Bundle member '{path}' not found")
+                if kind == "document":
+                    resources.append(BundleDocument(
+                        path=path, title=doc.title, description=doc.description,
+                        content=doc.content, document_type=doc.document_type, tags=doc.tags,
+                    ))
+                elif kind == "code_artifact":
+                    resources.append(BundleCodeArtifact(
+                        path=path, title=artifact.title, description=artifact.description,
+                        code=artifact.code, language=artifact.language, tags=artifact.tags,
+                    ))
+                else:
+                    native = file_model(file_row)
+                    resources.append(BundleFile(
+                        path=path, description=native.description, data=native.data,
+                        mime_type=native.mime_type, tags=native.tags,
+                    ))
+            resources.sort(key=lambda resource: resource.path)
+            return SkillBundleSnapshot(skill=self._to_skill(rows[0][0]), resources=resources)
