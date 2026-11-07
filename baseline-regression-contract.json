@@ -1,0 +1,21 @@
+{
+  "state": "PREPARED_UNRUN",
+  "baseline_tree": "8c63e23e97559ed45663c43ef32c4af4b2f3f4c2",
+  "regression_overlay_only": [
+    "tests/e2e_sqlite/test_skill_bundle_contract_oracle.py"
+  ],
+  "expected_feature_assertion_failures": [
+    "tests/e2e_sqlite/test_skill_bundle_contract_oracle.py::test_bundle_registry_contract[import_skill_bundle]",
+    "tests/e2e_sqlite/test_skill_bundle_contract_oracle.py::test_bundle_registry_contract[export_skill_bundle]"
+  ],
+  "expected_passes": [
+    "tests/e2e_sqlite/test_skill_bundle_contract_oracle.py::test_original_markdown_control"
+  ],
+  "requirements": [
+    "Original fullsource/nativePG pass before regression",
+    "Exactly2 genuine call-phase missing_bundle_tool assertion failures and1legacycontrol pass; no setup/collection/import/skip credit",
+    "Only baseline-compatible public test source overlaid for regression",
+    "Candidate entireoriginal+newsource/nativePG tests retained; actualinstalledwheel/freshDBconsole/shippingbundlepersistence required",
+    "One new193firstexecution; any setup/baseline failure terminal, no automaticretry or reset"
+  ]
+}
