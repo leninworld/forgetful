@@ -1,0 +1,25 @@
+{
+  "state": "PREPARED_UNRUN",
+  "baseline_tree": "d344efdc88b19667feb920a69a5b104ad8cfe40f",
+  "regression_overlay_only": [
+    "tests/integration/test_task_plugin_baseline.py"
+  ],
+  "expected_feature_assertion_failures": [
+    "tests/integration/test_task_plugin_baseline.py::test_task_create_policy_contract",
+    "tests/integration/test_task_plugin_baseline.py::test_task_claim_policy_contract"
+  ],
+  "expected_passes": [
+    "tests/integration/test_task_plugin_baseline.py::test_no_plugin_legacy_task_control"
+  ],
+  "requirements": [
+    "Fresh full unchanged baseline and native PostgreSQL pass on current128-package lock",
+    "Actual synthetic TASK_WRITE_PLUGIN environment set and persisted unauthorized create/claim read back",
+    "Exactly2 call-phase missing_task_plugin assertions and1 no-plugin control; setup/import/collection/skip do not count",
+    "All original and new full source/nativePG tests, architecture/Ruff/installed wheel/console/shipping retained",
+    "Only this new172 attempt; all170/175/183 and other attempts remain closed without reset"
+  ],
+  "expected_failure_markers": {
+    "tests/integration/test_task_plugin_baseline.py::test_task_create_policy_contract": "missing_task_plugin_create_policy",
+    "tests/integration/test_task_plugin_baseline.py::test_task_claim_policy_contract": "missing_task_plugin_claim_policy"
+  }
+}

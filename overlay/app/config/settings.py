@@ -1,0 +1,302 @@
+"""Configuration Management For the Service
+"""
+from pathlib import Path
+from typing import Literal
+
+from platformdirs import user_config_dir, user_data_dir
+from pydantic import ConfigDict, Field, field_validator
+from pydantic_settings import BaseSettings
+
+from app.version import get_version
+
+# NOTE: We deliberately do NOT call dotenv.load_dotenv() here. It promotes a
+# discovered .env into os.environ, which pydantic-settings ranks above every
+# env_file entry - letting a stray .env in the run directory outrank the user
+# config that `forgetful auth login` writes to ~/.config/forgetful/.env. The
+# env_file list below already encodes the documented precedence (user config
+# last => highest, since DotEnvSettingsSource merges files in order).
+
+# Platform-specific default paths
+_default_data_dir = Path(user_data_dir("forgetful", ensure_exists=False))
+_default_config_dir = Path(user_config_dir("forgetful", ensure_exists=False))
+
+
+def parse_onnx_providers(value: str | None) -> list[str] | None:
+    """Split a comma-separated ONNX Runtime provider list; None keeps FastEmbed's default."""
+    if value is None or not value.strip():
+        return None
+    providers = [name.strip() for name in value.split(",")]
+    if any(not name for name in providers):
+        raise ValueError("ONNX provider lists must not contain empty entries")
+    return providers
+
+
+class Settings(BaseSettings):
+    # Application Info
+    SERVICE_NAME: str = "Forgetful"
+    SERVICE_VERSION: str = get_version()
+    SERVICE_DESCRIPTION: str = "Forgetful Memory Service"
+
+    # Server Configuration
+    SERVER_HOST: str = "0.0.0.0"
+    SERVER_PORT: int = 8020
+    LOG_LEVEL: str = "INFO"
+    LOG_FORMAT: str = "console"
+
+    # CORS Configuration (HTTP transport only)
+    CORS_ENABLED: bool = False
+    CORS_ORIGINS: list[str] = ["*"]
+
+    # Trusted administrator Memory Plugin registration (empty disables).
+    MEMORY_WRITE_PLUGIN: str = ""
+    MEMORY_WRITE_PLUGIN_MODE: Literal["warn", "enforce"] = "enforce"
+    MEMORY_WRITE_PLUGIN_TIMEOUT_SECONDS: float = Field(default=5.0, gt=0, allow_inf_nan=False)
+
+    PLAN_WRITE_PLUGIN: str = ""
+    PLAN_WRITE_PLUGIN_MODE: Literal["warn", "enforce"] = "enforce"
+    PLAN_WRITE_PLUGIN_TIMEOUT_SECONDS: float = Field(default=5.0, gt=0, allow_inf_nan=False)
+
+    TASK_WRITE_PLUGIN: str = ""
+    TASK_WRITE_PLUGIN_MODE: Literal["warn", "enforce"] = "enforce"
+    TASK_WRITE_PLUGIN_TIMEOUT_SECONDS: float = Field(default=5.0, gt=0, allow_inf_nan=False)
+
+    ENTITY_WRITE_PLUGIN: str = ""
+    ENTITY_WRITE_PLUGIN_MODE: Literal["warn", "enforce"] = "enforce"
+    ENTITY_WRITE_PLUGIN_TIMEOUT_SECONDS: float = Field(default=5.0, gt=0, allow_inf_nan=False)
+
+    # Database Configuration
+    DATABASE: str = "SQLite"  # "Postgres" or "SQLite"
+
+    # Postgres Configuration
+    POSTGRES_HOST: str = "127.0.0.1"  # 127.0.0.1 for local, forgetful-db for Docker
+    PGPORT: int = 5099
+    POSTGRES_DB: str = "forgetful"
+    POSTGRES_USER: str = "forgetful"
+    POSTGRES_PASSWORD: str = "forgetful"
+
+    # SQLite Configuration
+    SQLITE_PATH: str = str(_default_data_dir / "forgetful.db")  # Platform-specific path
+    SQLITE_MEMORY: bool = False  # Use :memory: database (for testing)
+
+    DB_LOGGING: bool = False
+
+    # Auth Configuration
+    DEFAULT_USER_ID: str = "default-user-id"
+    DEFAULT_USER_NAME: str = "default-user-name"
+    DEFAULT_USER_EMAIL: str = "default-user-email"
+
+    # FastMCP Auth Provider Configuration
+    # Set FASTMCP_SERVER_AUTH to enable authentication (omit for no-auth default user mode)
+    FASTMCP_SERVER_AUTH: str = ""              # Fully-qualified provider class path
+
+    # GitHub OAuth Provider
+    FASTMCP_SERVER_AUTH_GITHUB_CLIENT_ID: str = ""
+    FASTMCP_SERVER_AUTH_GITHUB_CLIENT_SECRET: str = ""
+    FASTMCP_SERVER_AUTH_GITHUB_BASE_URL: str = ""
+    FASTMCP_SERVER_AUTH_GITHUB_REQUIRED_SCOPES: str = ""
+
+    # Google OAuth Provider
+    FASTMCP_SERVER_AUTH_GOOGLE_CLIENT_ID: str = ""
+    FASTMCP_SERVER_AUTH_GOOGLE_CLIENT_SECRET: str = ""
+    FASTMCP_SERVER_AUTH_GOOGLE_BASE_URL: str = ""
+    FASTMCP_SERVER_AUTH_GOOGLE_REQUIRED_SCOPES: str = ""
+
+    # JWT Verification
+    FASTMCP_SERVER_AUTH_JWT_JWKS_URI: str = ""
+    FASTMCP_SERVER_AUTH_JWT_PUBLIC_KEY: str = ""
+    FASTMCP_SERVER_AUTH_JWT_ISSUER: str = ""
+    FASTMCP_SERVER_AUTH_JWT_AUDIENCE: str = ""
+    FASTMCP_SERVER_AUTH_JWT_REQUIRED_SCOPES: str = ""
+
+    # Token Introspection (RFC 7662)
+    FASTMCP_SERVER_AUTH_INTROSPECTION_URL: str = ""
+    FASTMCP_SERVER_AUTH_INTROSPECTION_CLIENT_ID: str = ""
+    FASTMCP_SERVER_AUTH_INTROSPECTION_CLIENT_SECRET: str = ""
+    FASTMCP_SERVER_AUTH_INTROSPECTION_REQUIRED_SCOPES: str = ""
+
+    # OAuth Storage Configuration
+    OAUTH_STORAGE_PATH: str = str(_default_data_dir / "oauth")  # Platform-specific path for OAuth tokens
+
+    # Token Cache Configuration (for HTTP/REST auth performance)
+    TOKEN_CACHE_ENABLED: bool = True           # Enable/disable token caching
+    TOKEN_CACHE_TTL_SECONDS: int = 300         # 5 minutes default
+    TOKEN_CACHE_MAX_SIZE: int = 1000           # Maximum cached tokens
+
+    # Scoped Permissions Configuration
+    FORGETFUL_SCOPES: str = "*"               # Comma-separated scopes (e.g. "read", "write:memories", "read,write:entities")
+
+    # CLI Remote Mode Configuration
+    FORGETFUL_SERVER: str = ""                # Remote deployment URL for the CLI (empty = local mode)
+
+    # MCP descriptor presentation
+    MCP_DESCRIPTOR_MODE: str = "verbose"       # "verbose" (default) or "compact" meta-tool docstrings
+
+    # Memory Configuration
+    MEMORY_TITLE_MAX_LENGTH: int = 200      # Must be "easily titled" - scannable
+    MEMORY_CONTENT_MAX_LENGTH: int = 2000   # ~300-400 words - single concept
+    MEMORY_CONTEXT_MAX_LENGTH: int = 500    # Brief contextual description
+    MEMORY_KEYWORDS_MAX_COUNT: int = 10     # For semantic clustering
+    MEMORY_TAGS_MAX_COUNT: int = 10         # For categorization
+    MEMORY_TOKEN_BUDGET: int = 8000         # token budget for retrieved memories (to protect context window)
+    MEMORY_MAX_MEMORIES: int = 20           # maximum number of memories that can be retrieved from a query
+    MEMORY_NUM_AUTO_LINK: int = 3           # number of memories to automatically link
+    MEMORY_SIMILARITY_THRESHOLD: float = 0.7  # minimum cosine similarity for auto-links
+    OBSOLETE_WARNING_ENABLED: bool = True  # create_memory warns when content matches superseded memories
+    OBSOLETE_WARNING_THRESHOLD: float = 0.89  # minimum cosine similarity for obsolete-memory warnings
+
+    # Project Configuration
+    PROJECT_DESCRIPTION_MAX_LENGTH: int = 5000  # Text field, no DB limit - reasonable cap
+    PROJECT_NOTES_MAX_LENGTH: int = 4000        # Text field, no DB limit - reasonable cap
+
+    # Code Artifact Configuration
+    CODE_ARTIFACT_TITLE_MAX_LENGTH: int = 500         # DB limit: String(500)
+    CODE_ARTIFACT_DESCRIPTION_MAX_LENGTH: int = 5000  # Reasonable cap for text field
+    CODE_ARTIFACT_CODE_MAX_LENGTH: int = 50000        # ~50KB for large code snippets
+    CODE_ARTIFACT_TAGS_MAX_COUNT: int = 10            # For categorization
+
+    # Document Configuration
+    DOCUMENT_TITLE_MAX_LENGTH: int = 500         # DB limit: String(500)
+    DOCUMENT_DESCRIPTION_MAX_LENGTH: int = 5000  # Reasonable cap for text field
+    DOCUMENT_CONTENT_MAX_LENGTH: int = 100000    # ~100KB for large documents
+    DOCUMENT_TAGS_MAX_COUNT: int = 10            # For categorization
+
+    # Files Feature Flag
+    FILES_ENABLED: bool = False                  # Enable file storage tools and routes
+
+    # File Configuration (only relevant when FILES_ENABLED=True)
+    FILE_MAX_SIZE_BYTES: int = 10_485_760        # 10MB decoded binary size limit
+    FILE_FILENAME_MAX_LENGTH: int = 255
+    FILE_DESCRIPTION_MAX_LENGTH: int = 5000
+    FILE_TAGS_MAX_COUNT: int = 10
+
+    # Entity Configuration
+    ENTITY_NAME_MAX_LENGTH: int = 200            # DB limit: String(200)
+    ENTITY_TYPE_MAX_LENGTH: int = 100            # For custom entity types
+    ENTITY_NOTES_MAX_LENGTH: int = 4000          # Reasonable cap for text field
+    ENTITY_TAGS_MAX_COUNT: int = 10              # For categorization
+    ENTITY_AKA_MAX_COUNT: int = 10               # Maximum alternative names per entity
+    ENTITY_RELATIONSHIP_TYPE_MAX_LENGTH: int = 100  # e.g., "works_at", "owns", "manages"
+
+    # Planning Feature Flag
+    PLANNING_ENABLED: bool = False               # Enable plans, tasks, criteria, dependencies
+
+    # Plan/Task Configuration (only relevant when PLANNING_ENABLED=True)
+    PLAN_TITLE_MAX_LENGTH: int = 500
+    PLAN_GOAL_MAX_LENGTH: int = 2000
+    PLAN_CONTEXT_MAX_LENGTH: int = 2000
+    TASK_TITLE_MAX_LENGTH: int = 500
+    TASK_DESCRIPTION_MAX_LENGTH: int = 5000
+    TASK_AGENT_MAX_LENGTH: int = 200
+    CRITERION_DESCRIPTION_MAX_LENGTH: int = 1000
+
+
+    # Skills Feature Flag
+    SKILLS_ENABLED: bool = False
+
+    # Skills Configuration
+    SKILL_NAME_MAX_LENGTH: int = 64
+    SKILL_DESCRIPTION_MAX_LENGTH: int = 1024
+    SKILL_CONTENT_MAX_LENGTH: int = 100000
+    SKILL_LICENSE_MAX_LENGTH: int = 100
+    SKILL_COMPATIBILITY_MAX_LENGTH: int = 500
+    SKILL_ALLOWED_TOOLS_MAX_LENGTH: int = 2000
+    SKILL_TAGS_MAX_COUNT: int = 10
+
+    # Provenance Defaults (auto-applied to all writes when set via MCP env config)
+    ENCODING_AGENT: str = ""        # Software running the agent (e.g., "OpenCode")
+    ENCODING_VERSION: str = ""      # Version of that software (e.g., "1.3.13")
+    AGENT_ID: str = ""              # Agent identity (e.g., "CodeAgentUltra")
+    AGENT_VERSION: str = ""         # Agent version (e.g., "1.0")
+    AGENT_MODEL: str = ""           # LLM model (e.g., "claude-sonnet-4-6")
+    ENFORCE_ENV_OVERWRITE: bool = False  # When True, env values override agent-provided values
+
+    # Activity Tracking Configuration
+    ACTIVITY_ENABLED: bool = False               # Enable activity event tracking
+    ACTIVITY_RETENTION_DAYS: int | None = None   # Days to keep activity events (None = forever)
+    ACTIVITY_TRACK_READS: bool = False           # Track read/query operations (opt-in)
+
+    # SSE Streaming Configuration
+    SSE_MAX_QUEUE_SIZE: int = 1000               # Max events per SSE subscriber queue (backpressure)
+
+    # Graph Visualization Configuration
+    # Safety cap for the /api/v1/graph and /api/v1/graph/subgraph endpoints.
+    # Prevents clients from requesting an unbounded number of nodes in a single
+    # response while staying configurable for larger graphs (see issue #23).
+    MAX_GRAPH_LIMIT: int = 2000                  # Upper bound for ?limit and ?max_nodes query params
+
+    # Search Configuration
+    EMBEDDING_PROVIDER: str = "FastEmbed" # FastEmbed | Azure | Google | OpenAI | Ollama
+    EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
+    EMBEDDING_DIMENSIONS: int = 384
+    EMBEDDING_MAX_CONCURRENCY: int = Field(default=1, ge=1)  # FastEmbed workers / OpenAI and Azure HTTP connections per process
+    EMBEDDING_ONNX_PROVIDERS: str = ""  # FastEmbed only; comma-separated ONNX Runtime providers, empty = default
+
+    # AZURE EMBEDDING PROVIDER CONFIG
+    AZURE_ENDPOINT: str = ""
+    AZURE_DEPLOYMENT: str = ""
+    AZURE_API_VERSION: str = ""
+    AZURE_API_KEY: str = ""
+    AZURE_TIMEOUT_SECONDS: float = Field(default=120.0, gt=0, allow_inf_nan=False)
+
+    # GOOGLE EMBEDDING PROVIDER CONFIG
+    GOOGLE_AI_API_KEY: str = ""
+
+    # OPENAI EMBEDDING PROVIDER CONFIG
+    OPENAI_API_KEY: str = ""
+    OPENAI_BASE_URL: str = ""                    # custom endpoint (e.g. http://localhost:8080/v1)
+    OPENAI_SUPPORTS_DIMENSIONS: bool = True      # False for endpoints that don't support it (llama.cpp)
+    OPENAI_TIMEOUT_SECONDS: float = Field(default=120.0, gt=0, allow_inf_nan=False)
+
+    # OLLAMA EMBEDDING PROVIDER CONFIG
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+
+    # RERANKING
+    RERANKING_ENABLED: bool = True
+    RERANKING_PROVIDER: str = "FastEmbed"        # FastEmbed | HTTP
+    RERANKING_URL: str = ""                      # custom endpoints (e.g. http://localhost:8080/v1/rerank)
+    RERANKING_API_KEY: str = ""
+    RERANKING_MODEL: str = "Xenova/ms-marco-MiniLM-L-12-v2"
+    # Local FastEmbed only; HTTP concurrency is controlled by the remote server.
+    RERANKING_THREADS: int = Field(default=1, ge=1)  # ONNX inference threads
+    RERANKING_WORKERS: int = Field(default=1, ge=1)  # Concurrent reranking jobs per adapter
+    RERANKING_ONNX_PROVIDERS: str = ""  # Comma-separated ONNX Runtime providers, empty = FastEmbed default
+    DENSE_SEARCH_CANDIDATES: int = 20 # number of candidates to retrieve from the dense search
+
+    # FASTEMBED CACHE CONFIGURATION
+    FASTEMBED_CACHE_DIR: str = str(_default_data_dir / "models" / "fastembed")
+    FASTEMBED_LOCAL_FILES_ONLY: bool = False      # When True, FastEmbed only loads models from local cache
+
+    @field_validator("OBSOLETE_WARNING_THRESHOLD")
+    @classmethod
+    def _validate_obsolete_warning_threshold(cls, value: float) -> float:
+        if not 0.0 < value <= 1.0:
+            raise ValueError("OBSOLETE_WARNING_THRESHOLD must be in (0, 1]")
+        return value
+
+    @field_validator("RERANKING_ONNX_PROVIDERS", "EMBEDDING_ONNX_PROVIDERS")
+    @classmethod
+    def _validate_onnx_providers(cls, value: str) -> str:
+        parse_onnx_providers(value)
+        return value
+
+    @property
+    def embedding_onnx_providers(self) -> list[str] | None:
+        return parse_onnx_providers(self.EMBEDDING_ONNX_PROVIDERS)
+
+    @property
+    def reranking_onnx_providers(self) -> list[str] | None:
+        return parse_onnx_providers(self.RERANKING_ONNX_PROVIDERS)
+
+    """Pydantic Configuration"""
+
+    model_config = ConfigDict(
+        env_file=[
+            ".env",  # Local override
+            "docker/.env",  # Development/Docker
+            str(_default_config_dir / ".env"),  # User config
+        ],
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+settings = Settings()

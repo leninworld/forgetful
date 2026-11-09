@@ -1,0 +1,52 @@
+"""Domain exceptions for the application
+"""
+
+class NotFoundError(Exception):
+    """Raised when a requested resource is not found"""
+
+class ConflictError(Exception):
+    """Raised when there's a resource conflict (e.g., duplicate key)"""
+
+
+class InvalidStateTransitionError(Exception):
+    """Raised when a state machine transition is not allowed"""
+
+
+class DependencyNotMetError(Exception):
+    """Raised when task dependencies are not satisfied for a transition"""
+
+
+class CyclicDependencyError(Exception):
+    """Raised when adding a dependency would create a cycle"""
+
+
+class WritePluginRejectedError(Exception):
+    """A Write Plugin rejected the pending memory write with a client-safe message."""
+
+
+class WritePluginUnavailableError(Exception):
+    """A configured Write Plugin could not decide whether a write may proceed."""
+
+
+class TaskPluginRejectedError(Exception):
+    """Task policy rejected a mutation before persistence."""
+
+
+class TaskPluginStateChangedError(ConflictError):
+    """An object was replaced while a task policy was awaited."""
+
+
+class TaskPluginUnavailableError(Exception):
+    """A configured task policy could not complete before persistence."""
+
+
+class PlanPluginRejectedError(Exception):
+    """A Plan Plugin rejected a pending plan mutation with a client-safe message."""
+
+
+class PlanPluginUnavailableError(Exception):
+    """A configured Plan Plugin could not decide whether a mutation may proceed."""
+
+
+class PlanPluginStateChangedError(Exception):
+    """Plan state changed while a registered before handler was awaited."""
