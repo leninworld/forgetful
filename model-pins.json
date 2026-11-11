@@ -1,0 +1,93 @@
+{
+  "scope": "Exactactualwheel allow_patterns+model_file; no weights downloaded",
+  "library_member": "fastembed/common/model_management.py",
+  "member_sha256": "97d41fcecba2e68d74fd20dbda1a10308f0d4a6218b71b9cedd39445d1a7be09",
+  "source_allow_patterns_quote": "        allow_patterns = [\n            \"config.json\",\n            \"tokenizer.json\",\n            \"tokenizer_config.json\",\n            \"special_tokens_map.json\",\n            \"preprocessor_config.json\",\n        ]\n\n        allow_patterns.extend(extra_patterns)",
+  "models": [
+    {
+      "configured_name": "Xenova/ms-marco-MiniLM-L-12-v2",
+      "repo_id": "Xenova/ms-marco-MiniLM-L-12-v2",
+      "revision": "42a4a787e30451cf9dbd09080c2a5b8dde332c1e",
+      "declared_license": "apache-2.0",
+      "required_files": [
+        {
+          "rfilename": "config.json",
+          "blobId": "e1d037aba09e1a4aeacbd83a61323362e63af1e5",
+          "size": 826
+        },
+        {
+          "rfilename": "tokenizer.json",
+          "blobId": "688882a79f44442ddc1f60d70334a7ff5df0fb47",
+          "size": 711396
+        },
+        {
+          "rfilename": "tokenizer_config.json",
+          "blobId": "75305659f7795d4549f0e23688b52fa20a32f925",
+          "size": 1242
+        },
+        {
+          "rfilename": "special_tokens_map.json",
+          "blobId": "a8b3208c2884c4efb86e49300fdd3dc877220cdf",
+          "size": 125
+        },
+        {
+          "rfilename": "onnx/model.onnx",
+          "blobId": "cdb133314707e70de87b61d998bc25e8b8f7226b",
+          "size": 133708208,
+          "lfs": {
+            "sha256": "3a6d50ce60de831c8c68197df674eeb878d4ff34bb1aca5d1f3cb346c9075dba",
+            "size": 133708208,
+            "pointerSize": 134
+          }
+        }
+      ],
+      "optional_not_present": [
+        "preprocessor_config.json"
+      ],
+      "total_bytes": 134421797
+    },
+    {
+      "configured_name": "BAAI/bge-small-en-v1.5",
+      "repo_id": "Qdrant/bge-small-en-v1.5-onnx-Q",
+      "revision": "aa8f8b060edb00e03bfdd08813a2949946c8ba55",
+      "declared_license": "mit",
+      "required_files": [
+        {
+          "rfilename": "config.json",
+          "blobId": "0d7726d0cdccb62ee17c03bd1595cff07199b8f8",
+          "size": 706
+        },
+        {
+          "rfilename": "tokenizer.json",
+          "blobId": "688882a79f44442ddc1f60d70334a7ff5df0fb47",
+          "size": 711396
+        },
+        {
+          "rfilename": "tokenizer_config.json",
+          "blobId": "75305659f7795d4549f0e23688b52fa20a32f925",
+          "size": 1242
+        },
+        {
+          "rfilename": "special_tokens_map.json",
+          "blobId": "9bbecc17cabbcbd3112c14d6982b51403b264bfa",
+          "size": 695
+        },
+        {
+          "rfilename": "model_optimized.onnx",
+          "blobId": "94f6925f5e2ad78878198fa757195c25f74d6bc2",
+          "size": 66465124,
+          "lfs": {
+            "sha256": "51f1bd0addd6e859e42c2c8021a5e5461385bb676a649f4b269aa445449f2431",
+            "size": 66465124,
+            "pointerSize": 133
+          }
+        }
+      ],
+      "optional_not_present": [
+        "preprocessor_config.json"
+      ],
+      "total_bytes": 67179163
+    }
+  ],
+  "total_download_bytes": 201600960
+}
