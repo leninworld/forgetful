@@ -1,0 +1,9 @@
+{
+  "expected_feature_assertion_failures": [
+    "tests/e2e_sqlite/test_bundle_contract_oracle.py::test_bundle_registry_contract[import_skill_bundle]",
+    "tests/e2e_sqlite/test_bundle_contract_oracle.py::test_bundle_registry_contract[export_skill_bundle]"
+  ],
+  "expected_passes": [
+    "tests/e2e_sqlite/test_bundle_contract_oracle.py::test_original_markdown_control"
+  ]
+}
