@@ -1,0 +1,280 @@
+"""Protocol (interface) for Skill Repository
+
+Defines the contract for skill data access operations.
+Concrete implementations must provide all methods defined here.
+"""
+from typing import Protocol
+from uuid import UUID
+
+from app.models.skill_bundle_models import (
+    CreatedSkillBundle,
+    PreparedBundleResource,
+    SkillBundleMember,
+    SkillBundleSnapshot,
+)
+from app.models.skill_models import (
+    Skill,
+    SkillCreate,
+    SkillLinks,
+    SkillSummary,
+    SkillUpdate,
+)
+
+
+class SkillRepository(Protocol):
+    """Contract for Skill Repository operations
+
+    All repository implementations must provide these methods.
+    Services depend on this protocol, not concrete implementations.
+    """
+
+    async def create_skill(
+        self,
+        user_id: UUID,
+        skill_data: SkillCreate,
+    ) -> Skill:
+        """Create a new skill
+
+        Args:
+            user_id: User ID for ownership
+            skill_data: SkillCreate with title, description, content, etc.
+
+        Returns:
+            Created Skill with generated ID and timestamps
+
+        Raises:
+            ValidationError: If skill_data is invalid
+        """
+        ...
+
+    async def skill_name_exists(
+        self,
+        user_id: UUID,
+        name: str,
+    ) -> bool:
+        """Check if a skill with the given name already exists for this user.
+
+        Args:
+            user_id: User ID for ownership scoping
+            name: Skill name to check
+
+        Returns:
+            True if a skill with this name exists, False otherwise
+        """
+        ...
+
+    async def get_skill_by_id(
+        self,
+        user_id: UUID,
+        skill_id: int,
+    ) -> Skill | None:
+        """Get a single skill by ID
+
+        Args:
+            user_id: User ID for ownership verification
+            skill_id: Skill ID to retrieve
+
+        Returns:
+            Skill if found and owned by user, None otherwise
+        """
+        ...
+
+    async def list_skills(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        tags: list[str] | None = None,
+        importance_threshold: int | None = None,
+    ) -> list[SkillSummary]:
+        """List skills with optional filtering
+
+        Args:
+            user_id: User ID for ownership filtering
+            project_id: Optional filter by project
+            tags: Optional filter by tags (returns skills with ANY of these tags)
+            importance_threshold: Optional minimum importance level
+
+        Returns:
+            List of SkillSummary (lightweight, excludes full content)
+            Sorted by creation date (newest first)
+        """
+        ...
+
+    async def update_skill(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        skill_data: SkillUpdate,
+    ) -> Skill:
+        """Update an existing skill (PATCH semantics)
+
+        Only provided fields are updated. None/omitted fields remain unchanged.
+
+        Args:
+            user_id: User ID for ownership verification
+            skill_id: Skill ID to update
+            skill_data: SkillUpdate with fields to change
+
+        Returns:
+            Updated Skill
+
+        Raises:
+            NotFoundError: If skill not found or not owned by user
+            ValidationError: If update data is invalid
+        """
+        ...
+
+    async def delete_skill(
+        self,
+        user_id: UUID,
+        skill_id: int,
+    ) -> bool:
+        """Delete a skill
+
+        Args:
+            user_id: User ID for ownership verification
+            skill_id: Skill ID to delete
+
+        Returns:
+            True if deleted, False if not found or not owned by user
+        """
+        ...
+
+    async def search_skills(
+        self,
+        user_id: UUID,
+        query: str,
+        k: int = 5,
+        project_id: int | None = None,
+    ) -> list[SkillSummary]:
+        """Search skills by semantic similarity
+
+        Args:
+            user_id: User ID for ownership filtering
+            query: Search query string
+            k: Number of results to return (default: 5)
+            project_id: Optional filter by project
+
+        Returns:
+            List of SkillSummary ranked by relevance
+        """
+        ...
+
+    async def link_skill_to_memory(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        memory_id: int,
+    ) -> dict:
+        """Link a skill to a memory via the association table."""
+        ...
+
+    async def unlink_skill_from_memory(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        memory_id: int,
+    ) -> dict:
+        """Unlink a skill from a memory."""
+        ...
+
+    async def link_skill_to_file(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        file_id: int,
+    ) -> dict:
+        """Link a skill to a file via the association table."""
+        ...
+
+    async def unlink_skill_from_file(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        file_id: int,
+    ) -> dict:
+        """Unlink a skill from a file."""
+        ...
+
+    async def link_skill_to_code_artifact(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        code_artifact_id: int,
+    ) -> dict:
+        """Link a skill to a code artifact via the association table."""
+        ...
+
+    async def unlink_skill_from_code_artifact(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        code_artifact_id: int,
+    ) -> dict:
+        """Unlink a skill from a code artifact."""
+        ...
+
+    async def link_skill_to_document(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        document_id: int,
+    ) -> dict:
+        """Link a skill to a document via the association table."""
+        ...
+
+    async def unlink_skill_from_document(
+        self,
+        user_id: UUID,
+        skill_id: int,
+        document_id: int,
+    ) -> dict:
+        """Unlink a skill from a document."""
+        ...
+
+    async def get_skill_links(
+        self,
+        user_id: UUID,
+        skill_id: int,
+    ) -> SkillLinks:
+        """Get IDs of all content linked to a skill (reverse lookup).
+
+        Raises NotFoundError if the skill does not exist or is not owned by the user.
+        """
+        ...
+
+    async def get_all_skill_file_links(
+        self,
+        user_id: UUID,
+    ) -> list[tuple[int, int]]:
+        """Get all skill-file associations for a user (for graph visualization)."""
+        ...
+
+    async def get_all_skill_code_artifact_links(
+        self,
+        user_id: UUID,
+    ) -> list[tuple[int, int]]:
+        """Get all skill-code_artifact associations for a user (for graph visualization)."""
+        ...
+
+    async def get_all_skill_document_links(
+        self,
+        user_id: UUID,
+    ) -> list[tuple[int, int]]:
+        """Get all skill-document associations for a user (for graph visualization)."""
+        ...
+
+    async def create_skill_bundle(
+        self, user_id: UUID, skill_data: SkillCreate,
+        resources: list[PreparedBundleResource],
+    ) -> CreatedSkillBundle:
+        """Atomically create all package records, vectors and links."""
+        ...
+
+    async def read_skill_bundle(
+        self, user_id: UUID, skill_id: int,
+        members: list[SkillBundleMember] | None = None,
+        *, allowed_kinds: frozenset[str],
+    ) -> SkillBundleSnapshot:
+        """Read an owned package and its current resources in one snapshot."""
+        ...

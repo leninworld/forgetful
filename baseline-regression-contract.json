@@ -1,0 +1,20 @@
+{
+  "baseline_tree": "583cedb5121e4aefe2b3d83ab3a3f3c475ab048a",
+  "regression_overlay_only": [
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py"
+  ],
+  "expected_feature_assertion_failures": [
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py::test_owner_nested_schema",
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py::test_owner_permission",
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py::test_owner_budget",
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py::test_owner_canonical"
+  ],
+  "expected_passes": [
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py::test_owner_control"
+  ],
+  "requirements": [
+    "4 actual owner-report assertion failures, one control; no setup/collection errors",
+    "Full baseline and candidate SQLite+PG, Ruff, architecture, wheel, installed demo, shipping unchanged",
+    "One feedback2/2 execution; no automatic correction/retry"
+  ]
+}
