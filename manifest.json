@@ -1,0 +1,381 @@
+{
+  "base": "9f85ddcf2ca1ae0264358e0b4b50860948ec1e03",
+  "repository": "ScottRBK/forgetful",
+  "overlay_sha256": {
+    "alembic/versions/20261107_add_skill_bundle_resources.py": "3f7210a667550b04c1e99a536bd75882034882a6e61c24f72aade3a858be130d",
+    "alembic/versions/20261111_merge_skill_bundle_memory_search.py": "74532064d95acf1cc217bbb88f54b5c1d654bc09448f65d80e85dc15b01e6317",
+    "app/config/settings.py": "ab1dcf5fc3638edc7993f28d89298dc506cf3b14e92d56d2e7db110641de2131",
+    "app/exceptions.py": "4514f5e400fddb3f377c0888117854b3795e0280ec83412495569980c2bd14fa",
+    "app/models/skill_bundle_models.py": "a30cba06ec319aef832225d017d2ec9c24d3395c6bcc3fb5c02c6c8b961946b3",
+    "app/models/tool_registry_models.py": "313cbc1b9aadd3740a4cadcc8885725f70e3460a57737bd0d39c0065ffd2113e",
+    "app/protocols/skill_protocol.py": "a6ba33c59ece95216a7f8f369e58625a0e168a0fb6ea86f6981a8527cbf82824",
+    "app/repositories/postgres/code_artifact_repository.py": "e82a2471d1b3513d86c473556bfc2b6b0a2daccd2ee7b7f64d2ef1285b8e2e85",
+    "app/repositories/postgres/document_repository.py": "f8aaf57a5442a7a8896d95d74ff47c9dbd7ea1a158e4d8d6d88ed99505ba1698",
+    "app/repositories/postgres/file_repository.py": "e34b9e27ccf0aca88e7583858ccf7d57ab43d2b2fa46d607c34c892cea837993",
+    "app/repositories/postgres/postgres_adapter.py": "04338c4df06a32c9489d79a1fdf81badd80eb9b92302e29d3d31c7dc31436bba",
+    "app/repositories/postgres/postgres_tables.py": "c526b7d03998c73b2df86cddc6de6db34c93a0ccbc53378deb2e56c729e8d479",
+    "app/repositories/postgres/resource_rows.py": "515be826b5cca932579009ccaa6ab9354e3dc82c37e9ac177c162622a03d0568",
+    "app/repositories/postgres/skill_repository.py": "b58e790aa1af4e480448657455e3d2fc1e7d799de71210142a9684ab6a8fc558",
+    "app/repositories/skill_bundle_export.py": "bc72f55cd08e5d96a0925b55368795b39973ea8461255d7192eb823c9bcd51ad",
+    "app/repositories/sqlite/code_artifact_repository.py": "42235adbd0eec74e7ca18e0057c3b0d4fcf23637cfcbe15337fe77881d8824e9",
+    "app/repositories/sqlite/document_repository.py": "6fc43f62b2ecc4639c2ce8e202c29758944fd369f0a5a6d8195b21e3c85b6c5b",
+    "app/repositories/sqlite/file_repository.py": "ed0bc0493c029cdfebc2fdfcce1c9c87525742b574a8fcea45783e2bb0361686",
+    "app/repositories/sqlite/resource_rows.py": "ff6d5aac4ab688352b9e5d6e39a40474d194028d1b3b3b940c0db52e557f90e2",
+    "app/repositories/sqlite/skill_repository.py": "420a60d1b272ac01a8b23a48844782f6b0d04176d500bba5b38d6e0b7024a42d",
+    "app/repositories/sqlite/sqlite_adapter.py": "e87769fcae7d24950fc56d6d84718961163138d6874e871cf1daac620bd89589",
+    "app/repositories/sqlite/sqlite_tables.py": "afe2a6a9731ab08d1df849736a0d846d31b9d1d82dfa216497e9bef29be21b0b",
+    "app/routes/api/skills.py": "d09463205c9db80cd7970671bcdcc5d6750d7ef96e0057700c94cfb3345cffe2",
+    "app/routes/cli/context.py": "304d7e0cc9148e0a263530d39eeab20c32717887cd1cfff6bc350a2742879c34",
+    "app/routes/mcp/tool_adapters.py": "0f373058fa1381e1ff56dd2574baf974b406932b875661322bd0de414fe280f7",
+    "app/routes/mcp/tool_metadata_registry.py": "5da549be28cffe1fe6b7a266e676cb11fca0d07ae03817942ff2f9959c209fd3",
+    "app/services/file_service.py": "9ddf5b3c784b8bbe93078672251ad1693a93e649d133f63a5a7dca95f8ac1de1",
+    "app/services/skill_service.py": "e10449ccfda16c40bc489ce6cd2e95ddf1e8c61cde2e92556f1947d995d872e1",
+    "app/utils/bundle_validation.py": "751b7f6a6d54abde4f949dd956e369b3c9721a86a0ad950522b161558ca80797",
+    "app/utils/file_snapshot.py": "6a965911a785337d9015cf1a2b8ce699bf42652b4b4dc2c6f278921e2a88591a",
+    "app/utils/skill_markdown.py": "bfc1d63b237ada2f6e7ddbcb0fdb9899da105b3ec499808e9cda2f292211c9ba",
+    "architecture.md": "ffc7edb6325ae8bddd6db7f5fb73774a7d31e38826fe763a845ff7ec80ed5d65",
+    "docs/configuration.md": "d86418c6136e0ac5ecc70c03c8c43b88f3f2ffff416a4abe4d627022f96b153f",
+    "docs/skill-bundles.md": "e18bd156e31ecef4ab879369712523815aae234a2e1b03c7fdcc5a3d42eefac2",
+    "docs/tool_reference.md": "d786a6c330fde5705029610f32164a0ef7314cbfb3b6ce14c04cbdb96de74557",
+    "skills/forgetful-procedures/SKILL.md": "d823d048055d7b4b49e7fae62a2c859b2096108f252b549a288d398024f01308",
+    "tests/docker/test_offline_image.py": "1633398b36d222717e63c9d2877302ef71a96f2e8b3a9fe8ee969710508e7c6e",
+    "tests/e2e/test_skill_bundles.py": "04919b88ad5dd2dea59fe2754babc3933522601107be3cedbf266630b60c42ed",
+    "tests/e2e_sqlite/test_skill_bundle_cli.py": "adc281203a0992c67007f86b764e06eb6220b83add10016c8acbf0dfe4e0829c",
+    "tests/e2e_sqlite/test_skill_bundle_contract_oracle.py": "9fe024b6e75360d1d640944bcdb4b0221fe9e58d698641bf28e277a02561e873",
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py": "309223b260d06e8edfc3526cb5fb99f6afec42291a48ea65d524da502fd54aed",
+    "tests/e2e_sqlite/test_skill_bundle_remote_cli.py": "43c03831c16a10b92f09545781c860e5064939f44a2719db40e7f0aedd4d2aec",
+    "tests/e2e_sqlite/test_skill_bundles.py": "d6b4bc1589c0162b19c7455dc3361fceb99a31bf543637005c2f8e3988fc8ab3",
+    "tests/integration/test_bundle_tool_schema.py": "2348649bff06022eac1c2eca53c403b0c1d81d130c27c0112dcd528e4df70bc1",
+    "tests/integration/test_skill_bundle_migration.py": "d96fd7191cd8c42319fda2f9fda5ba079b4cb3a31fbcf26bf6b4db4723d2cd8a",
+    "tests/integration/test_skill_bundle_models.py": "3f7c917180fa32de4fa25c672d869f446736710a9a9c61f8918e6c622f0fe983",
+    "tests/skill_bundle_cases.py": "aa5c5d9d5464d8abac76fb001794f01a4713078f3d2e72989290a9c1108d29db",
+    "tests/skill_bundle_feedback_cases.py": "e2eafcef8ea02f8b8e09b36bd6ce9042907d4f4655946d45d50b1358b6f76789"
+  },
+  "source_sha256": {
+    "app/config/settings.py": "9581bfa08046ca6d3a0bc6005cf18027629d5469d857cc8d8b6888108d4bdf68",
+    "app/exceptions.py": "16063d68524b9dc8f17a2d0328d435fdeb7e5b4245950d1d008f7791ef1d5141",
+    "app/models/tool_registry_models.py": "4379979efc40881d37dc26b2f8122af313482c50ec1dcab53f02679c9e318700",
+    "app/protocols/skill_protocol.py": "1b2b2f0396233f15772ea181932c2334219e83a8671632e6e13526fcf491802f",
+    "app/repositories/postgres/code_artifact_repository.py": "7ceb5a11d785b8db7d6fb4940cfd626b64f0f72f3b7bb6e06d21d9fc696c5073",
+    "app/repositories/postgres/document_repository.py": "f1559537a2dfac6c4b49e751b18da9f442320ebef19d90830e3bf05a674239ea",
+    "app/repositories/postgres/file_repository.py": "a77642727c49c39ff447b65e60e50e4f8210a5ebf6133b0a4c8de5c9e6229dd9",
+    "app/repositories/postgres/postgres_adapter.py": "c80c2d7ed3fa1d6be50b29c4d03f7d61b36c2adf926f0728464a3ce5568968fc",
+    "app/repositories/postgres/postgres_tables.py": "d4fec9bf19b0b9b6c43ed973e22df7c3d6ade0ca6f4108de270f95b6980155f0",
+    "app/repositories/postgres/skill_repository.py": "0af26ae2031415d467f981af6fc92d440c3bde1f69ee88f74f4bd06187b0c116",
+    "app/repositories/sqlite/code_artifact_repository.py": "7f4273d63b806a7c44e0dcc9f5031010ae8f0ae84d1d4afebe9f5ff121e1c129",
+    "app/repositories/sqlite/document_repository.py": "2c629e24d09be8ba77b99548ce3ab1f6f94f38c5f01064560204d6409ba163e0",
+    "app/repositories/sqlite/file_repository.py": "38764b2ad08738088919fa3dd112d84d1c17b18f27344c53183a7a4877660a20",
+    "app/repositories/sqlite/skill_repository.py": "fec3f377df0fc87cee1f9f29c361deb70c1c7819d46e835329ecd2ff04213a67",
+    "app/repositories/sqlite/sqlite_adapter.py": "944ba16053ecef7ffc95f04a3ef19ed0bba5ca222eb8b36012a9efb2e08a0d6d",
+    "app/repositories/sqlite/sqlite_tables.py": "83168dd6cbbcb5d10f15853e327dbab391ef32883ebd470ec7761a59a8efd70e",
+    "app/routes/api/skills.py": "770028638039e774b3546df3748f95e1ec2db667482882be1bc61451c3780071",
+    "app/routes/cli/context.py": "f979e4a065f27e9163f6ab1413a0628a7cc020be66e8d97b391fa7876d74ae3f",
+    "app/routes/mcp/tool_adapters.py": "3b5634ea938624ccdf2519a4eb7510f8f399ad0303e5d8502bb91777c23e5ea0",
+    "app/routes/mcp/tool_metadata_registry.py": "c249e45426ab134a683a064fefbf276f63bae52596c95ddd1b37d15bce0f8671",
+    "app/services/file_service.py": "76eb64d5e87e773a9e5a968e548a3ce2a4dd08f6836c4c98af329db574260120",
+    "app/services/skill_service.py": "cbdc9b0be65b320972c2a3085bd5a926c0efff10818d50bb1abb14c26c36d3d8",
+    "architecture.md": "ec8fdada9bac37cc4b0da7189a4ba0a92f2b66bb700fad141ecd883197eb3637",
+    "docs/configuration.md": "6720c3199f06fdbb6dcd2beea092727f0c9fa6ec1541bab457e17db5b1e5cfa2",
+    "docs/tool_reference.md": "50de1950020cc579ede0bd5f1b1a23ac8f1a34f97c58dde909b735084b35e88e",
+    "skills/forgetful-procedures/SKILL.md": "04ee4a725a21ba7dd95aa16042ad4f19a6377b2143b9384e3017c8881760e67f",
+    "tests/docker/test_offline_image.py": "d59f19e7503d0237bbbaed4b65050cc003ebcb225659933e04b1fee6ff767a46"
+  },
+  "lock_sha256": "8c9389b428116f5c67c4770d79c4055d41f34a231c3db4e5642cde5270ed38ab",
+  "images": [
+    {
+      "name": "python313",
+      "repository": "library/python",
+      "tag": "3.13-slim-bookworm",
+      "digest": "sha256:70bda1e795ded2a684ef9815955e05829b14ee5bb5c3eb2a940648e88f10fce9",
+      "compressed_size": 44197665,
+      "platform": "linux/amd64",
+      "tag_updated": "2026-10-28T11:08:00.418849Z"
+    },
+    {
+      "name": "python312",
+      "repository": "library/python",
+      "tag": "3.12-slim",
+      "digest": "sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+      "compressed_size": 43267206,
+      "platform": "linux/amd64",
+      "tag_updated": "2026-10-28T11:07:18.303146Z"
+    },
+    {
+      "name": "pgvector16",
+      "repository": "pgvector/pgvector",
+      "tag": "pg16",
+      "digest": "sha256:c0cd736fe8b8b5d408db56b780570bac404fe518e66e39de624aa46f9aabc60a",
+      "compressed_size": 156203405,
+      "platform": "linux/amd64",
+      "tag_updated": "2026-10-31T10:01:47.448476Z"
+    }
+  ],
+  "uv_version": "0.9.30",
+  "ruff_version": "0.16.10",
+  "target_seconds": 3000,
+  "absolute_seconds": 3600,
+  "network_bytes_cap": 4294967296,
+  "output_bytes_cap": 67108864,
+  "app_memory_gib": 8,
+  "postgres_memory_gib": 1,
+  "image_orchestrator_memory_gib": 1,
+  "image_child_memory_gib": 6,
+  "build_memory_gib": 4,
+  "shipping_build_reserve_seconds": 180,
+  "image_reserve_seconds": 180,
+  "export_reserve_seconds": 60,
+  "runtime_approved": true,
+  "docker_api_approved": true,
+  "diagnostic_branch_approved": true,
+  "style_normalization_approved": true,
+  "diagnostic_branch": "validate-skill-bundles-194-migration-f9",
+  "contribution_publication_approved": false,
+  "regression_files": [
+    "tests/e2e_sqlite/test_bundle_contract_oracle.py"
+  ],
+  "packet_sha256": {
+    ".github/workflows/validate-skill194-feedback.yml": "4674a6890ac0e31b2c324b1ffe76cbe0c5cb087c1cb2cf8473ae64cbfc738f64",
+    "Dockerfile": "a3cd6fd02eb69a4e06f8cd45ff9c1cc80a0fe530e9fcf0ac1dfe553bb784c92d",
+    "LICENCE.md": "b0335e6d57ec89c1318969eeaa30419baa2a62ea76d70a458bcadc471110629a",
+    "artifacts.json": "92124ee2b02818a35bc642f48f25e6cd37dd6a0a8191abcd892bf7bd4642f884",
+    "baseline-regression-contract.json": "68eee82dd0c949df3f2bca6a2b216255d3af50c043e168ea6d406e89550248b6",
+    "build-constraints.txt": "222f0445e9d28d99b98f5ac6398cf362f576023dce2370902ddbbfd4d0d6c652",
+    "bundle-contract-oracle.py": "89a7ecdd543d1d53e01916d2f1d06dddd32254918078fd20f111fdab74d8883b",
+    "cache_identity.py": "fb7aa8f0c3933bc1a400d26eeca829b729c95ec2757d41087159360c37acdaee",
+    "host.py": "adc5ea6232f0d70814699471e41301b9d552bbe1e955fdaca2ddfa53a5cc2a1e",
+    "image_identity_plugin.py": "79069110ea796117bbde4ffec558601d7a838236d2474c38663e0727a641c26a",
+    "inside.py": "9fc20a7f54bda1bc3880fab65ee4509e2ef9532a0ef1d22c7ef1ca1fab4c6133",
+    "installed_demo.py": "8a0a13656425e3059e6f93a53a2e1d90f784998a03953a0bd4039deebf55b9c0",
+    "migration_upgrade_probe.py": "15fb2b91dcb124ee955511619b67cfaa723aa2c70db6f530cd281ae48207cf9a",
+    "model-pins.json": "1ad32b765fefa354087d63ccc8cd75cf1fd423005c783a72ee3e89d23e27ad0f",
+    "pgdg-key.asc": "0144068502a1eddd2a0280ede10ef607d1ec592ce819940991203941564e8e76",
+    "selection_identity.py": "27242eb8a9fbfc3d5a26e644ca036d424af632b74d93b1173d88859fa00aaf49",
+    "tiny_regression_fixture.py": "74f4e08a671f7d7cd1ab2a36ff790117e93517a0357593ae681cbd646de49947"
+  },
+  "pytest_timeout_seconds": {
+    "baseline": 1200,
+    "baseline-postgres": 900,
+    "regression": 120,
+    "candidate": 1200,
+    "postgres": 900,
+    "image": 360,
+    "early-sqlite": 1200,
+    "early-postgres": 900,
+    "controller-fixture": 60
+  },
+  "clock_scope": "One corrected execution10/13,feedback8; attempt9terminal59.943s Ruff I001 in unchangedupstreambenchmark; noreset/noautoretry.",
+  "regression_paths": [
+    "tests/e2e_sqlite/test_bundle_contract_oracle.py::test_bundle_registry_contract[import_skill_bundle]",
+    "tests/e2e_sqlite/test_bundle_contract_oracle.py::test_bundle_registry_contract[export_skill_bundle]",
+    "tests/e2e_sqlite/test_bundle_contract_oracle.py::test_original_markdown_control"
+  ],
+  "state": "AUTHORIZED_SINGLE_EXECUTION",
+  "new_source_paths": [
+    "alembic/versions/20261107_add_skill_bundle_resources.py",
+    "alembic/versions/20261111_merge_skill_bundle_memory_search.py",
+    "app/models/skill_bundle_models.py",
+    "app/repositories/postgres/resource_rows.py",
+    "app/repositories/skill_bundle_export.py",
+    "app/repositories/sqlite/resource_rows.py",
+    "app/utils/bundle_validation.py",
+    "app/utils/file_snapshot.py",
+    "app/utils/skill_markdown.py",
+    "docs/skill-bundles.md",
+    "tests/e2e/test_skill_bundles.py",
+    "tests/e2e_sqlite/test_skill_bundle_cli.py",
+    "tests/e2e_sqlite/test_skill_bundle_contract_oracle.py",
+    "tests/e2e_sqlite/test_skill_bundle_owner_oracle.py",
+    "tests/e2e_sqlite/test_skill_bundle_remote_cli.py",
+    "tests/e2e_sqlite/test_skill_bundles.py",
+    "tests/integration/test_bundle_tool_schema.py",
+    "tests/integration/test_skill_bundle_migration.py",
+    "tests/integration/test_skill_bundle_models.py",
+    "tests/skill_bundle_cases.py",
+    "tests/skill_bundle_feedback_cases.py"
+  ],
+  "attempt_number": 11,
+  "prior_attempt": {
+    "original_validation_cycle": {
+      "executed": 2,
+      "final_run": 42404832179,
+      "conclusion": "success",
+      "closed": true
+    },
+    "new_external_trigger": {
+      "published_PR": 194,
+      "head": "6734c6afad2cc03d3334a9984caf862bfb3da0c0",
+      "job": 128513730146,
+      "conclusion": "failure",
+      "case": "test_bundle_roundtrip_new_resource_ids",
+      "reason": "ID-only disjoint assertion; cause under review, no emitted actualIDvalues"
+    },
+    "old_deadlines_counters_receipts_preserved": true,
+    "owner_trigger": {
+      "review": 5851810619,
+      "head": "583cedb5121e4aefe2b3d83ab3a3f3c475ab048a",
+      "all4threads": "co_create/20261110/forgetful194-feedback/feedback-response.json"
+    },
+    "F2_owner_feedback": {
+      "run": 42939794134,
+      "commit": "1715f7963dbe0df90444fc78375973cee28b287a",
+      "conclusion": "failure",
+      "elapsed": 64.86923336982727,
+      "functional_tests_started": false,
+      "cause": [
+        "C408",
+        "ISC004"
+      ],
+      "terminal_no_retry": true
+    },
+    "F3_owner_feedback": {
+      "run": 42941496316,
+      "commit": "5f028d7348681f679b8c8a4a16b60d672761ea90",
+      "conclusion": "failure",
+      "elapsed": 819.7351295948029,
+      "cause": "Two new shared test functions omitted lifecycle client fixture; five AttributeError failures",
+      "candidate_early": {
+        "passed": 65,
+        "failed": 5
+      },
+      "baseline_sqlite": {
+        "passed": 2054,
+        "skipped": 11
+      },
+      "baseline_postgres": {
+        "passed": 474,
+        "skipped": 1
+      },
+      "ruff": "PASS",
+      "owner_oracle": "4 expected failures +1control verified on unchanged source; all pass candidate",
+      "full_candidate_postgres_shipping": "NOT_RUN",
+      "terminal_no_retry": true
+    },
+    "F4_owner_feedback": {
+      "run": 42944927241,
+      "commit": "b54acd1c213363548b8bff0f4f67249c38bfdff9",
+      "conclusion": "failure",
+      "elapsed": 1675.941047668457,
+      "cause": [
+        "PostgreSQL codepoint order",
+        "PostgreSQL canonical cap"
+      ],
+      "terminal_no_retry": true
+    },
+    "F5_owner_feedback": {
+      "run": 42956644191,
+      "commit": "7834b2b6e10d64287f420bae9bc62d9c38432b05",
+      "conclusion": "failure",
+      "elapsed": 104.86393308639526,
+      "cause": "New fixture16tags exceeds real model10",
+      "early_sqlite": {
+        "passed": 72,
+        "failed": 3
+      },
+      "postgres_full_shipping": "NOT_RUN",
+      "terminal_no_retry": true
+    },
+    "F1_postpublication_ID_namespace": {
+      "run": 42411426391,
+      "conclusion": "success",
+      "source": "co_create/20261107/forgetful-after188/checkpoint.json:F1"
+    },
+    "F6_owner_feedback": {
+      "run": 43049392590,
+      "conclusion": "success",
+      "published_source": "25f3b1ff3048ec706f601797d8ed90fad5c137f3",
+      "branch_only_validation": true,
+      "synthetic_merge_CI": "MultipleHeads failure, separate e2e apt DNS failure"
+    },
+    "F7_migration_feedback": {
+      "run": 43077506704,
+      "conclusion": "failure",
+      "elapsed": 59.94328284263611,
+      "cause": "Upstream benchmarks/retrieval/build_corpus.py import wrapping I001",
+      "functional_tests_started": false
+    }
+  },
+  "execution_slot": "One owned full combined-main migration repair workload; no other owned validation.",
+  "source_parent": "25f3b1ff3048ec706f601797d8ed90fad5c137f3",
+  "feedback_attempt_number": 9,
+  "feedback_maximum_attempts": 13,
+  "attempt_exception_authorized": true,
+  "proposed_attempt_number": 11,
+  "proposed_feedback_attempt_number": 9,
+  "total_validation_attempt_limit": 13,
+  "consumed_validation_attempts": 10,
+  "automatic_retry": false,
+  "migration_scope": {
+    "real_startup_paths_per_backend": 4,
+    "both_backends": true,
+    "fresh_current_main_baselines": true,
+    "negative_control": "unjoined MultipleHeads",
+    "previous_owner_oracle_evidence": "F6 retained, not relabelled"
+  },
+  "early_shipping_image_before_full_baselines": true,
+  "validation_attempt_ledger": [
+    {
+      "attempt": 1,
+      "run": 42400866098,
+      "conclusion": "failure"
+    },
+    {
+      "attempt": 2,
+      "run": 42404832179,
+      "conclusion": "success"
+    },
+    {
+      "attempt": 3,
+      "run": 42411426391,
+      "conclusion": "success"
+    },
+    {
+      "attempt": 4,
+      "run": 42939794134,
+      "conclusion": "failure"
+    },
+    {
+      "attempt": 5,
+      "run": 42941496316,
+      "conclusion": "failure"
+    },
+    {
+      "attempt": 6,
+      "run": 42944927241,
+      "conclusion": "failure"
+    },
+    {
+      "attempt": 7,
+      "run": 42956644191,
+      "conclusion": "failure"
+    },
+    {
+      "attempt": 8,
+      "run": 43049392590,
+      "conclusion": "success"
+    },
+    {
+      "attempt": 9,
+      "run": 43077506704,
+      "conclusion": "failure",
+      "elapsed": 59.94328284263611,
+      "cause": "Full Ruff I001 upstream benchmark import; functional tests NOT_RUN",
+      "owned_containers_stopped": true
+    },
+    {
+      "attempt": 10,
+      "run": 43078801452,
+      "conclusion": "failure",
+      "elapsed": 921.3737354278564,
+      "cause": "Shared PostgreSQL database stamped with candidate head before unchanged baseline;434setup errors",
+      "owned_containers_stopped": true
+    }
+  ],
+  "ledger_evidence": {
+    "attempt1": "co_create/20261107/forgetful-after188/run-watch.log:42400866098",
+    "attempt2": "co_create/20261107/forgetful-after188/I4-current-run.json",
+    "attempt3": "co_create/20261107/forgetful-after188/checkpoint.json:F1",
+    "attempts4to8": "co_create/20261110/forgetful194-feedback/checkpoint.json and retained terminal evidence"
+  },
+  "probe_timeout_seconds_per_backend": 300,
+  "ruff_policy": "Full repository with same binary/config on baseline and candidate; no changed-file violations and no new/multiplied unchanged violations. Explicit inherited debt disclosure."
+}
