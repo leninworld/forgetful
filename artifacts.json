@@ -1,0 +1,20 @@
+[
+  {
+    "name": "uv-0.9.30-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "url": "https://files.pythonhosted.org/packages/6a/57/12a67c569e69b71508ad669adad266221f0b1d374be88eaf60109f551354/uv-0.9.30-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "bytes": 22774258,
+    "sha256": "4366dd740ac9ad3ec50a58868a955b032493bb7d7e6ed368289e6ced8bbc70f3"
+  },
+  {
+    "name": "ruff-0.16.10-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "url": "https://files.pythonhosted.org/packages/e4/03/17234145f302a645a123e8c3bb2411ecf4669fbc350de3b0d803230a1729/ruff-0.16.10-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "bytes": 10387968,
+    "sha256": "f33f43a864a8483eebd160e713336c8bab02c934feaff0a33cf5ccb41546d09a"
+  },
+  {
+    "name": "9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+    "url": "https://openaipublic.blob.core.windows.net/encodings/cl100k_base.tiktoken",
+    "bytes": 1681126,
+    "sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7"
+  }
+]
