@@ -1,0 +1,25 @@
+name: Validate Memory Link Plugin 168
+on:
+  push:
+    branches: [validate-memory-link-hooks-168-i1]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Anchor first workload clock
+        run: echo "VALIDATION_JOB_STARTED_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: packet
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: ScottRBK/forgetful
+          ref: 83d088e76840c07d4995e9a4df7d4f3e1b2e06e2
+          path: source
+          persist-credentials: false
+      - name: Complete integrated hosted Docker attempt
+        run: python3 packet/host.py
