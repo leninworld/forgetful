@@ -1,0 +1,25 @@
+name: Validate Memory Link Feedback 212
+on:
+  push:
+    branches: [validate-memory-link-feedback-212-i2]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Anchor first workload clock
+        run: echo "VALIDATION_JOB_STARTED_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: packet
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: leninworld/forgetful
+          ref: 46b45dc2a42076a4c220b35770ad30fc9fa4c450
+          path: source
+          persist-credentials: false
+      - name: Complete integrated hosted Docker attempt
+        run: python3 packet/host.py
