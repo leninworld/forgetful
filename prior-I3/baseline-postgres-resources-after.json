@@ -1,0 +1,31 @@
+{
+  "phase": "baseline-postgres",
+  "at": 1794845928.7526317,
+  "working_set": 22466560,
+  "inactive_file": 22028288,
+  "current": 44494848,
+  "peak": 951009280,
+  "limit": 8589934592,
+  "mounts": {
+    "/tmp": {
+      "free": 88649867264,
+      "inodes": 19529728,
+      "available_inodes": 18335796
+    },
+    "/work": {
+      "free": 88649867264,
+      "inodes": 19529728,
+      "available_inodes": 18335796
+    },
+    "/runtime": {
+      "free": 88649867264,
+      "inodes": 19529728,
+      "available_inodes": 18335796
+    },
+    "/source": {
+      "free": 88649867264,
+      "inodes": 19529728,
+      "available_inodes": 18335796
+    }
+  }
+}

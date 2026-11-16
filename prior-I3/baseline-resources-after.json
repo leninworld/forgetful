@@ -1,0 +1,31 @@
+{
+  "phase": "baseline",
+  "at": 1794845806.170517,
+  "working_set": 43958272,
+  "inactive_file": 326180864,
+  "current": 370139136,
+  "peak": 3800014848,
+  "limit": 8589934592,
+  "mounts": {
+    "/tmp": {
+      "free": 88676392960,
+      "inodes": 19529728,
+      "available_inodes": 18337115
+    },
+    "/work": {
+      "free": 88676392960,
+      "inodes": 19529728,
+      "available_inodes": 18337115
+    },
+    "/runtime": {
+      "free": 88676392960,
+      "inodes": 19529728,
+      "available_inodes": 18337115
+    },
+    "/source": {
+      "free": 88676392960,
+      "inodes": 19529728,
+      "available_inodes": 18337115
+    }
+  }
+}

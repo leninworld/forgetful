@@ -1,0 +1,37 @@
+FROM python@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv
+COPY --from=forgetful215-tools:43901923810 /usr/local/bin/uv /usr/local/bin/uv
+COPY --from=forgetful215-tools:43901923810 /opt/build-constraints.txt /opt/build-constraints.txt
+ENV UV_BUILD_CONSTRAINT=/opt/build-constraints.txt UV_HTTP_RETRIES=0
+
+# Cache third-party dependencies independently of application code and version.
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+
+# Copy every input needed by hatch, including migrations and the application.
+COPY README.md main.py alembic.ini ./
+COPY alembic ./alembic
+COPY app ./app
+
+# Install the complete project and generate its version without requiring .git.
+ARG VERSION=0.0.0+dev
+ENV SETUPTOOLS_SCM_PRETEND_VERSION=$VERSION
+RUN uv sync --frozen --no-dev
+
+COPY tests ./tests
+COPY pytest.ini ./
+
+# Expose port
+EXPOSE 8020
+
+# Use the installed environment; startup must not resolve or rebuild packages.
+CMD ["uv", "run", "--no-sync", "main.py", "--transport", "http"]
