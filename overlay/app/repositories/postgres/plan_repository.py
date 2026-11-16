@@ -1,0 +1,199 @@
+"""Plan repository for Postgres data access operations"""
+
+from datetime import UTC, datetime
+from uuid import UUID
+
+from sqlalchemy import delete, func, select, update
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
+
+from app.config.logging_config import logging
+from app.exceptions import ConflictError, NotFoundError
+from app.models.plan_models import (
+    Plan,
+    PlanCreate,
+    PlanStatus,
+    PlanSummary,
+    PlanUpdate,
+)
+from app.repositories.postgres.postgres_adapter import PostgresDatabaseAdapter
+from app.repositories.postgres.postgres_tables import PlansTable, TasksTable
+from app.repositories.postgres.project_reference import ensure_project_owned
+
+logger = logging.getLogger(__name__)
+
+
+class PostgresPlanRepository:
+    """Repository for Plan entity operations in Postgres."""
+
+    def __init__(self, db_adapter: PostgresDatabaseAdapter):
+        self.db_adapter = db_adapter
+        logger.info("Plan repository initialized")
+
+    async def create_plan(self, user_id: UUID, plan_data: PlanCreate) -> Plan:
+        logger.info("Creating plan", extra={"user_id": str(user_id), "title": plan_data.title})
+
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                await ensure_project_owned(session, user_id, plan_data.project_id)
+
+                data = plan_data.model_dump(exclude={"criteria", "dependency_ids"})
+                new_plan = PlansTable(**data, user_id=user_id)
+                session.add(new_plan)
+                await session.flush()
+                await session.refresh(new_plan, attribute_names=["tasks"])
+                plan = Plan.model_validate(new_plan)
+                logger.info("Plan created", extra={"plan_id": plan.id})
+                return plan
+        except IntegrityError as exc:
+            if getattr(exc.orig.__cause__, "constraint_name", None) == "ix_plans_user_external_ref":
+                raise ConflictError(
+                    "A plan with this external_ref already exists. "
+                    "Use list_plans with external_ref to find it.",
+                ) from exc
+            raise
+
+    async def get_plan_by_id(self, user_id: UUID, plan_id: int) -> Plan | None:
+        logger.info("Getting plan by ID", extra={"plan_id": plan_id})
+
+        async with self.db_adapter.session(user_id) as session:
+            stmt = (
+                select(PlansTable)
+                .options(selectinload(PlansTable.tasks))
+                .where(PlansTable.user_id == user_id, PlansTable.id == plan_id)
+            )
+            result = await session.execute(stmt)
+            plan_orm = result.scalar_one_or_none()
+            if plan_orm:
+                return Plan.model_validate(plan_orm)
+            return None
+
+    async def list_plans(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        status: PlanStatus | None = None,
+        external_ref: str | None = None,
+    ) -> list[PlanSummary]:
+        logger.info("Listing plans", extra={"user_id": str(user_id)})
+
+        async with self.db_adapter.session(user_id) as session:
+            stmt = (
+                select(PlansTable)
+                .options(selectinload(PlansTable.tasks))
+                .where(PlansTable.user_id == user_id)
+            )
+            if project_id is not None:
+                stmt = stmt.where(PlansTable.project_id == project_id)
+            if status:
+                stmt = stmt.where(PlansTable.status == status.value)
+            if external_ref is not None:
+                stmt = stmt.where(PlansTable.external_ref == external_ref)
+            stmt = stmt.order_by(PlansTable.created_at.desc())
+
+            result = await session.execute(stmt)
+            plans_orm = result.scalars().all()
+            return [PlanSummary.model_validate(p) for p in plans_orm]
+
+    async def list_plans_page(
+        self,
+        user_id: UUID,
+        project_id: int | None = None,
+        status: PlanStatus | None = None,
+        external_ref: str | None = None,
+        *,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[PlanSummary], int]:
+        """Return a counted SQL page using only summary columns."""
+        async with self.db_adapter.session(user_id) as session:
+            conditions = [PlansTable.user_id == user_id]
+            if project_id is not None:
+                conditions.append(PlansTable.project_id == project_id)
+            if status:
+                conditions.append(PlansTable.status == status.value)
+            if external_ref is not None:
+                conditions.append(PlansTable.external_ref == external_ref)
+
+            task_count = (
+                select(func.count(TasksTable.id))
+                .where(TasksTable.plan_id == PlansTable.id)
+                .correlate(PlansTable)
+                .scalar_subquery()
+                .label("task_count")
+            )
+
+            count_stmt = select(func.count(PlansTable.id)).where(*conditions)
+            total = await session.scalar(count_stmt)
+            stmt = (
+                select(
+                    PlansTable.id,
+                    PlansTable.title,
+                    PlansTable.project_id,
+                    PlansTable.status,
+                    PlansTable.external_ref,
+                    task_count,
+                    PlansTable.created_at,
+                    PlansTable.updated_at,
+                )
+                .where(*conditions)
+                .order_by(
+                    PlansTable.created_at.desc(),
+                    PlansTable.id.desc(),
+                )
+                .offset(offset)
+                .limit(limit)
+            )
+            result = await session.execute(stmt)
+            return [PlanSummary.model_validate(row) for row in result.mappings().all()], total or 0
+
+    async def update_plan(
+        self, user_id: UUID, plan_id: int, plan_data: PlanUpdate,
+    ) -> Plan:
+        logger.info("Updating plan", extra={"plan_id": plan_id})
+
+        try:
+            async with self.db_adapter.session(user_id) as session:
+                update_data = plan_data.model_dump(exclude_unset=True)
+                if not update_data:
+                    stmt = (
+                        select(PlansTable)
+                        .options(selectinload(PlansTable.tasks))
+                        .where(PlansTable.user_id == user_id, PlansTable.id == plan_id)
+                    )
+                    result = await session.execute(stmt)
+                    plan_orm = result.scalar_one_or_none()
+                    if not plan_orm:
+                        raise NotFoundError(f"Plan with id {plan_id} not found")
+                    return Plan.model_validate(plan_orm)
+
+                update_data["updated_at"] = datetime.now(UTC)
+                stmt = (
+                    update(PlansTable)
+                    .where(PlansTable.user_id == user_id, PlansTable.id == plan_id)
+                    .values(**update_data)
+                    .returning(PlansTable)
+                )
+                result = await session.execute(stmt)
+                plan_orm = result.scalar_one_or_none()
+                if not plan_orm:
+                    raise NotFoundError(f"Plan with id {plan_id} not found")
+                await session.refresh(plan_orm, attribute_names=["tasks"])
+                return Plan.model_validate(plan_orm)
+        except IntegrityError as exc:
+            if getattr(exc.orig.__cause__, "constraint_name", None) == "ix_plans_user_external_ref":
+                raise ConflictError(
+                    "A plan with this external_ref already exists. "
+                    "Use list_plans with external_ref to find it.",
+                ) from exc
+            raise
+
+    async def delete_plan(self, user_id: UUID, plan_id: int) -> bool:
+        logger.info("Deleting plan", extra={"plan_id": plan_id})
+
+        async with self.db_adapter.session(user_id) as session:
+            stmt = delete(PlansTable).where(
+                PlansTable.user_id == user_id, PlansTable.id == plan_id,
+            )
+            result = await session.execute(stmt)
+            return result.rowcount > 0
