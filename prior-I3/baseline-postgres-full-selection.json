@@ -1,0 +1,3798 @@
+{
+  "exitstatus": 0,
+  "files": {
+    "tests/e2e/test_activity_user_scope_e2e.py": {
+      "selected": 6,
+      "deselected": 0,
+      "executed": 6,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "bea47761fc642cfddbd53822641a8e4ae1b23affe4de4b296f68e5945c645e13",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "bea47761fc642cfddbd53822641a8e4ae1b23affe4de4b296f68e5945c645e13",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_api_activity.py": {
+      "selected": 34,
+      "deselected": 0,
+      "executed": 34,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "d708a495ad763a978f6f7e97cf1e6910cce4fc7dadaea40aec1e8409dc32c6a0",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "d708a495ad763a978f6f7e97cf1e6910cce4fc7dadaea40aec1e8409dc32c6a0",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_api_memories_e2e.py": {
+      "selected": 18,
+      "deselected": 0,
+      "executed": 18,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "db488382023ba01a3552f64f48b48f502aa770c95f6c262a48836d896b30eef7",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "db488382023ba01a3552f64f48b48f502aa770c95f6c262a48836d896b30eef7",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_auth_e2e.py": {
+      "selected": 1,
+      "deselected": 0,
+      "executed": 1,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "595100ee660116fba9325e92e1173f22a68c4f931ad440b5ee8643be45b6940b",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "595100ee660116fba9325e92e1173f22a68c4f931ad440b5ee8643be45b6940b",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_auto_link_threshold_e2e.py": {
+      "selected": 1,
+      "deselected": 0,
+      "executed": 1,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "8eb32cf8ea9234b7706fa304311a890d5c50f410a1a03218ebe6812414bd8939",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "8eb32cf8ea9234b7706fa304311a890d5c50f410a1a03218ebe6812414bd8939",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_backup_recovery_e2e.py": {
+      "selected": 5,
+      "deselected": 0,
+      "executed": 5,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "d46bd041c314c7dfc890571e1bfe78e1cb7a70e41b839d43c562a0202fa893f9",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "d46bd041c314c7dfc890571e1bfe78e1cb7a70e41b839d43c562a0202fa893f9",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_cli_postgres_e2e.py": {
+      "selected": 1,
+      "deselected": 0,
+      "executed": 1,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "db2a8a5dfce08430a96367c988c8dfe0c3b6773611fa12006abeef8d9b7cc313",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "db2a8a5dfce08430a96367c988c8dfe0c3b6773611fa12006abeef8d9b7cc313",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py": {
+      "selected": 7,
+      "deselected": 0,
+      "executed": 7,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "eb4d8f74a4255e3c9b8e5a1204030e47716b117a4322bbe21ef1fe764821cada",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "eb4d8f74a4255e3c9b8e5a1204030e47716b117a4322bbe21ef1fe764821cada",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py": {
+      "selected": 28,
+      "deselected": 0,
+      "executed": 28,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "de84e483361673f09b1bd167c52b5456a3754a459beb11dff7167afc63bbb689",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "de84e483361673f09b1bd167c52b5456a3754a459beb11dff7167afc63bbb689",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_document_tools_e2e.py": {
+      "selected": 7,
+      "deselected": 0,
+      "executed": 7,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "979cec7ebc327bb106f946eeb79e4b91846779612915f441b7e3f828cbfd2e8a",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "979cec7ebc327bb106f946eeb79e4b91846779612915f441b7e3f828cbfd2e8a",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_embedding_concurrency.py": {
+      "selected": 2,
+      "deselected": 0,
+      "executed": 2,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "ad7cf7a6f0a79b61a49a92921ea187f48626764813951c57d30de9f4d8737aed",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "ad7cf7a6f0a79b61a49a92921ea187f48626764813951c57d30de9f4d8737aed",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_entity_tools_e2e.py": {
+      "selected": 36,
+      "deselected": 0,
+      "executed": 36,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "78be25ed1053cabe47fd18fb1a95ad4d1c613f4a7c70dba0e3cdfcf7c7af221a",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "78be25ed1053cabe47fd18fb1a95ad4d1c613f4a7c70dba0e3cdfcf7c7af221a",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_file_tools_e2e.py": {
+      "selected": 11,
+      "deselected": 0,
+      "executed": 11,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "a1797d2a71ff22ac7d086ca93684a9156479ad53a5999d1005d8f1ae4c63b264",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "a1797d2a71ff22ac7d086ca93684a9156479ad53a5999d1005d8f1ae4c63b264",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_graph_e2e.py": {
+      "selected": 45,
+      "deselected": 0,
+      "executed": 45,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "0c9c2aa48e16430e16be6bced4a555a0d3073fface1438cbe0946d4a5a8dbe91",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "0c9c2aa48e16430e16be6bced4a555a0d3073fface1438cbe0946d4a5a8dbe91",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_health_e2e.py": {
+      "selected": 1,
+      "deselected": 0,
+      "executed": 1,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "9730fa174225cc43fe3bb5c44b6d007c62ba145cb245ba09b828a2a829646af4",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "9730fa174225cc43fe3bb5c44b6d007c62ba145cb245ba09b828a2a829646af4",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_hybrid_search_e2e.py": {
+      "selected": 14,
+      "deselected": 0,
+      "executed": 14,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "86c1c1f27d31d46dbc976841088d48c5f2d1571bd1e548f89b41055b96b1f776",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "86c1c1f27d31d46dbc976841088d48c5f2d1571bd1e548f89b41055b96b1f776",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py": {
+      "selected": 8,
+      "deselected": 0,
+      "executed": 8,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "abe301426153785c21e810712d92f66d5336a94db58f3091af99a3339b61bb95",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "abe301426153785c21e810712d92f66d5336a94db58f3091af99a3339b61bb95",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_memory_link_ownership_e2e.py": {
+      "selected": 2,
+      "deselected": 0,
+      "executed": 2,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "c096a9f643a1baf0a08bbd26e99289f082d55d3beaa62695eecc3203d11b7359",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "c096a9f643a1baf0a08bbd26e99289f082d55d3beaa62695eecc3203d11b7359",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_memory_link_plugin_native.py": {
+      "selected": 5,
+      "deselected": 0,
+      "executed": 5,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "b4917a13e36570f8e96384e025216d1d14a63330903c4e4c8cdfdbc0b7ae4819",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "b4917a13e36570f8e96384e025216d1d14a63330903c4e4c8cdfdbc0b7ae4819",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_memory_tools_e2e.py": {
+      "selected": 38,
+      "deselected": 0,
+      "executed": 38,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "957260815557086636e7410800ca49ca2082c0071a069b6872d5b0b1a4ee6f77",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "957260815557086636e7410800ca49ca2082c0071a069b6872d5b0b1a4ee6f77",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_memory_usage_e2e.py": {
+      "selected": 6,
+      "deselected": 0,
+      "executed": 6,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "a367d7d64a7bee166d61b126ec86f090e41c08cb8829cc98dfae4d4ec1c0e7eb",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "a367d7d64a7bee166d61b126ec86f090e41c08cb8829cc98dfae4d4ec1c0e7eb",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_memory_usage_tracking_disabled_e2e.py": {
+      "selected": 1,
+      "deselected": 0,
+      "executed": 1,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "6cd2f6e381f8cbc573c4b789b8789f2c87179e2d3c3b37f19e8f6b546bad1db8",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "6cd2f6e381f8cbc573c4b789b8789f2c87179e2d3c3b37f19e8f6b546bad1db8",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_meta_tools_e2e.py": {
+      "selected": 16,
+      "deselected": 0,
+      "executed": 16,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "5007b96f82e85a8b78fae6317a9b6c60b6ad8ec1be6e0792979271f49df5df3c",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "5007b96f82e85a8b78fae6317a9b6c60b6ad8ec1be6e0792979271f49df5df3c",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_obsolete_matches_e2e.py": {
+      "selected": 2,
+      "deselected": 0,
+      "executed": 2,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "cd4f137e0b2b59e819ea6385bfa5ac6d31c3cc0499763b62444a4dc7aad95cd8",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "cd4f137e0b2b59e819ea6385bfa5ac6d31c3cc0499763b62444a4dc7aad95cd8",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py": {
+      "selected": 13,
+      "deselected": 0,
+      "executed": 13,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "9e63b8b6c1dc2cdbea14f7721bbec70c9834506b4863a144caebf0209150838d",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "9e63b8b6c1dc2cdbea14f7721bbec70c9834506b4863a144caebf0209150838d",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_plan_plugin_e2e.py": {
+      "selected": 37,
+      "deselected": 0,
+      "executed": 37,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "de315ef80870a185a6a45b2a0db1f3ad602f7cac261712453c634b738d623170",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "de315ef80870a185a6a45b2a0db1f3ad602f7cac261712453c634b738d623170",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_plan_tools_e2e.py": {
+      "selected": 9,
+      "deselected": 0,
+      "executed": 9,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "417f1bd0bb55fd1a4f528f6816507e4a5fc7e5dc76e31ed749b055e8176a764c",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "417f1bd0bb55fd1a4f528f6816507e4a5fc7e5dc76e31ed749b055e8176a764c",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_project_tools_e2e.py": {
+      "selected": 36,
+      "deselected": 0,
+      "executed": 36,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "7caa50dd31b9396bae91d5ef9c53dac4989fd583a0c785b567f46ad309eb666d",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "7caa50dd31b9396bae91d5ef9c53dac4989fd583a0c785b567f46ad309eb666d",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_provenance_e2e.py": {
+      "selected": 11,
+      "deselected": 0,
+      "executed": 11,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "f214de56fa98b90b7945388bed9056ffe18998fea283d0da278110dca89b325a",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "f214de56fa98b90b7945388bed9056ffe18998fea283d0da278110dca89b325a",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_re_embedding_e2e.py": {
+      "selected": 11,
+      "deselected": 0,
+      "executed": 11,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "caff40c9a63e90188f34b2cf52185a6a2200b6977295c6612f6f902f261d0bff",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "caff40c9a63e90188f34b2cf52185a6a2200b6977295c6612f6f902f261d0bff",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_reranking_e2e.py": {
+      "selected": 2,
+      "deselected": 0,
+      "executed": 2,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "3fd54915d7637952b0d5fafd8b13044156159ba895b61c5c4c22bda34434fdfe",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "3fd54915d7637952b0d5fafd8b13044156159ba895b61c5c4c22bda34434fdfe",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_retrieval_scores_e2e.py": {
+      "selected": 2,
+      "deselected": 0,
+      "executed": 2,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "02aa3f2272174df82c85e480dab95280055b7ef388c84c0c324221d6e43452e6",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "02aa3f2272174df82c85e480dab95280055b7ef388c84c0c324221d6e43452e6",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_skill_bundles.py": {
+      "selected": 79,
+      "deselected": 0,
+      "executed": 78,
+      "skipped": 1,
+      "nodeids_sha256": {
+        "selected": "2d93235a6c15af2199b63b1ae94356d41b31dc3e68e012153eead5b07799c2e2",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "20ad6772f069bb6d6e76d815911e6c0b2d851bd63e33c2fd28bab057398e002d",
+        "skipped": "36892851ee58566ee045cb1b9f6068e4b1a57291b80d50591c9aef566ed2797a"
+      }
+    },
+    "tests/e2e/test_skill_tools_e2e.py": {
+      "selected": 19,
+      "deselected": 0,
+      "executed": 19,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "c4f871608282e8f0ae2684c09bf72b343020d50f81bd090512bcb5991c95a25c",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "c4f871608282e8f0ae2684c09bf72b343020d50f81bd090512bcb5991c95a25c",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_task_tools_e2e.py": {
+      "selected": 16,
+      "deselected": 0,
+      "executed": 16,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "468d6463b174a3a2e9c88578f8412ca53e44495b57f73276dc0cb767e756e897",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "468d6463b174a3a2e9c88578f8412ca53e44495b57f73276dc0cb767e756e897",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_user_creation_e2e.py": {
+      "selected": 4,
+      "deselected": 0,
+      "executed": 4,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "4a3f881671e529a09d8f27ac00c0396980a6e75842062907b3873fad603b6014",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "4a3f881671e529a09d8f27ac00c0396980a6e75842062907b3873fad603b6014",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_user_tools_e2e.py": {
+      "selected": 3,
+      "deselected": 0,
+      "executed": 3,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "0146dbb153e6da0325d31bb6b7f96548023e9ee5eceea30c671b832789d0fb38",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "0146dbb153e6da0325d31bb6b7f96548023e9ee5eceea30c671b832789d0fb38",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e/test_zz_backup_restore_e2e.py": {
+      "selected": 2,
+      "deselected": 0,
+      "executed": 2,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "b547348bf9f982fd7bb104df836a615c85f3a2f8dbe3bddf2e4391d19eca9332",
+        "deselected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "executed": "b547348bf9f982fd7bb104df836a615c85f3a2f8dbe3bddf2e4391d19eca9332",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py": {
+      "selected": 12,
+      "deselected": 12,
+      "executed": 12,
+      "skipped": 0,
+      "nodeids_sha256": {
+        "selected": "c51a274965ae015dbfbfff37ca00e50781c9d1831621742f7a5e62f3ad78b5ca",
+        "deselected": "a39c17ee6398c007e110b771ca28c1fe59405fcb2965c5140a184a3079b5dbac",
+        "executed": "c51a274965ae015dbfbfff37ca00e50781c9d1831621742f7a5e62f3ad78b5ca",
+        "skipped": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "selected_nodeids": [
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_query_events_returns_only_callers_events",
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_query_events_entity_filter_cannot_reach_other_users_rows",
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_count_events_counts_only_callers_events",
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_cleanup_expired_only_deletes_callers_events",
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_cleanup_expired_with_no_own_events_deletes_nothing",
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_service_lazy_retention_cleanup_is_user_scoped",
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_empty",
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_after_memory_created",
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_filter_by_entity_type",
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_filter_by_action",
+    "tests/e2e/test_api_activity.py::TestActivityAPIUpdates::test_update_generates_event_with_changes",
+    "tests/e2e/test_api_activity.py::TestActivityAPIDelete::test_delete_generates_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIReads::test_get_memory_generates_read_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntityHistory::test_get_entity_history",
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntityHistory::test_get_entity_history_invalid_type",
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_limit_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_limit_over_max_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_offset_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_action_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_entity_type_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_actor_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_entity_id_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_returns_sse_content_type",
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_receives_created_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_filters_by_entity_type",
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_invalid_entity_type_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_invalid_action_returns_400",
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_includes_sequence_numbers",
+    "tests/e2e/test_api_activity.py::TestActivityAPIProject::test_project_created_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIProject::test_project_updated_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIProject::test_project_deleted_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIDocument::test_document_created_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIDocument::test_document_deleted_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPICodeArtifact::test_code_artifact_created_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPICodeArtifact::test_code_artifact_deleted_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_created_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_deleted_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_memory_link_created_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_relationship_created_event",
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_relationship_deleted_event",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_title_sort_is_binary_codepoint_order",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_project_name_sort_uses_least_owned_name_and_nulls_last",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_project_name_sort_is_binary_codepoint_order_with_ties",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_matches_title_content_and_context_with_ascii_fold",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_wildcards_are_literal_and_unicode_is_not_folded",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_empty_or_whitespace_is_not_trimmed",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_rejects_nul",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_importance_max_supports_exact_and_range",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_importance_range_errors",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_updated_range_endpoints_are_inclusive_and_offset_equivalent",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_updated_range_rejects_invalid_values",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_combined_filters_apply_before_count_and_paging",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_title_and_project_paging_concatenates_without_duplicates",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_title_ties_order_by_id_in_sort_direction",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_owner_isolation_obsolete_and_defaults_unchanged",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_owner_isolation_with_new_filters_and_project_sort",
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_default_and_importance_sorts_unchanged",
+    "tests/e2e/test_api_memories_e2e.py::test_importance_filter_applies_before_pagination",
+    "tests/e2e/test_auth_e2e.py::test_default_user_provisioning_e2e",
+    "tests/e2e/test_auto_link_threshold_e2e.py::test_create_memory_links_only_above_similarity_cutoff",
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_backup_restores_memories_and_vectors",
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[utf-8-provider_error]",
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[utf-8-search_error]",
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[cp1252-provider_error]",
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[cp1252-search_error]",
+    "tests/e2e/test_cli_postgres_e2e.py::test_cli_local_executor_create_and_query_against_postgres",
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_create_code_artifact_basic_e2e",
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_get_code_artifact_e2e",
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_list_code_artifacts_e2e",
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_list_code_artifacts_by_project_e2e",
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_update_code_artifact_e2e",
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_delete_code_artifact_e2e",
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_get_code_artifact_not_found_e2e",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[documents]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[code-artifacts]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[files]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[plans]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[skills]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[documents]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[code-artifacts]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[files]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[plans]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[skills]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[documents]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[code-artifacts]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[files]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[plans]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[skills]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[documents]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[code-artifacts]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[files]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[skills]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[documents]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[code-artifacts]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[files]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[skills]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[documents]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[code-artifacts]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[files]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[skills]",
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_owner_project_delete_leaves_other_users_rows_alone_e2e",
+    "tests/e2e/test_document_tools_e2e.py::test_create_document_basic_e2e",
+    "tests/e2e/test_document_tools_e2e.py::test_get_document_e2e",
+    "tests/e2e/test_document_tools_e2e.py::test_list_documents_e2e",
+    "tests/e2e/test_document_tools_e2e.py::test_list_documents_by_project_e2e",
+    "tests/e2e/test_document_tools_e2e.py::test_update_document_e2e",
+    "tests/e2e/test_document_tools_e2e.py::test_delete_document_e2e",
+    "tests/e2e/test_document_tools_e2e.py::test_get_document_not_found_e2e",
+    "tests/e2e/test_embedding_concurrency.py::test_concurrent_search_returns_distinct_expected_memories",
+    "tests/e2e/test_embedding_concurrency.py::test_concurrent_creation_preserves_each_memory_and_embedding",
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_basic_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_with_custom_type_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_filter_by_type_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_filter_by_tags_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_delete_entity_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_link_entity_to_memory_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_unlink_entity_from_memory_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_relationship_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_relationships_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_relationships_filter_direction_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_relationship_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_delete_entity_relationship_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_not_found_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_basic_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_case_insensitive_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_with_type_filter_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_with_tags_filter_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_limit_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_no_results_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_with_multiple_projects_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_with_no_projects_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_with_project_ids_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_filter_by_project_ids_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_change_projects_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_clear_all_projects_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_basic_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_empty_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_not_found_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_after_unlink_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_basic_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_not_found_e2e",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_user_isolation_e2e[False]",
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_user_isolation_e2e[True]",
+    "tests/e2e/test_file_tools_e2e.py::test_create_file",
+    "tests/e2e/test_file_tools_e2e.py::test_get_file",
+    "tests/e2e/test_file_tools_e2e.py::test_list_files",
+    "tests/e2e/test_file_tools_e2e.py::test_list_files_filter_mime_type",
+    "tests/e2e/test_file_tools_e2e.py::test_list_files_filter_tags",
+    "tests/e2e/test_file_tools_e2e.py::test_update_file",
+    "tests/e2e/test_file_tools_e2e.py::test_update_file_data",
+    "tests/e2e/test_file_tools_e2e.py::test_delete_file",
+    "tests/e2e/test_file_tools_e2e.py::test_create_memory_with_file_ids",
+    "tests/e2e/test_file_tools_e2e.py::test_text_file_round_trip",
+    "tests/e2e/test_file_tools_e2e.py::test_file_summary_excludes_data",
+    "tests/e2e/test_graph_e2e.py::test_graph_empty_returns_200",
+    "tests/e2e/test_graph_e2e.py::test_graph_with_all_node_types",
+    "tests/e2e/test_graph_e2e.py::test_graph_node_types_filter",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_memory_center",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_project_center",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_document_center",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_code_artifact_center",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_cycle_detection_postgresql",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_multi_hop_traversal",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_meta_includes_all_new_counts",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_node_types_filter_postgresql",
+    "tests/e2e/test_graph_e2e.py::test_graph_pagination_with_offset",
+    "tests/e2e/test_graph_e2e.py::test_graph_pagination_metadata",
+    "tests/e2e/test_graph_e2e.py::test_graph_respects_max_graph_limit_setting",
+    "tests/e2e/test_graph_e2e.py::test_graph_sort_by_importance",
+    "tests/e2e/test_graph_e2e.py::test_graph_invalid_pagination_params",
+    "tests/e2e/test_graph_e2e.py::test_graph_offset_beyond_total",
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_file_nodes",
+    "tests/e2e/test_graph_e2e.py::test_graph_memory_file_edges",
+    "tests/e2e/test_graph_e2e.py::test_graph_file_project_edges",
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_skill_nodes",
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_project_edges",
+    "tests/e2e/test_graph_e2e.py::test_graph_memory_skill_edges",
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_file_edges",
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_code_artifact_edges",
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_document_edges",
+    "tests/e2e/test_graph_e2e.py::test_graph_entity_file_edges",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_skill_center_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_memory_skill_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_skill_to_code_artifact_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_skill_to_document_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_skill_project_postgres",
+    "tests/e2e/test_graph_e2e.py::test_full_graph_meta_includes_all_skill_file_counts_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_meta_includes_all_skill_file_counts_postgres",
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_plan_nodes_postgres",
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_task_nodes_postgres",
+    "tests/e2e/test_graph_e2e.py::test_graph_plan_project_edge_postgres",
+    "tests/e2e/test_graph_e2e.py::test_graph_plan_task_edge_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_plan_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_task_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_task_depth2_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_project_to_plans_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_meta_includes_plan_task_counts_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_nonexistent_plan_404_postgres",
+    "tests/e2e/test_graph_e2e.py::test_subgraph_nonexistent_task_404_postgres",
+    "tests/e2e/test_health_e2e.py::test_health_endpoint_returns_200",
+    "tests/e2e/test_hybrid_search_e2e.py::test_ticket_identifier_rank_one",
+    "tests/e2e/test_hybrid_search_e2e.py::test_symbol_in_keywords_rank_one",
+    "tests/e2e/test_hybrid_search_e2e.py::test_hash_ticket_rank_one",
+    "tests/e2e/test_hybrid_search_e2e.py::test_hybrid_off_no_fusion_fields",
+    "tests/e2e/test_hybrid_search_e2e.py::test_hybrid_off_mcp_and_rest_no_hybrid_score_keys",
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_leg_failure_falls_back_to_dense",
+    "tests/e2e/test_hybrid_search_e2e.py::test_obsolete_excluded_from_keyword_leg",
+    "tests/e2e/test_hybrid_search_e2e.py::test_update_and_delete_keyword_index",
+    "tests/e2e/test_hybrid_search_e2e.py::test_migration_round_trip_preserves_hybrid_search",
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_dotted_name_with_prefix_distractors",
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_path_with_prefix_distractors",
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_ticket_with_same_prefix_distractors",
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_unicode_letter_matches",
+    "tests/e2e/test_hybrid_search_e2e.py::test_hybrid_recovers_target_outside_dense_pool",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_basic_e2e",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_batch_e2e",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_persistence_e2e",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_partial_failure_e2e",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_duplicate_prevention_e2e",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_invalid_source_id_e2e",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_unlink_memories_basic_e2e",
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_unlink_memories_not_found_e2e",
+    "tests/e2e/test_memory_link_ownership_e2e.py::test_link_memories_skips_other_users_memory_e2e",
+    "tests/e2e/test_memory_link_ownership_e2e.py::test_link_memories_foreign_id_indistinguishable_from_missing_e2e",
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[enforce-link]",
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[enforce-unlink]",
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[warn-link]",
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[warn-unlink]",
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_link_request_cancellation",
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_basic_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_auto_linking_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_query_memory_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_create_and_query_persistence_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_query_memory_with_linked_memories_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_single_field_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_multiple_fields_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_content_triggers_embedding_refresh_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_persistence_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_keywords_tags_replacement_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_invalid_id_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_memory_basic_retrieval_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_memory_invalid_id_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_basic_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_filtered_from_query_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_retrievable_by_id_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_with_superseded_by_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_add_project_ids_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_add_multiple_projects_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_remove_project_ids_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_basic_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_linked_ids_match_get_memory_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_with_project_filter_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_excludes_obsolete_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_with_tags_filter_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_tags_with_project_ids_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_filters_before_pagination_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_importance_ties_use_creation_time_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_include_obsolete_and_sort_importance_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_negative_offset_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_over_limit_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_zero_limit_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_hundred_cap_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_with_provenance_postgres_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_without_provenance_backward_compat_postgres_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_add_provenance_postgres_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_provenance_in_query_results_postgres_e2e",
+    "tests/e2e/test_memory_tools_e2e.py::test_provenance_confidence_boundaries_postgres_e2e",
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_repeated_get_preserves_updated_at_and_content",
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_read_does_not_change_updated_sort_or_date_membership",
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_query_preserves_updated_at_for_primary_and_linked",
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_real_edit_still_advances_updated_at",
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTrackingE2E::test_get_memory_increments_access_count",
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTrackingE2E::test_query_memory_increments_access_count",
+    "tests/e2e/test_memory_usage_tracking_disabled_e2e.py::test_get_memory_does_not_increment_access_count_when_tracking_disabled",
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_forgetful_tools_all_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_forgetful_tools_by_category_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_tools_invalid_category_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_how_to_use_forgetful_tool_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_how_to_use_nonexistent_tool_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_forgetful_tool_user_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_forgetful_tool_memory_create_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_forgetful_tool_memory_query_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_nonexistent_tool_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_tool_preserves_user_context_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_meta_tools_workflow_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_create_project_via_meta_tools_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_list_projects_via_meta_tools_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_create_entity_via_meta_tools_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_entity_workflow_via_meta_tools_e2e",
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_all_categories_e2e",
+    "tests/e2e/test_obsolete_matches_e2e.py::test_recreating_superseded_memory_reports_match[original]",
+    "tests/e2e/test_obsolete_matches_e2e.py::test_recreating_superseded_memory_reports_match[after-full-rebuild]",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_invalid_references_on_create_update_and_lookup[]",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_invalid_references_on_create_update_and_lookup[ \\t\\n ]",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_invalid_references_on_create_update_and_lookup[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_is_private_and_unique_per_user",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_inactive_plans_retain_reference_until_deleted[completed]",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_inactive_plans_retain_reference_until_deleted[archived]",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_round_trip_and_lookup",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_duplicate_create_and_optional_reference",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_updates_preserve_replace_and_reject_duplicates",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefMCP::test_external_ref_mcp_workflow",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefStorage::test_concurrent_creates_on_separate_connections",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefStorage::test_unrelated_integrity_error_is_not_a_reference_conflict",
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefStorage::test_migration_preserves_existing_plans_and_tasks",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_crud_snapshots_and_confirmed_delete",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_core_ownership_and_external_reference_stay_authoritative",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_rejection_and_after_failure_preserve_persisted_outcomes",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_noop_missing_and_invalid_transition_dispatch_nothing",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_before_await_rechecks_transition_and_preserves_concurrent_patch",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_lost_delete_race_has_no_after_success",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_cascades_do_not_dispatch_per_task_or_indirect_plan[plan]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_cascades_do_not_dispatch_per_task_or_indirect_plan[project]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-enforce-plan_auto_completion_rejected-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-enforce-plan_auto_completion_rejected-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[error-enforce-plan_auto_completion_unavailable-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[error-enforce-plan_auto_completion_unavailable-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-warn-PLAN_TEST-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-warn-PLAN_TEST-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[allow-enforce-PLAN_AFTER-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[allow-enforce-PLAN_AFTER-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-transition]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-delete]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_manual_completion_allows_unfinished_tasks",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_manual_policy_child_cancellation_propagates",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_manual_completion_rejects_core_guard",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_concurrent_completions_do_not_promise_atomic_dispatch",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_nontrigger_controls[empty]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_nontrigger_controls[all_cancelled]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_nontrigger_controls[non_active]",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_unrelated_secondary_error_keeps_existing_postcommit_propagation",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_cancelled_request_during_secondary_policy_keeps_primary_committed",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_handler_mutation_cannot_rewrite_saved_data",
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_unregistered_create_needs_no_new_project_query",
+    "tests/e2e/test_plan_tools_e2e.py::test_create_plan_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_get_plan_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_list_plans_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_update_plan_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_create_defaults_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_lifecycle_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_invalid_status_transition_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_list_plans_filter_by_status_e2e",
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_discover_tools_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[not-an-id-get_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[not-an-id-update_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[not-an-id-delete_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[True-get_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[True-update_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[True-delete_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[1.9-get_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[1.9-update_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[1.9-delete_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[None-get_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[None-update_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[None-delete_project]",
+    "tests/e2e/test_project_tools_e2e.py::test_create_project_basic_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_get_project_e2e[integer-id]",
+    "tests/e2e/test_project_tools_e2e.py::test_get_project_e2e[string-id]",
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_e2e[first]",
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_e2e[repeat]",
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_e2e[integer-id]",
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_e2e[string-id]",
+    "tests/e2e/test_project_tools_e2e.py::test_delete_project_e2e[integer-id]",
+    "tests/e2e/test_project_tools_e2e.py::test_delete_project_e2e[string-id]",
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_filter_by_status_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_filter_by_repo_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_project_persistence_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_get_project_invalid_id_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_invalid_id_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_delete_project_invalid_id_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_create_project_with_opaque_repository_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_partial_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_archive_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_list_returns_summary_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_get_returns_full_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_project_memory_count_updates_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_query_memory_by_project_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_last_encoding_point_round_trip_e2e",
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_filter_by_name_e2e",
+    "tests/e2e/test_provenance_e2e.py::test_project_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_memory_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_document_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_code_artifact_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_entity_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_entity_relationship_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_plan_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_task_provenance_roundtrip_pg",
+    "tests/e2e/test_provenance_e2e.py::test_no_provenance_fields_remain_null_pg",
+    "tests/e2e/test_provenance_e2e.py::test_project_provenance_via_http_api",
+    "tests/e2e/test_provenance_e2e.py::test_enforce_env_overwrite_blocks_update_pg",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_search_works_after",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_count_integrity",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_preserves_memory_data",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[missing_vector-mixed]",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[missing_vector-all-obsolete]",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[old_dimensions-mixed]",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[old_dimensions-all-obsolete]",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_empty_database",
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_validation_checks",
+    "tests/e2e/test_re_embedding_e2e.py::test_validation_checks_obsolete_only_database[missing_embeddings]",
+    "tests/e2e/test_re_embedding_e2e.py::test_validation_checks_obsolete_only_database[wrong_dimensions]",
+    "tests/e2e/test_reranking_e2e.py::test_reranking_orders_by_score_e2e",
+    "tests/e2e/test_reranking_e2e.py::test_reranking_with_different_contexts_e2e",
+    "tests/e2e/test_retrieval_scores_e2e.py::test_scores_aligned_and_non_increasing",
+    "tests/e2e/test_retrieval_scores_e2e.py::test_rerank_scores_present_and_ordered",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_roundtrip_new_resource_ids",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[delete-document]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[delete-code_artifact]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[delete-file]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[unlink-document]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[unlink-code_artifact]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[unlink-file]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_legacy_linked_reference_explicit_export",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_unlinked_explicit_id_is_refused",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[../escape]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[/absolute]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a/../b]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a//b]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[SKILL.md]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[C:/file]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a\\\\b]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a/]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[nul.txt]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a/CON]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a.]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_text_rejected_before_storage[content-\\x00]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_text_rejected_before_storage[content-   ]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_collision_rejected_before_storage",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_legacy_markdown_still_has_original_shape",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_component_scope_denial_has_no_writes",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_binary_feature_disabled_before_any_write",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_midway_database_failure_rolls_back_all_records",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_events_follow_commit_and_redact_binary",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_postcommit_event_failure_preserves_whole_package[tracking-off]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_postcommit_event_failure_preserves_whole_package[tracking-on]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_reads_one_statement",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_existing_create_conversion_matches_bundle",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_foreign_owner_never_exported",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-off-before_commit]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-off-after_commit]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-on-before_commit]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-on-after_commit]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_sqlite_foreign_keys_actually_enabled",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_rest_bundle_and_legacy_shapes",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_large_bundle_uses_transport_not_cli_argv",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_destination_project_applies_to_all_records",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_project_creates_no_package",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_hidden_yaml_nul_rejected_before_any_write",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_codepoint_order",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_foreign_explicit_member_is_indistinguishable_from_absent",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_skill_delete_cascades_only_membership",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[nul-False]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[nul-True]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[file_limit-False]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[file_limit-True]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_authorized_invalid_export_is_sanitized",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_budget_precedes_body_fetch[False]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_budget_precedes_body_fetch[True]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_exact_cap_and_repeated_ids",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_canonical_import_rejected_before_embedding[False]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_canonical_import_rejected_before_embedding[True]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_canonical_exact_limit_and_integer_metadata_key",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_detailed_help_and_examples",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_native_text_length_and_isolation",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[grow]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[tags]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[unlink]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[delete]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_accepted_canonical_import_at_exact_cap[False]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_accepted_canonical_import_at_exact_cap[True]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_optional_tools_exact_boundary[None]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_optional_tools_exact_boundary[tools1]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_optional_tools_exact_boundary[tools2]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nested_metadata_canonical_boundary",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_null_document_type_persisted_budget",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_overlapping_bundle_exports",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_kind_schema_and_runtime_agree[0]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_kind_schema_and_runtime_agree[1]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_kind_schema_and_runtime_agree[2]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_numeric_metadata_native_storage_exact_cap[  n: 1.0e+20\\n]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_numeric_metadata_native_storage_exact_cap[  values: [1.0, 100.0, -0.0, 1.0e+16, 1.5e+20, 1.0e+23, 1.0e-5, 1.5e-7, 7, true]\\n  nested: {n: 1.0e+23}\\n]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nonfinite_bundle_import_leaves_no_records[.inf]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nonfinite_bundle_import_leaves_no_records[.nan]",
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nonfinite_bundle_import_leaves_no_records[-.inf]",
+    "tests/e2e/test_skill_tools_e2e.py::test_create_skill_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_list_skills_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_search_skills_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_update_skill_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_delete_skill_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_import_export_roundtrip_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_file_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_skill_from_file_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_code_artifact_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_skill_from_code_artifact_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_document_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_skill_from_document_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_file_skill_not_found_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_duplicate_link_idempotent_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_nonexistent_returns_false_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_export_includes_tags_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_duplicate_skill_name_rejected_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_get_skill_links_e2e",
+    "tests/e2e/test_skill_tools_e2e.py::test_get_skill_links_not_found_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_create_task_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_get_task_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_query_tasks_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_update_task_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_transition_task_lifecycle_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_transition_task_invalid_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_claim_task_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_claim_task_version_conflict_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_criteria_lifecycle_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_done_requires_criteria_met_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_dependency_chain_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_cyclic_dependency_rejected_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_remove_dependency_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_plan_auto_completes_when_all_tasks_done_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_create_task_with_inline_criteria_e2e",
+    "tests/e2e/test_task_tools_e2e.py::test_task_discover_tools_e2e",
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_other_insert_errors_are_not_reported_as_duplicates",
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_duplicate_creation_preserves_existing_user",
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_creation_race_returns_existing_user[get_or_create_user]",
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_creation_race_returns_existing_user[update_user]",
+    "tests/e2e/test_user_tools_e2e.py::test_get_current_user_e2e",
+    "tests/e2e/test_user_tools_e2e.py::test_update_user_notes_e2e",
+    "tests/e2e/test_user_tools_e2e.py::test_user_persistence_e2e",
+    "tests/e2e/test_zz_backup_restore_e2e.py::test_backup_and_restore_after_schema_modification",
+    "tests/e2e/test_zz_backup_restore_e2e.py::test_backup_and_restore_with_data_changes",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_embedding_wait_allows_another_users_read[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_invalid_skill_references_reject_before_failing_provider[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_failed_and_cancelled_skill_embedding_preserves_text_and_search[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_update_preserves_unsubmitted_concurrent_patch[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_update_rechecks_deleted_skill_and_project[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_rerank_wait_releases_pool_and_keeps_candidate_snapshot[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_memory_embedding_wait_allows_another_users_read[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_reembedding_validation_wait_allows_another_users_read[Postgres-active]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_reembedding_validation_wait_allows_another_users_read[Postgres-obsolete-only]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_failed_and_cancelled_memory_embedding_preserves_text_and_search[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_memory_search_retains_configured_dense_budget[Postgres]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_row_rejection_rolls_back_matching_vector[Postgres]"
+  ],
+  "deselected_nodeids": [
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_embedding_wait_allows_another_users_read[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_invalid_skill_references_reject_before_failing_provider[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_failed_and_cancelled_skill_embedding_preserves_text_and_search[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_update_preserves_unsubmitted_concurrent_patch[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_update_rechecks_deleted_skill_and_project[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_rerank_wait_releases_pool_and_keeps_candidate_snapshot[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_memory_embedding_wait_allows_another_users_read[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_reembedding_validation_wait_allows_another_users_read[SQLite-active]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_reembedding_validation_wait_allows_another_users_read[SQLite-obsolete-only]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_failed_and_cancelled_memory_embedding_preserves_text_and_search[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_memory_search_retains_configured_dense_budget[SQLite]",
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_row_rejection_rolls_back_matching_vector[SQLite]"
+  ],
+  "reports": {
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_query_events_returns_only_callers_events": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_query_events_entity_filter_cannot_reach_other_users_rows": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_count_events_counts_only_callers_events": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_cleanup_expired_only_deletes_callers_events": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_cleanup_expired_with_no_own_events_deletes_nothing": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_activity_user_scope_e2e.py::TestPostgresActivityUserScope::test_service_lazy_retention_cleanup_is_user_scoped": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_empty": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_after_memory_created": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_filter_by_entity_type": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIList::test_list_activity_filter_by_action": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIUpdates::test_update_generates_event_with_changes": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIDelete::test_delete_generates_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIReads::test_get_memory_generates_read_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntityHistory::test_get_entity_history": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntityHistory::test_get_entity_history_invalid_type": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_limit_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_limit_over_max_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_offset_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_action_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_entity_type_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_actor_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIValidation::test_invalid_entity_id_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_returns_sse_content_type": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_receives_created_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_filters_by_entity_type": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_invalid_entity_type_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_invalid_action_returns_400": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIStreamSSE::test_stream_includes_sequence_numbers": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIProject::test_project_created_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIProject::test_project_updated_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIProject::test_project_deleted_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIDocument::test_document_created_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIDocument::test_document_deleted_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPICodeArtifact::test_code_artifact_created_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPICodeArtifact::test_code_artifact_deleted_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_created_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_deleted_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_memory_link_created_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_relationship_created_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_activity.py::TestActivityAPIEntity::test_entity_relationship_deleted_event": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_title_sort_is_binary_codepoint_order": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_project_name_sort_uses_least_owned_name_and_nulls_last": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_project_name_sort_is_binary_codepoint_order_with_ties": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_matches_title_content_and_context_with_ascii_fold": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_wildcards_are_literal_and_unicode_is_not_folded": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_empty_or_whitespace_is_not_trimmed": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_q_rejects_nul": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_importance_max_supports_exact_and_range": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_importance_range_errors": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_updated_range_endpoints_are_inclusive_and_offset_equivalent": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_updated_range_rejects_invalid_values": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_combined_filters_apply_before_count_and_paging": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_title_and_project_paging_concatenates_without_duplicates": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_title_ties_order_by_id_in_sort_direction": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_owner_isolation_obsolete_and_defaults_unchanged": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_owner_isolation_with_new_filters_and_project_sort": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::TestMemoryListContract::test_default_and_importance_sorts_unchanged": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_api_memories_e2e.py::test_importance_filter_applies_before_pagination": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_auth_e2e.py::test_default_user_provisioning_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_auto_link_threshold_e2e.py::test_create_memory_links_only_above_similarity_cutoff": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_backup_restores_memories_and_vectors": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[utf-8-provider_error]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[utf-8-search_error]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[cp1252-provider_error]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_backup_recovery_e2e.py::TestPostgresBackupRestore::test_failed_cli_rebuild_restores_backup[cp1252-search_error]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cli_postgres_e2e.py::test_cli_local_executor_create_and_query_against_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_create_code_artifact_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_get_code_artifact_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_list_code_artifacts_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_list_code_artifacts_by_project_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_update_code_artifact_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_delete_code_artifact_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_code_artifact_tools_e2e.py::test_get_code_artifact_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[documents]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[code-artifacts]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[files]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[plans]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_rejects_other_users_project_e2e[skills]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[documents]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[code-artifacts]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[files]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[plans]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_unknown_project_is_not_found_e2e[skills]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[documents]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[code-artifacts]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[files]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[plans]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_create_with_own_project_still_works_e2e[skills]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[documents]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[code-artifacts]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[files]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_rejects_other_users_project_e2e[skills]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[documents]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[code-artifacts]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[files]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_unknown_project_is_not_found_e2e[skills]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[documents]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[code-artifacts]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[files]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_update_with_own_project_still_works_e2e[skills]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_cross_user_reference_checks_e2e.py::test_owner_project_delete_leaves_other_users_rows_alone_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_document_tools_e2e.py::test_create_document_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_document_tools_e2e.py::test_get_document_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_document_tools_e2e.py::test_list_documents_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_document_tools_e2e.py::test_list_documents_by_project_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_document_tools_e2e.py::test_update_document_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_document_tools_e2e.py::test_delete_document_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_document_tools_e2e.py::test_get_document_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_embedding_concurrency.py::test_concurrent_search_returns_distinct_expected_memories": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_embedding_concurrency.py::test_concurrent_creation_preserves_each_memory_and_embedding": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_with_custom_type_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_filter_by_type_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_filter_by_tags_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_delete_entity_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_link_entity_to_memory_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_unlink_entity_from_memory_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_relationship_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_relationships_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_relationships_filter_direction_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_relationship_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_delete_entity_relationship_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_case_insensitive_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_with_type_filter_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_with_tags_filter_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_limit_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_search_entities_no_results_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_with_multiple_projects_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_create_entity_with_no_projects_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_with_project_ids_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_list_entities_filter_by_project_ids_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_change_projects_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_update_entity_clear_all_projects_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_empty_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_entity_memories_after_unlink_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_user_isolation_e2e[False]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_entity_tools_e2e.py::test_get_memory_entities_user_isolation_e2e[True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_create_file": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_get_file": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_list_files": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_list_files_filter_mime_type": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_list_files_filter_tags": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_update_file": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_update_file_data": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_delete_file": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_create_memory_with_file_ids": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_text_file_round_trip": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_file_tools_e2e.py::test_file_summary_excludes_data": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_empty_returns_200": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_with_all_node_types": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_node_types_filter": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_memory_center": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_project_center": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_document_center": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_code_artifact_center": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_cycle_detection_postgresql": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_multi_hop_traversal": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_meta_includes_all_new_counts": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_node_types_filter_postgresql": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_pagination_with_offset": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_pagination_metadata": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_respects_max_graph_limit_setting": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_sort_by_importance": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_invalid_pagination_params": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_offset_beyond_total": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_file_nodes": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_memory_file_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_file_project_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_skill_nodes": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_project_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_memory_skill_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_file_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_code_artifact_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_skill_document_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_entity_file_edges": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_skill_center_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_memory_skill_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_skill_to_code_artifact_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_skill_to_document_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_traverses_skill_project_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_full_graph_meta_includes_all_skill_file_counts_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_meta_includes_all_skill_file_counts_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_plan_nodes_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_includes_task_nodes_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_plan_project_edge_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_graph_plan_task_edge_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_plan_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_task_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_task_depth2_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_from_project_to_plans_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_meta_includes_plan_task_counts_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_nonexistent_plan_404_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_graph_e2e.py::test_subgraph_nonexistent_task_404_postgres": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_health_e2e.py::test_health_endpoint_returns_200": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_ticket_identifier_rank_one": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_symbol_in_keywords_rank_one": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_hash_ticket_rank_one": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_hybrid_off_no_fusion_fields": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_hybrid_off_mcp_and_rest_no_hybrid_score_keys": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_leg_failure_falls_back_to_dense": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_obsolete_excluded_from_keyword_leg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_update_and_delete_keyword_index": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_migration_round_trip_preserves_hybrid_search": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_dotted_name_with_prefix_distractors": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_path_with_prefix_distractors": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_ticket_with_same_prefix_distractors": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_keyword_unicode_letter_matches": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_hybrid_search_e2e.py::test_hybrid_recovers_target_outside_dense_pool": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_batch_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_persistence_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_partial_failure_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_duplicate_prevention_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_link_memories_invalid_source_id_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_unlink_memories_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_link_memories_no_autolink_e2e.py::test_unlink_memories_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_link_ownership_e2e.py::test_link_memories_skips_other_users_memory_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_link_ownership_e2e.py::test_link_memories_foreign_id_indistinguishable_from_missing_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[enforce-link]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[enforce-unlink]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[warn-link]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_mixed_link_policy[warn-unlink]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_link_plugin_native.py::test_native_link_request_cancellation": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_auto_linking_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_query_memory_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_create_and_query_persistence_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_query_memory_with_linked_memories_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_single_field_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_multiple_fields_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_content_triggers_embedding_refresh_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_persistence_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_keywords_tags_replacement_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_invalid_id_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_memory_basic_retrieval_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_memory_invalid_id_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_filtered_from_query_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_retrievable_by_id_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_mark_memory_obsolete_with_superseded_by_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_add_project_ids_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_add_multiple_projects_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_remove_project_ids_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_linked_ids_match_get_memory_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_with_project_filter_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_excludes_obsolete_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_with_tags_filter_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_tags_with_project_ids_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_filters_before_pagination_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_importance_ties_use_creation_time_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_include_obsolete_and_sort_importance_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_negative_offset_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_over_limit_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_zero_limit_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_get_recent_memories_clamps_hundred_cap_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_with_provenance_postgres_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_create_memory_without_provenance_backward_compat_postgres_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_update_memory_add_provenance_postgres_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_provenance_in_query_results_postgres_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_tools_e2e.py::test_provenance_confidence_boundaries_postgres_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_repeated_get_preserves_updated_at_and_content": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_read_does_not_change_updated_sort_or_date_membership": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_query_preserves_updated_at_for_primary_and_linked": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTracking::test_real_edit_still_advances_updated_at": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTrackingE2E::test_get_memory_increments_access_count": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_usage_e2e.py::TestMemoryUsageTrackingE2E::test_query_memory_increments_access_count": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_memory_usage_tracking_disabled_e2e.py::test_get_memory_does_not_increment_access_count_when_tracking_disabled": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_forgetful_tools_all_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_forgetful_tools_by_category_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_tools_invalid_category_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_how_to_use_forgetful_tool_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_how_to_use_nonexistent_tool_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_forgetful_tool_user_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_forgetful_tool_memory_create_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_forgetful_tool_memory_query_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_nonexistent_tool_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_tool_preserves_user_context_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_meta_tools_workflow_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_create_project_via_meta_tools_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_list_projects_via_meta_tools_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_create_entity_via_meta_tools_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_execute_entity_workflow_via_meta_tools_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_meta_tools_e2e.py::test_discover_all_categories_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_obsolete_matches_e2e.py::test_recreating_superseded_memory_reports_match[original]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_obsolete_matches_e2e.py::test_recreating_superseded_memory_reports_match[after-full-rebuild]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_invalid_references_on_create_update_and_lookup[]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_invalid_references_on_create_update_and_lookup[ \\t\\n ]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_invalid_references_on_create_update_and_lookup[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_is_private_and_unique_per_user": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_inactive_plans_retain_reference_until_deleted[completed]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_inactive_plans_retain_reference_until_deleted[archived]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_round_trip_and_lookup": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_duplicate_create_and_optional_reference": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefAPI::test_external_ref_updates_preserve_replace_and_reject_duplicates": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefMCP::test_external_ref_mcp_workflow": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefStorage::test_concurrent_creates_on_separate_connections": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefStorage::test_unrelated_integrity_error_is_not_a_reference_conflict": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_external_ref_e2e.py::TestPlanExternalRefStorage::test_migration_preserves_existing_plans_and_tasks": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_crud_snapshots_and_confirmed_delete": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_core_ownership_and_external_reference_stay_authoritative": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_rejection_and_after_failure_preserve_persisted_outcomes": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_noop_missing_and_invalid_transition_dispatch_nothing": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_before_await_rechecks_transition_and_preserves_concurrent_patch": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_lost_delete_race_has_no_after_success": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_cascades_do_not_dispatch_per_task_or_indirect_plan[plan]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_cascades_do_not_dispatch_per_task_or_indirect_plan[project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-enforce-plan_auto_completion_rejected-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-enforce-plan_auto_completion_rejected-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[error-enforce-plan_auto_completion_unavailable-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[error-enforce-plan_auto_completion_unavailable-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-warn-PLAN_TEST-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[reject-warn-PLAN_TEST-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[allow-enforce-PLAN_AFTER-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_task_commit_survives_secondary_policy_outcome[allow-enforce-PLAN_AFTER-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[added-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[reopened-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_completion_rechecks_tasks_after_policy[none-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[warn-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-transition]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_plugin_child_cancellation_keeps_primary_task_success[enforce-delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_manual_completion_allows_unfinished_tasks": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_manual_policy_child_cancellation_propagates": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_manual_completion_rejects_core_guard": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_concurrent_completions_do_not_promise_atomic_dispatch": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_nontrigger_controls[empty]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_nontrigger_controls[all_cancelled]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_automatic_nontrigger_controls[non_active]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_unrelated_secondary_error_keeps_existing_postcommit_propagation": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_cancelled_request_during_secondary_policy_keeps_primary_committed": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_handler_mutation_cannot_rewrite_saved_data": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_plugin_e2e.py::TestPlanPluginPersistence::test_unregistered_create_needs_no_new_project_query": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_create_plan_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_get_plan_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_list_plans_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_update_plan_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_create_defaults_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_lifecycle_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_invalid_status_transition_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_list_plans_filter_by_status_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_plan_tools_e2e.py::test_plan_discover_tools_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[not-an-id-get_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[not-an-id-update_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[not-an-id-delete_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[True-get_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[True-update_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[True-delete_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[1.9-get_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[1.9-update_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[1.9-delete_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[None-get_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[None-update_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_tools_reject_invalid_ids[None-delete_project]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_create_project_basic_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_get_project_e2e[integer-id]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_get_project_e2e[string-id]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_e2e[first]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_e2e[repeat]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_e2e[integer-id]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_e2e[string-id]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_delete_project_e2e[integer-id]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_delete_project_e2e[string-id]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_filter_by_status_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_filter_by_repo_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_persistence_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_get_project_invalid_id_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_invalid_id_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_delete_project_invalid_id_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_create_project_with_opaque_repository_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_partial_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_update_project_archive_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_list_returns_summary_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_get_returns_full_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_project_memory_count_updates_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_query_memory_by_project_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_last_encoding_point_round_trip_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_project_tools_e2e.py::test_list_projects_filter_by_name_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_project_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_memory_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_document_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_code_artifact_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_entity_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_entity_relationship_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_plan_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_task_provenance_roundtrip_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_no_provenance_fields_remain_null_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_project_provenance_via_http_api": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_provenance_e2e.py::test_enforce_env_overwrite_blocks_update_pg": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_search_works_after": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_count_integrity": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_preserves_memory_data": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[missing_vector-mixed]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[missing_vector-all-obsolete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[old_dimensions-mixed]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_recovers_obsolete_vectors[old_dimensions-all-obsolete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_empty_database": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_re_embed_validation_checks": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_validation_checks_obsolete_only_database[missing_embeddings]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_re_embedding_e2e.py::test_validation_checks_obsolete_only_database[wrong_dimensions]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_reranking_e2e.py::test_reranking_orders_by_score_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_reranking_e2e.py::test_reranking_with_different_contexts_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_retrieval_scores_e2e.py::test_scores_aligned_and_non_increasing": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_retrieval_scores_e2e.py::test_rerank_scores_present_and_ordered": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_roundtrip_new_resource_ids": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[delete-document]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[delete-code_artifact]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[delete-file]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[unlink-document]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[unlink-code_artifact]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_member_is_not_silently_lost[unlink-file]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_legacy_linked_reference_explicit_export": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_unlinked_explicit_id_is_refused": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[../escape]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[/absolute]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a/../b]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a//b]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[SKILL.md]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[C:/file]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a\\\\b]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a/]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[nul.txt]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a/CON]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_paths_have_no_side_effects[a.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_text_rejected_before_storage[content-\\x00]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_invalid_text_rejected_before_storage[content-   ]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_collision_rejected_before_storage": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_legacy_markdown_still_has_original_shape": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_component_scope_denial_has_no_writes": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_binary_feature_disabled_before_any_write": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_midway_database_failure_rolls_back_all_records": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_events_follow_commit_and_redact_binary": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_postcommit_event_failure_preserves_whole_package[tracking-off]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_postcommit_event_failure_preserves_whole_package[tracking-on]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_reads_one_statement": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_existing_create_conversion_matches_bundle": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_foreign_owner_never_exported": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-off-before_commit]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-off-after_commit]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-on-before_commit]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_cancellation_preserves_transaction_boundary[tracking-on-after_commit]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_sqlite_foreign_keys_actually_enabled": {
+      "setup": "passed",
+      "call": "skipped",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_rest_bundle_and_legacy_shapes": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_large_bundle_uses_transport_not_cli_argv": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_destination_project_applies_to_all_records": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_missing_project_creates_no_package": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_hidden_yaml_nul_rejected_before_any_write": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_codepoint_order": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_foreign_explicit_member_is_indistinguishable_from_absent": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_skill_delete_cascades_only_membership": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[nul-False]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[nul-True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[file_limit-False]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_denied_export_never_loads_or_converts_body[file_limit-True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_authorized_invalid_export_is_sanitized": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_budget_precedes_body_fetch[False]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_budget_precedes_body_fetch[True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_exact_cap_and_repeated_ids": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_canonical_import_rejected_before_embedding[False]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_canonical_import_rejected_before_embedding[True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_canonical_exact_limit_and_integer_metadata_key": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_detailed_help_and_examples": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_native_text_length_and_isolation": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[grow]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[tags]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[unlink]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_export_snapshot_survives_concurrent_commit[delete]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_accepted_canonical_import_at_exact_cap[False]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_accepted_canonical_import_at_exact_cap[True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_optional_tools_exact_boundary[None]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_optional_tools_exact_boundary[tools1]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_bundle_optional_tools_exact_boundary[tools2]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nested_metadata_canonical_boundary": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_null_document_type_persisted_budget": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_overlapping_bundle_exports": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_kind_schema_and_runtime_agree[0]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_kind_schema_and_runtime_agree[1]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_kind_schema_and_runtime_agree[2]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_numeric_metadata_native_storage_exact_cap[  n: 1.0e+20\\n]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_numeric_metadata_native_storage_exact_cap[  values: [1.0, 100.0, -0.0, 1.0e+16, 1.5e+20, 1.0e+23, 1.0e-5, 1.5e-7, 7, true]\\n  nested: {n: 1.0e+23}\\n]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nonfinite_bundle_import_leaves_no_records[.inf]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nonfinite_bundle_import_leaves_no_records[.nan]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_bundles.py::TestSkillBundles::test_nonfinite_bundle_import_leaves_no_records[-.inf]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_create_skill_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_list_skills_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_search_skills_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_update_skill_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_delete_skill_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_import_export_roundtrip_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_file_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_skill_from_file_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_code_artifact_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_skill_from_code_artifact_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_document_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_skill_from_document_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_link_skill_to_file_skill_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_duplicate_link_idempotent_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_unlink_nonexistent_returns_false_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_export_includes_tags_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_duplicate_skill_name_rejected_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_get_skill_links_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_skill_tools_e2e.py::test_get_skill_links_not_found_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_create_task_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_get_task_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_query_tasks_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_update_task_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_transition_task_lifecycle_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_transition_task_invalid_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_claim_task_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_claim_task_version_conflict_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_criteria_lifecycle_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_done_requires_criteria_met_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_dependency_chain_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_cyclic_dependency_rejected_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_remove_dependency_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_plan_auto_completes_when_all_tasks_done_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_create_task_with_inline_criteria_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_task_tools_e2e.py::test_task_discover_tools_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_other_insert_errors_are_not_reported_as_duplicates": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_duplicate_creation_preserves_existing_user": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_creation_race_returns_existing_user[get_or_create_user]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_user_creation_e2e.py::TestPostgresUserCreation::test_creation_race_returns_existing_user[update_user]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_user_tools_e2e.py::test_get_current_user_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_user_tools_e2e.py::test_update_user_notes_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_user_tools_e2e.py::test_user_persistence_e2e": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_zz_backup_restore_e2e.py::test_backup_and_restore_after_schema_modification": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e/test_zz_backup_restore_e2e.py::test_backup_and_restore_with_data_changes": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_embedding_wait_allows_another_users_read[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_invalid_skill_references_reject_before_failing_provider[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_failed_and_cancelled_skill_embedding_preserves_text_and_search[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_update_preserves_unsubmitted_concurrent_patch[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_update_rechecks_deleted_skill_and_project[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_rerank_wait_releases_pool_and_keeps_candidate_snapshot[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_memory_embedding_wait_allows_another_users_read[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_reembedding_validation_wait_allows_another_users_read[Postgres-active]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_reembedding_validation_wait_allows_another_users_read[Postgres-obsolete-only]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_failed_and_cancelled_memory_embedding_preserves_text_and_search[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_memory_search_retains_configured_dense_budget[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/e2e_provider_sessions/test_provider_sessions.py::test_skill_row_rejection_rolls_back_matching_vector[Postgres]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    }
+  },
+  "collection_reports": []
+}

@@ -1,0 +1,10 @@
+hatchling==1.32.4
+hatch-vcs==0.5.0
+setuptools-scm==10.3.4
+vcs-versioning==2.6.0
+packaging==26.3
+setuptools==84.0.0
+pathspec==1.1.1
+pluggy==1.7.0
+tomlkit==0.15.2
+trove-classifiers==2026.9.21.13
